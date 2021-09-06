@@ -1,7 +1,7 @@
-import Drawingboard from "../../components/Drawingboard";
+import Collaboration from "../../components/Collaboration";
 
-function DrawingboardContainer() {
-  return <Drawingboard />;
+function CollaborationContainer() {
+  return <Collaboration />;
 }
 
-export default DrawingboardContainer;
+export default CollaborationContainer;
