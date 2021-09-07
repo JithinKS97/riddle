@@ -1,25 +1,31 @@
 const JOIN = "JOIN";
-const JOIN_ACKNOWLEDGE = "JOIN_ACKNOWLEDGE";
 
 /**
  * Sending
  */
 
-function join({ client }) {
-  const address = client.getPublicKey();
-  const content = {
-    identifier: client.identifier,
-  };
-  const message = generateMessage(JOIN, content);
-  sendMessage({ address, message, client });
-}
+const join = async ({ client }) => {
+  try {
+    const address = client.getPublicKey();
+    const content = {
+      identifier: client.identifier,
+    };
+    const message = generateMessage(JOIN, content);
+    const res = await sendMessage({ address, message, client });
+    console.log(res);
+    return res;
+  } catch (err) {
+    console.log("Join request failed");
+  }
+};
 
-const sendMessage = ({ address, message, client }) => {
+const sendMessage = async ({ address, message, client }) => {
   console.log(`Sending message...`);
   console.log(JSON.parse(message));
   console.log(`to address ${address}`);
 
-  client.send(address, message);
+  const res = await client.send(address, message);
+  return res;
 };
 
 /**
@@ -29,7 +35,7 @@ const sendMessage = ({ address, message, client }) => {
 function handleMessageReceive({ message, client }) {
   let payload = JSON.parse(message.payload);
   if (isMain(client)) {
-    handleMessageForMain({ client, payload });
+    return handleMessageForMain({ client, payload });
   }
 }
 
@@ -39,8 +45,7 @@ function handleMessageForMain({ client, payload }) {
 
   switch (type) {
     case JOIN:
-      console.log("Allow them to join...");
-      console.log(content);
+      return "Joining request recieved";
   }
 }
 

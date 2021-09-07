@@ -22,16 +22,7 @@ function Collaboration() {
   }, [client]);
 
   const handleMessage = (message) => {
-    messageApi.handleMessageReceive({ message, client });
-  };
-
-  const addMember = (newMember) => {
-    membersApi.addMember({
-      newMember,
-      members,
-      setMembers,
-      client,
-    });
+    return messageApi.handleMessageReceive({ message, client });
   };
 
   useEffect(() => {
@@ -40,8 +31,10 @@ function Collaboration() {
     }
     if (isSubClient) {
       const newClient = nknApi.createClient({ id, isMainClient: false });
+
       console.log("Client created...");
       console.log(newClient);
+
       setClient(newClient);
       newClient.onConnect(postConnect(newClient));
     } else {
@@ -49,10 +42,10 @@ function Collaboration() {
     }
   }, [id]);
 
-  const postConnect = (client) => () => {
-    setLoading(false);
+  const postConnect = (client) => async () => {
     console.log("Client finished connecting...");
-    messageApi.join({ client });
+    await messageApi.join({ client });
+    setLoading(false);
   };
 
   return loading ? <div>Loading...</div> : <Drawingboard />;
