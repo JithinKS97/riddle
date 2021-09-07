@@ -1,5 +1,5 @@
 import { fabric } from "fabric";
-import { useEffect } from "react";
+import { forwardRef, useEffect, useImperativeHandle } from "react";
 
 let canvas,
   canvasConfig = {
@@ -9,10 +9,25 @@ let canvas,
     backgroundColor: "rgba(0,0,0,0)",
   };
 
-function Drawingboard() {
+const Drawingboard = forwardRef((props, ref) => {
   useEffect(() => {
     canvas = new fabric.Canvas("c", canvasConfig);
   }, []);
+
+  useImperativeHandle(ref, () => {
+    return {
+      getCanvasAsJSON,
+      loadFromJSON,
+    };
+  });
+
+  const getCanvasAsJSON = () => {
+    return canvas.toJSON();
+  };
+
+  const loadFromJSON = (fabricJSON) => {
+    canvas.loadFromJSON(fabricJSON);
+  };
 
   return (
     <>
@@ -22,7 +37,7 @@ function Drawingboard() {
       </div>
     </>
   );
-}
+});
 
 const style = `
     .canvas-box {

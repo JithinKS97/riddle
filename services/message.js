@@ -12,7 +12,7 @@ const join = async ({ client }) => {
     };
     const message = generateMessage(JOIN, content);
     const res = await sendMessage({ address, message, client });
-    console.log(res);
+    console.log("Received join acknowledge message and canvas data");
     return res;
   } catch (err) {
     console.log("Join request failed");
@@ -32,20 +32,25 @@ const sendMessage = async ({ address, message, client }) => {
  * Receiving
  */
 
-function handleMessageReceive({ message, client }) {
-  let payload = JSON.parse(message.payload);
+function handleMessageReceive(props) {
+  const { client } = props;
+
   if (isMain(client)) {
-    return handleMessageForMain({ client, payload });
+    return handleMessageForMain(props);
   }
 }
 
-function handleMessageForMain({ client, payload }) {
-  const content = payload.content;
+function handleMessageForMain(props) {
+  const { message, getCanvasAsJSON, addMember } = props;
+  let payload = JSON.parse(message.payload);
   const type = payload.type;
 
   switch (type) {
     case JOIN:
-      return "Joining request recieved";
+      const identifier = payload.content.identifier;
+      const currentMembers = addMember(identifier);
+      const content = getCanvasAsJSON();
+      return content;
   }
 }
 
