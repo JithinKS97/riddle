@@ -1,4 +1,6 @@
 const JOIN = "JOIN";
+const JOIN_ACKNOWLEDGE = "JOIN_ACKNOWLEDGE";
+const ADD_MEMBER = "ADD_MEMBER";
 
 /**
  * Sending
@@ -11,21 +13,18 @@ const join = async ({ client }) => {
       identifier: client.identifier,
     };
     const message = generateMessage(JOIN, content);
-    const res = await sendMessage({ address, message, client });
+    let res = await sendMessage({ address, message, client });
     console.log("Received join acknowledge message and canvas data");
-    return res;
+
+    res = JSON.parse(res);
+
+    const fabricJSON = res.content.fabricJSON;
+    const currentMembers = res.content.currentMembers;
+
+    return { fabricJSON, currentMembers };
   } catch (err) {
     console.log("Join request failed");
   }
-};
-
-const sendMessage = async ({ address, message, client }) => {
-  console.log(`Sending message...`);
-  console.log(JSON.parse(message));
-  console.log(`to address ${address}`);
-
-  const res = await client.send(address, message);
-  return res;
 };
 
 /**
@@ -34,25 +33,66 @@ const sendMessage = async ({ address, message, client }) => {
 
 function handleReception(props) {
   const { client } = props;
+  const { message } = props;
+
+  let payload = JSON.parse(message.payload);
 
   if (isMain(client)) {
-    return handleMessageForMain(props);
+    return handleMessageForMain({ ...props, payload });
+  } else {
+    return handleMessageForSub({ ...props, payload });
   }
 }
 
 function handleMessageForMain(props) {
-  const { message, getCanvasAsJSON, addMember } = props;
-  let payload = JSON.parse(message.payload);
+  const { payload, getCanvasAsJSON, addMember, client } = props;
   const type = payload.type;
 
   switch (type) {
     case JOIN:
       const identifier = payload.content.identifier;
       const currentMembers = addMember(identifier);
-      const content = getCanvasAsJSON();
-      return content;
+      const content = {
+        fabricJSON: getCanvasAsJSON(),
+        currentMembers,
+      };
+
+      const message = generateMessage(JOIN_ACKNOWLEDGE, content);
+
+      const membersToNotify = currentMembers.filter(
+        (member) => member !== identifier
+      );
+      sentMemberUpdatesToAll({
+        client,
+        newMember: identifier,
+        membersToNotify,
+      });
+
+      return message;
   }
 }
+
+function handleMessageForSub(props) {
+  const { payload, addMember } = props;
+
+  const type = payload.type;
+  const newMember = payload.content.newMember;
+
+  switch (type) {
+    case ADD_MEMBER:
+      addMember(newMember);
+  }
+}
+
+const sentMemberUpdatesToAll = ({ client, newMember, membersToNotify }) => {
+  const content = {
+    newMember,
+  };
+  const publicKey = client.getPublicKey();
+  membersToNotify = membersToNotify.map((member) => `${member}.${publicKey}`);
+  const message = generateMessage(ADD_MEMBER, content);
+  client.send(membersToNotify, message);
+};
 
 /**
  * Utilities
@@ -69,6 +109,15 @@ const generateMessage = (type, content) => {
 
 const isMain = (client) => {
   return client.identifier === "";
+};
+
+const sendMessage = async ({ address, message, client }) => {
+  console.log(`Sending message...`);
+  console.log(JSON.parse(message));
+  console.log(`to address ${address}`);
+
+  const res = await client.send(address, message);
+  return res;
 };
 
 export default {

@@ -16,6 +16,12 @@ function Collaboration() {
   const [loading, setLoading] = useState(true);
   const canvasRef = useRef(null);
 
+  const membersRef = useRef([]);
+
+  useEffect(() => {
+    membersRef.current = members;
+  }, [members]);
+
   // Getting the current canvas state
   const { id } = router.query;
   useEffect(() => {
@@ -29,7 +35,7 @@ function Collaboration() {
       console.log(newClient);
 
       setClient(newClient);
-      newClient.onConnect(getCurrentCanvasState(newClient));
+      newClient.onConnect(getCurrentState(newClient));
     } else {
       client.onConnect(() => {
         console.log("Client finished connecting...");
@@ -38,10 +44,11 @@ function Collaboration() {
     }
   }, [id]);
 
-  const getCurrentCanvasState = (client) => async () => {
+  const getCurrentState = (client) => async () => {
     console.log("Client finished connecting...");
-    const fabricJSON = await messageApi.join({ client });
+    const { fabricJSON, currentMembers } = await messageApi.join({ client });
     setCanvas(fabricJSON);
+    setMembers(currentMembers);
     console.log("Restored canvas state...");
     setLoading(false);
   };
@@ -89,7 +96,7 @@ function Collaboration() {
 
   const addMember = (newMember) => {
     return membersApi.addMember({
-      members,
+      members: membersRef.current,
       setMembers,
       newMember,
     });

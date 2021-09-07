@@ -6,7 +6,7 @@ const Members = ({ members }) => {
   return (
     <ol>
       {members.map((member) => (
-        <li>{member}</li>
+        <li key={member}>{member}</li>
       ))}
     </ol>
   );
