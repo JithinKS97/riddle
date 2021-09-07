@@ -32,7 +32,7 @@ const sendMessage = async ({ address, message, client }) => {
  * Receiving
  */
 
-function handleMessageReceive(props) {
+function handleReception(props) {
   const { client } = props;
 
   if (isMain(client)) {
@@ -73,5 +73,5 @@ const isMain = (client) => {
 
 export default {
   join,
-  handleMessageReceive,
+  handleReception,
 };

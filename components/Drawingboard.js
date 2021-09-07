@@ -12,6 +12,8 @@ let canvas,
 const Drawingboard = forwardRef((props, ref) => {
   useEffect(() => {
     canvas = new fabric.Canvas("c", canvasConfig);
+    canvas.freeDrawingBrush.color = "black";
+    canvas.freeDrawingBrush.width = 3;
   }, []);
 
   useImperativeHandle(ref, () => {
