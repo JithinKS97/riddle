@@ -1,4 +1,9 @@
-import { JOIN, JOIN_ACKNOWLEDGE, ADD_MEMBER } from "../constant/App";
+import {
+  JOIN,
+  JOIN_ACKNOWLEDGE,
+  SUBCLIENT_LEAVE,
+  ADD_MEMBER,
+} from "../constant/App";
 
 /**
  * Sending
@@ -25,6 +30,24 @@ const join = async ({ client }) => {
   }
 };
 
+const sendLeaveMessage = ({ client, members }) => {
+  const publicKey = client.getPublicKey();
+
+  const content = {
+    identifier: client.identifier,
+  };
+
+  const recipients = members
+    .filter((member) => member != client.identifier)
+    .map((id) => `${id}.${publicKey}`);
+
+  recipients.push(publicKey);
+
+  const message = generateMessage(SUBCLIENT_LEAVE, content);
+
+  client.send(recipients, message);
+};
+
 /**
  * Receiving
  */
@@ -42,7 +65,7 @@ function handleReception(props) {
 }
 
 function handleMessageForMain(props) {
-  const { payload, getCanvasAsJSON, addMember, client } = props;
+  const { payload, getCanvasAsJSON, addMember, client, removeMember } = props;
   const type = payload.type;
 
   switch (type) {
@@ -66,18 +89,27 @@ function handleMessageForMain(props) {
       });
 
       return message;
+    case SUBCLIENT_LEAVE:
+      const memberToRemove = payload.content.identifier;
+      removeMember(memberToRemove);
+      break;
   }
 }
 
 function handleMessageForSub(props) {
-  const { payload, addMember } = props;
+  const { payload, addMember, removeMember } = props;
 
   const type = payload.type;
-  const newMember = payload.content.newMember;
 
   switch (type) {
     case ADD_MEMBER:
+      const newMember = payload.content.newMember;
       addMember(newMember);
+      break;
+    case SUBCLIENT_LEAVE:
+      const memberToRemove = payload.content.identifier;
+      removeMember(memberToRemove);
+      break;
   }
 }
 
@@ -120,4 +152,5 @@ const sendMessage = async ({ address, message, client }) => {
 export default {
   join,
   handleReception,
+  sendLeaveMessage,
 };

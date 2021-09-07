@@ -6,6 +6,11 @@ const addMember = ({ members, setMembers, newMember }) => {
   }
 };
 
+const removeMember = ({ members, setMembers, memberToRemove }) => {
+  setMembers(members.filter((member) => member !== memberToRemove));
+};
+
 export default {
   addMember,
+  removeMember,
 };

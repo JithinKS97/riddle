@@ -7,6 +7,7 @@ import nknApi from "../services/nkn";
 import messageApi from "../services/message";
 import membersApi from "../services/members";
 import Members from "./Members";
+import { Button } from "@chakra-ui/react";
 
 function Collaboration() {
   const context = useContext(AppContext);
@@ -16,6 +17,13 @@ function Collaboration() {
   const [loading, setLoading] = useState(true);
   const canvasRef = useRef(null);
   const membersRef = useRef([]);
+
+  useEffect(() => {
+    window.onbeforeunload = (e) => {
+      messageApi.sendLeaveMessage({ client, members });
+      return null;
+    };
+  });
 
   useEffect(() => {
     membersRef.current = members;
@@ -62,6 +70,7 @@ function Collaboration() {
       client,
       getCanvasAsJSON,
       addMember,
+      removeMember,
     });
   };
 
@@ -91,6 +100,14 @@ function Collaboration() {
       members: membersRef.current,
       setMembers,
       newMember,
+    });
+  };
+
+  const removeMember = (memberToRemove) => {
+    return membersApi.removeMember({
+      members: membersRef.current,
+      setMembers,
+      memberToRemove,
     });
   };
 
