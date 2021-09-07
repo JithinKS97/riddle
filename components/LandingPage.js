@@ -11,13 +11,17 @@ function LandingPage() {
 
   const handleCollaborationClick = () => {
     const client = createClient();
-    const publicKey = client.getPublicKey();
+
+    console.log("Client created...");
+    console.log(client);
+
+    const seed = client.getSeed();
     setClient(client);
-    goToCollabPage(publicKey);
+    goToCollabPage(seed);
   };
 
-  const goToCollabPage = (publicKey) => {
-    router.push(`drawingboard/${publicKey}`);
+  const goToCollabPage = (id) => {
+    router.push(`drawingboard/${id}`);
   };
 
   return (
