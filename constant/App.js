@@ -1,0 +1,9 @@
+const JOIN = "JOIN";
+const JOIN_ACKNOWLEDGE = "JOIN_ACKNOWLEDGE";
+const ADD_MEMBER = "ADD_MEMBER";
+
+export default {
+  JOIN,
+  JOIN_ACKNOWLEDGE,
+  ADD_MEMBER,
+};

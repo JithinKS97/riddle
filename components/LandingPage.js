@@ -11,10 +11,6 @@ function LandingPage() {
 
   const handleCollaborationClick = () => {
     const client = nknApi.createClient({ isMainClient: true });
-
-    console.log("Client created...");
-    console.log(client);
-
     const seed = client.getSeed();
     setClient(client);
     goToCollabPage(seed);

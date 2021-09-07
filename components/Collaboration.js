@@ -15,7 +15,6 @@ function Collaboration() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const canvasRef = useRef(null);
-
   const membersRef = useRef([]);
 
   useEffect(() => {
@@ -30,28 +29,25 @@ function Collaboration() {
     }
     if (isSubClient) {
       const newClient = nknApi.createClient({ id, isMainClient: false });
-
-      console.log("Created client...");
-      console.log(newClient);
-
       setClient(newClient);
       newClient.onConnect(getCurrentState(newClient));
     } else {
       client.onConnect(() => {
-        console.log("Client finished connecting...");
         setLoading(false);
       });
     }
   }, [id]);
 
   const getCurrentState = (client) => async () => {
-    console.log("Client finished connecting...");
     const { fabricJSON, currentMembers } = await messageApi.join({ client });
     setCanvas(fabricJSON);
     setMembers(currentMembers);
-    console.log("Restored canvas state...");
     setLoading(false);
   };
+
+  /**
+   * Message handling
+   */
 
   useEffect(() => {
     if (!client) {
@@ -59,10 +55,6 @@ function Collaboration() {
     }
     client.onMessage(handleMessage);
   }, [client]);
-
-  /**
-   * Message handling
-   */
 
   const handleMessage = (message) => {
     return messageApi.handleReception({

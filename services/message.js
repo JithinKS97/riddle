@@ -1,6 +1,4 @@
-const JOIN = "JOIN";
-const JOIN_ACKNOWLEDGE = "JOIN_ACKNOWLEDGE";
-const ADD_MEMBER = "ADD_MEMBER";
+import { JOIN, JOIN_ACKNOWLEDGE, ADD_MEMBER } from "../constant/App";
 
 /**
  * Sending
@@ -32,8 +30,7 @@ const join = async ({ client }) => {
  */
 
 function handleReception(props) {
-  const { client } = props;
-  const { message } = props;
+  const { client, message } = props;
 
   let payload = JSON.parse(message.payload);
 
