@@ -24,6 +24,12 @@ const Drawingboard = forwardRef((props, ref) => {
     canvas.on("path:created", (res) => {
       onAddPath(res.path);
     });
+
+    canvas.on("object:added", (res) => {
+      res.target.set({
+        id: uuidv4(),
+      });
+    });
   };
 
   useImperativeHandle(ref, () => {
@@ -45,26 +51,20 @@ const Drawingboard = forwardRef((props, ref) => {
   const addObject = (newObject) => {
     fabric.util.enlivenObjects([newObject], (objects) => {
       objects.forEach((object) => {
-        animatePath(object, object.path);
+        animatePath(object);
       });
     });
   };
 
-  const animatePath = (pathObject, fullPath) => {
-    let fullPathLength = fullPath.length;
-    let previousObject;
+  const animatePath = (pathObject) => {
+    canvas.add(pathObject);
     fabric.util.animate({
       startValue: 0,
-      endValue: fullPathLength,
-      duration: 500,
+      endValue: 1,
+      duration: 100,
       onChange: function (value) {
-        if (previousObject) {
-          canvas.remove(previousObject);
-        }
-        const newPathObject = fabric.util.object.clone(pathObject);
-        newPathObject.path = fullPath.slice(0, value);
-        canvas.add(newPathObject);
-        previousObject = newPathObject;
+        pathObject.opacity = value;
+        canvas.renderAll();
       },
     });
   };
@@ -73,7 +73,6 @@ const Drawingboard = forwardRef((props, ref) => {
     <>
       <style>{style}</style>
       <div className="canvas-box">
-        <button>onclick</button>
         <canvas id="c"></canvas>
       </div>
     </>
