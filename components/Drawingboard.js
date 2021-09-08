@@ -45,21 +45,26 @@ const Drawingboard = forwardRef((props, ref) => {
   const addObject = (newObject) => {
     fabric.util.enlivenObjects([newObject], (objects) => {
       objects.forEach((object) => {
-        animatePath(object);
+        animatePath(object, object.path);
       });
     });
   };
 
-  const animatePath = (pathObject) => {
-    pathObject.opacity = 0;
-    canvas.add(pathObject);
+  const animatePath = (pathObject, fullPath) => {
+    let fullPathLength = fullPath.length;
+    let previousObject;
     fabric.util.animate({
       startValue: 0,
-      endValue: 1,
-      duration: 100,
+      endValue: fullPathLength,
+      duration: 500,
       onChange: function (value) {
-        pathObject.opacity = value;
-        canvas.renderAll();
+        if (previousObject) {
+          canvas.remove(previousObject);
+        }
+        const newPathObject = fabric.util.object.clone(pathObject);
+        newPathObject.path = fullPath.slice(0, value);
+        canvas.add(newPathObject);
+        previousObject = newPathObject;
       },
     });
   };
@@ -68,6 +73,7 @@ const Drawingboard = forwardRef((props, ref) => {
     <>
       <style>{style}</style>
       <div className="canvas-box">
+        <button>onclick</button>
         <canvas id="c"></canvas>
       </div>
     </>
