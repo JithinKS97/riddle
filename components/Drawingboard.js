@@ -1,5 +1,6 @@
 import { fabric } from "fabric";
 import { forwardRef, useEffect, useImperativeHandle } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 let canvas,
   canvasConfig = {
@@ -42,11 +43,24 @@ const Drawingboard = forwardRef((props, ref) => {
   };
 
   const addObject = (newObject) => {
-    console.log(newObject);
     fabric.util.enlivenObjects([newObject], (objects) => {
       objects.forEach((object) => {
-        canvas.add(object);
+        animatePath(object);
       });
+    });
+  };
+
+  const animatePath = (pathObject) => {
+    pathObject.opacity = 0;
+    canvas.add(pathObject);
+    fabric.util.animate({
+      startValue: 0,
+      endValue: 1,
+      duration: 100,
+      onChange: function (value) {
+        pathObject.opacity = value;
+        canvas.renderAll();
+      },
     });
   };
 
