@@ -83,6 +83,8 @@ const style = `
     .canvas-box {
         display:inline-block;
         border:1px solid black;
+        width:100vw;
+        height:100vh;
     }
 `;
 
