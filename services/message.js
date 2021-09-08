@@ -1,9 +1,10 @@
 import {
   JOIN,
   JOIN_ACKNOWLEDGE,
-  SUBCLIENT_LEAVE,
+  REMOVE_MEMBER,
   ADD_MEMBER,
-} from "../constant/App";
+  MAKE_SUBCLIENT_MAINCLIENT,
+} from "../constant/message";
 
 /**
  * Sending
@@ -43,9 +44,21 @@ const sendLeaveMessage = ({ client, members }) => {
 
   recipients.push(publicKey);
 
-  const message = generateMessage(SUBCLIENT_LEAVE, content);
+  const message = generateMessage(REMOVE_MEMBER, content);
 
   client.send(recipients, message);
+};
+
+const makeSubClientMainClient = ({ client, members }) => {
+  if (members.length === 0) {
+    return;
+  }
+  const memberToMakeSubClient = members[0];
+  const publicKey = client.getPublicKey();
+
+  const message = generateMessage(MAKE_SUBCLIENT_MAINCLIENT);
+
+  client.send(`${memberToMakeSubClient}.${publicKey}`, message);
 };
 
 /**
@@ -89,7 +102,7 @@ function handleMessageForMain(props) {
       });
 
       return message;
-    case SUBCLIENT_LEAVE:
+    case REMOVE_MEMBER:
       const memberToRemove = payload.content.identifier;
       removeMember(memberToRemove);
       break;
@@ -97,7 +110,7 @@ function handleMessageForMain(props) {
 }
 
 function handleMessageForSub(props) {
-  const { payload, addMember, removeMember } = props;
+  const { payload, addMember, removeMember, makeThisMainClient } = props;
 
   const type = payload.type;
 
@@ -106,10 +119,12 @@ function handleMessageForSub(props) {
       const newMember = payload.content.newMember;
       addMember(newMember);
       break;
-    case SUBCLIENT_LEAVE:
+    case REMOVE_MEMBER:
       const memberToRemove = payload.content.identifier;
       removeMember(memberToRemove);
       break;
+    case MAKE_SUBCLIENT_MAINCLIENT:
+      makeThisMainClient();
   }
 }
 
@@ -153,4 +168,5 @@ export default {
   join,
   handleReception,
   sendLeaveMessage,
+  makeSubClientMainClient,
 };

@@ -6,10 +6,11 @@ import { useRouter } from "next/router";
 
 function LandingPage() {
   const context = useContext(AppContext);
-  const { setClient } = context;
+  const { setClient, setIsMainClient } = context;
   const router = useRouter();
 
   const handleCollaborationClick = () => {
+    setIsMainClient(true);
     const client = nknApi.createClient({ isMainClient: true });
     const seed = client.getSeed();
     setClient(client);

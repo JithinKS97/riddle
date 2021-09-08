@@ -7,11 +7,17 @@ import nknApi from "../services/nkn";
 import messageApi from "../services/message";
 import membersApi from "../services/members";
 import Members from "./Members";
-import { Button } from "@chakra-ui/react";
 
 function Collaboration() {
   const context = useContext(AppContext);
-  const { client, setClient, members, setMembers } = context;
+  const {
+    client,
+    setClient,
+    members,
+    setMembers,
+    isMainClient,
+    setIsMainClient,
+  } = context;
   const isSubClient = client === null;
   const router = useRouter();
   const [loading, setLoading] = useState(true);
@@ -19,8 +25,16 @@ function Collaboration() {
   const membersRef = useRef([]);
 
   useEffect(() => {
-    window.onbeforeunload = (e) => {
-      messageApi.sendLeaveMessage({ client, members });
+    window.onbeforeunload = () => {
+      if (!isMainClient) {
+        messageApi.sendLeaveMessage({ client, members });
+      } else {
+        messageApi.makeSubClientMainClient({
+          client,
+          members,
+          makeThisMainClient,
+        });
+      }
       return null;
     };
   });
@@ -71,6 +85,7 @@ function Collaboration() {
       getCanvasAsJSON,
       addMember,
       removeMember,
+      makeThisMainClient,
     });
   };
 
@@ -111,12 +126,25 @@ function Collaboration() {
     });
   };
 
+  const makeThisMainClient = () => {
+    return membersApi.makeThisMainClient({
+      members: membersRef.current,
+      setMembers,
+      client,
+      setIsMainClient,
+      setClient,
+      setLoading,
+      createClient: nknApi.createClient,
+    });
+  };
+
   return (
     <>
       <style>{style({ loading })}</style>
       {loading ? <div>Loading...</div> : null}
       <div className="canvas-outer">
         <Drawingboard ref={canvasRef} />
+        {isMainClient ? <div>This is main client</div> : null}
         <Members members={members} />
       </div>
     </>
