@@ -32,7 +32,6 @@ function Collaboration() {
         messageApi.makeSubClientMainClient({
           client,
           members,
-          makeThisMainClient,
         });
       }
       return null;

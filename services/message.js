@@ -58,7 +58,34 @@ const makeSubClientMainClient = ({ client, members }) => {
 
   const message = generateMessage(MAKE_SUBCLIENT_MAINCLIENT);
 
+  const membersToUpdate = members.filter(
+    (member) => member != memberToMakeSubClient
+  );
+
+  removeMemberFromOthers({
+    memberToRemove: memberToMakeSubClient,
+    client,
+    membersToUpdate,
+  });
+
   client.send(`${memberToMakeSubClient}.${publicKey}`, message);
+};
+
+const removeMemberFromOthers = ({
+  memberToRemove,
+  client,
+  membersToUpdate,
+}) => {
+  const publicKey = client.getPublicKey();
+
+  const content = {
+    identifier: memberToRemove,
+  };
+
+  const recipients = membersToUpdate.map((id) => `${id}.${publicKey}`);
+
+  const message = generateMessage(REMOVE_MEMBER, content);
+  client.send(recipients, message);
 };
 
 /**
