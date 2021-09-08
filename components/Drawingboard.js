@@ -10,16 +10,26 @@ let canvas,
   };
 
 const Drawingboard = forwardRef((props, ref) => {
+  const { onAddPath } = props;
+
   useEffect(() => {
     canvas = new fabric.Canvas("c", canvasConfig);
     canvas.freeDrawingBrush.color = "black";
     canvas.freeDrawingBrush.width = 3;
+    registerEvents();
   }, []);
+
+  const registerEvents = () => {
+    canvas.on("path:created", (res) => {
+      onAddPath(res.path);
+    });
+  };
 
   useImperativeHandle(ref, () => {
     return {
       getCanvasAsJSON,
       loadFromJSON,
+      addObject,
     };
   });
 
@@ -29,6 +39,15 @@ const Drawingboard = forwardRef((props, ref) => {
 
   const loadFromJSON = (fabricJSON) => {
     canvas.loadFromJSON(fabricJSON);
+  };
+
+  const addObject = (newObject) => {
+    console.log(newObject);
+    fabric.util.enlivenObjects([newObject], (objects) => {
+      objects.forEach((object) => {
+        canvas.add(object);
+      });
+    });
   };
 
   return (

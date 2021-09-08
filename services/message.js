@@ -4,10 +4,11 @@ import {
   REMOVE_MEMBER,
   ADD_MEMBER,
   MAKE_SUBCLIENT_MAINCLIENT,
+  ADD_OBJECT,
 } from "../constant/message";
 
 /**
- * Sending
+ * Functions related to joining and leaving
  */
 
 const join = async ({ client }) => {
@@ -56,8 +57,6 @@ const makeSubClientMainClient = ({ client, members }) => {
   const memberToMakeSubClient = members[0];
   const publicKey = client.getPublicKey();
 
-  const message = generateMessage(MAKE_SUBCLIENT_MAINCLIENT);
-
   const membersToUpdate = members.filter(
     (member) => member != memberToMakeSubClient
   );
@@ -67,6 +66,8 @@ const makeSubClientMainClient = ({ client, members }) => {
     client,
     membersToUpdate,
   });
+
+  const message = generateMessage(MAKE_SUBCLIENT_MAINCLIENT);
 
   client.send(`${memberToMakeSubClient}.${publicKey}`, message);
 };
@@ -89,6 +90,30 @@ const removeMemberFromOthers = ({
 };
 
 /**
+ * Canvas functions
+ */
+
+const sendObject = ({ client, newObject, members }) => {
+  const content = {
+    newObject,
+  };
+
+  const message = generateMessage(ADD_OBJECT, content);
+
+  const publicKey = client.getPublicKey();
+
+  if (!isMain(client)) {
+    members = members.filter((member) => member !== client.identifier);
+    members = members.map((member) => `${member}.${publicKey}`);
+    members.push(publicKey);
+  } else {
+    members = members.map((member) => `${member}.${publicKey}`);
+  }
+
+  client.send(members, message);
+};
+
+/**
  * Receiving
  */
 
@@ -105,7 +130,14 @@ function handleReception(props) {
 }
 
 function handleMessageForMain(props) {
-  const { payload, getCanvasAsJSON, addMember, client, removeMember } = props;
+  const {
+    payload,
+    getCanvasAsJSON,
+    addMember,
+    client,
+    removeMember,
+    addObjectToCanvas,
+  } = props;
   const type = payload.type;
 
   switch (type) {
@@ -133,11 +165,20 @@ function handleMessageForMain(props) {
       const memberToRemove = payload.content.identifier;
       removeMember(memberToRemove);
       break;
+    case ADD_OBJECT:
+      const newObject = payload.content.newObject;
+      addObjectToCanvas(newObject);
   }
 }
 
 function handleMessageForSub(props) {
-  const { payload, addMember, removeMember, makeThisMainClient } = props;
+  const {
+    payload,
+    addMember,
+    removeMember,
+    makeThisMainClient,
+    addObjectToCanvas,
+  } = props;
 
   const type = payload.type;
 
@@ -152,6 +193,10 @@ function handleMessageForSub(props) {
       break;
     case MAKE_SUBCLIENT_MAINCLIENT:
       makeThisMainClient();
+      break;
+    case ADD_OBJECT:
+      const newObject = payload.content.newObject;
+      addObjectToCanvas(newObject);
   }
 }
 
@@ -196,4 +241,5 @@ export default {
   handleReception,
   sendLeaveMessage,
   makeSubClientMainClient,
+  sendObject,
 };

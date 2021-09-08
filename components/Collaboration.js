@@ -23,6 +23,11 @@ function Collaboration() {
   const [loading, setLoading] = useState(true);
   const canvasRef = useRef(null);
   const membersRef = useRef([]);
+  const clientRef = useRef(null);
+
+  useEffect(() => {
+    clientRef.current = client;
+  }, [client]);
 
   useEffect(() => {
     window.onbeforeunload = () => {
@@ -85,6 +90,7 @@ function Collaboration() {
       addMember,
       removeMember,
       makeThisMainClient,
+      addObjectToCanvas,
     });
   };
 
@@ -103,6 +109,18 @@ function Collaboration() {
     canvasRef.current.loadFromJSON(fabricJSON, function () {
       canvasRef.current.renderAll();
     });
+  };
+
+  const onAddPath = (path) => {
+    messageApi.sendObject({
+      client: clientRef.current,
+      newObject: path,
+      members: membersRef.current,
+    });
+  };
+
+  const addObjectToCanvas = (newObject) => {
+    canvasRef.current.addObject(newObject);
   };
 
   /**
@@ -142,7 +160,7 @@ function Collaboration() {
       <style>{style({ loading })}</style>
       {loading ? <div>Loading...</div> : null}
       <div className="canvas-outer">
-        <Drawingboard ref={canvasRef} />
+        <Drawingboard onAddPath={onAddPath} ref={canvasRef} />
         {isMainClient ? <div>This is main client</div> : null}
         <Members members={members} />
       </div>
