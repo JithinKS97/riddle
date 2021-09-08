@@ -163,7 +163,7 @@ function Collaboration() {
       <div className="canvas-outer">
         <Drawingboard onAddPath={onAddPath} ref={canvasRef} />
         {isMainClient ? <div>This is main client</div> : null}
-        <Members members={members} />
+        {/* <Members members={members} /> */}
       </div>
     </>
   );
