@@ -7,6 +7,7 @@ import nknApi from "../services/nkn";
 import messageApi from "../services/message";
 import membersApi from "../services/members";
 import Members from "./Members";
+import Loading from "./Loading";
 
 function Collaboration() {
   const context = useContext(AppContext);
@@ -158,7 +159,7 @@ function Collaboration() {
   return (
     <>
       <style>{style({ loading })}</style>
-      {loading ? <div>Loading...</div> : null}
+      {loading ? <Loading /> : null}
       <div className="canvas-outer">
         <Drawingboard onAddPath={onAddPath} ref={canvasRef} />
         {isMainClient ? <div>This is main client</div> : null}
