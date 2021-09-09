@@ -9,7 +9,7 @@ import {
   Input,
 } from "@chakra-ui/react";
 
-function BasicUsage(props) {
+function NamePopup(props) {
   const { show, setName, name, onClose, onNameSubmit } = props;
 
   const handleNameChange = (e) => {
@@ -60,4 +60,4 @@ function BasicUsage(props) {
   );
 }
 
-export default BasicUsage;
+export default NamePopup;

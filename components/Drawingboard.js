@@ -1,7 +1,6 @@
 import { fabric } from "fabric";
 import { forwardRef, useEffect, useImperativeHandle } from "react";
 import { v4 as uuidv4 } from "uuid";
-import TopMenu from "./menu/TopMenu";
 
 let canvas;
 
@@ -77,7 +76,6 @@ const Drawingboard = forwardRef((props, ref) => {
   return (
     <>
       <style>{style}</style>
-      <TopMenu />
       <div className="canvas-box">
         <canvas id="c"></canvas>
       </div>

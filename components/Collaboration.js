@@ -11,6 +11,8 @@ import NamePopup from "./popups/NamePopup";
 import SharePopup from "./popups/SharePopup";
 import { useToast } from "@chakra-ui/react";
 import { Button } from "@chakra-ui/react";
+import MembersPopup from "./popups/MembersPopup";
+import TopMenu from "./menu/TopMenu";
 
 function Collaboration() {
   const context = useContext(AppContext);
@@ -29,6 +31,7 @@ function Collaboration() {
   const clientRef = useRef(null);
   const [showNamePopup, setShowNamePopup] = useState(true);
   const [showSharePopup, setShowSharePopup] = useState(true);
+  const [showMembersPopup, setShowMembersPopup] = useState(false);
   const [shareLink, setShareLink] = useState("");
   const [name, setName] = useState("");
   const toast = useToast();
@@ -135,6 +138,14 @@ function Collaboration() {
     handleNamePopupClose();
   };
 
+  const onMembersIconClick = () => {
+    setShowMembersPopup(true);
+  };
+
+  const onMembersPopupCloseClick = () => {
+    setShowMembersPopup(false);
+  };
+
   /**
    * Canvas functions
    */
@@ -236,7 +247,13 @@ function Collaboration() {
     <>
       <style>{style({ loading })}</style>
       {loading ? <Loading /> : null}
+      <TopMenu onMembersIconClick={onMembersIconClick} />
       <div className="canvas-outer">
+        <MembersPopup
+          members={membersRef.current}
+          onClose={onMembersPopupCloseClick}
+          show={showMembersPopup}
+        />
         <NamePopup
           name={name}
           setName={setName}

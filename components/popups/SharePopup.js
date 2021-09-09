@@ -13,7 +13,7 @@ import {
   useClipboard,
 } from "@chakra-ui/react";
 
-function BasicUsage(props) {
+function SharePopup(props) {
   const { shareLink, onClose, show } = props;
   const { hasCopied, onCopy } = useClipboard(shareLink);
 
@@ -53,4 +53,4 @@ function BasicUsage(props) {
   );
 }
 
-export default BasicUsage;
+export default SharePopup;
