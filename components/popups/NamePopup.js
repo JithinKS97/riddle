@@ -6,11 +6,8 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
-  useDisclosure,
   Button,
   Input,
-  Text,
-  Box,
 } from "@chakra-ui/react";
 
 function BasicUsage(props) {
@@ -33,11 +30,11 @@ function BasicUsage(props) {
         isCentered
         isOpen={show}
         onClose={onClose}
+        closeOnEsc={false}
       >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Welcome to Riddle!</ModalHeader>
-          <ModalCloseButton isDisabled={!name} />
 
           <ModalBody>
             <Input
