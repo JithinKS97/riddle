@@ -1,8 +1,10 @@
-import { Center, Button, Container } from "@chakra-ui/react";
+import { Center, Button, Text, VStack, HStack, Box } from "@chakra-ui/react";
 import nknApi from "../services/nkn";
 import { AppContext } from "../context/App";
 import { useContext } from "react";
 import { useRouter } from "next/router";
+import Cover from "../public/pencil.gif";
+import Image from "next/image";
 
 function LandingPage() {
   const context = useContext(AppContext);
@@ -22,12 +24,47 @@ function LandingPage() {
   };
 
   return (
-    <Container>
+    <>
+      <style>{style}</style>
       <Center h="100vh">
-        <Button onClick={handleCollaborationClick}>Start collaboration</Button>
+        <HStack position="relative" left="110px">
+          <VStack>
+            <Text color="#2C5282" className="title" fontSize="9xl">
+              Riddle
+            </Text>
+            <Box position="relative" left="10px">
+              Real time collaborative whiteboard
+            </Box>
+            <Button
+              position="relative"
+              top="20px"
+              variant="primary"
+              onClick={handleCollaborationClick}
+            >
+              Start collaboration
+            </Button>
+          </VStack>
+          <Box position="relative" left="20px">
+            <Image width="300px" height="300px" src={Cover}></Image>
+          </Box>
+        </HStack>
       </Center>
-    </Container>
+    </>
   );
 }
+
+const style = `
+@font-face {
+  font-family: "Caveat";
+  src: url("/fonts/caveat.ttf");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+.title {
+  font-family: 'Caveat', cursive;
+}
+`;
 
 export default LandingPage;

@@ -1,24 +1,29 @@
 import { fabric } from "fabric";
 import { forwardRef, useEffect, useImperativeHandle } from "react";
 import { v4 as uuidv4 } from "uuid";
+import TopMenu from "./menu/TopMenu";
 
-let canvas,
-  canvasConfig = {
-    isDrawingMode: true,
-    width: 640,
-    height: 360,
-    backgroundColor: "rgba(0,0,0,0)",
-  };
+let canvas;
 
 const Drawingboard = forwardRef((props, ref) => {
   const { onAddPath } = props;
 
   useEffect(() => {
-    canvas = new fabric.Canvas("c", canvasConfig);
+    canvas = createCanvas();
     canvas.freeDrawingBrush.color = "black";
     canvas.freeDrawingBrush.width = 3;
     registerEvents();
   }, []);
+
+  const createCanvas = () => {
+    const canvasConfig = {
+      isDrawingMode: true,
+      width: window.innerWidth,
+      height: window.innerHeight,
+      backgroundColor: "rgba(0,0,0,0)",
+    };
+    return new fabric.Canvas("c", canvasConfig);
+  };
 
   const registerEvents = () => {
     canvas.on("path:created", (res) => {
@@ -72,6 +77,7 @@ const Drawingboard = forwardRef((props, ref) => {
   return (
     <>
       <style>{style}</style>
+      <TopMenu />
       <div className="canvas-box">
         <canvas id="c"></canvas>
       </div>
@@ -82,7 +88,8 @@ const Drawingboard = forwardRef((props, ref) => {
 const style = `
     .canvas-box {
         display:inline-block;
-        border:1px solid black;
+        width:100vw;
+        height:100vh;
     }
 `;
 
