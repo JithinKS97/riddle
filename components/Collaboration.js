@@ -199,7 +199,7 @@ function Collaboration() {
           onClose={handleNamePopupClose}
           onNameSubmit={handleNameSubmit}
         />
-        {!loading && isMainClient ? (
+        {!loading && isMainClient && !showNamePopup ? (
           <SharePopup
             show={showSharePopup}
             onClose={handleSharePopupClose}
