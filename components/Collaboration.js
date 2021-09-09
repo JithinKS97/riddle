@@ -20,7 +20,6 @@ function Collaboration() {
     isMainClient,
     setIsMainClient,
   } = context;
-  const isSubClient = client === null;
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const canvasRef = useRef(null);

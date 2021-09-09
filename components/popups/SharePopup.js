@@ -27,7 +27,7 @@ function BasicUsage(props) {
           <ModalCloseButton />
 
           <ModalBody>
-            <Text>Share the links with others so that they can join</Text>
+            <Text>Copy and share the link with others for them to join</Text>
             <InputGroup marginTop="20px" size="md">
               <Input isReadOnly value={shareLink} pr="4.5rem" />
               <InputRightElement width="4.5rem">
@@ -38,11 +38,7 @@ function BasicUsage(props) {
             </InputGroup>
           </ModalBody>
 
-          <ModalFooter>
-            <Button onClick={onClose} colorScheme="blue" mr={3}>
-              OK
-            </Button>
-          </ModalFooter>
+          <ModalFooter></ModalFooter>
         </ModalContent>
       </Modal>
     </>
