@@ -22,11 +22,15 @@ function BasicUsage(props) {
 
   return (
     <>
-      <Modal isCentered isOpen={show} onClose={onClose}>
+      <Modal
+        closeOnOverlayClick={false}
+        isCentered
+        isOpen={show}
+        onClose={onClose}
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Welcome to Riddle!</ModalHeader>
-          <ModalCloseButton />
 
           <ModalBody>
             <Input onChange={handleNameChange} placeholder="Enter your name" />
@@ -39,7 +43,7 @@ function BasicUsage(props) {
               mr={3}
               onClick={onNameSubmit}
             >
-              OK
+              Submit
             </Button>
           </ModalFooter>
         </ModalContent>

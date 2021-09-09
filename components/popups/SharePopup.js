@@ -24,7 +24,6 @@ function BasicUsage(props) {
         <ModalOverlay />
         <ModalContent>
           <ModalHeader></ModalHeader>
-          <ModalCloseButton />
 
           <ModalBody>
             <Text>Copy and share the link with others for them to join</Text>
