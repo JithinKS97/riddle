@@ -5,6 +5,7 @@ import {
   ADD_MEMBER,
   MAKE_SUBCLIENT_MAINCLIENT,
   ADD_OBJECT,
+  MAKE_THE_MEMBER_MAINCLIENT,
 } from "../constant/message";
 
 /**
@@ -19,7 +20,10 @@ const join = async ({ client }) => {
       identifier: client.identifier,
       name: client.name,
     };
+
     const message = generateMessage(JOIN, content);
+
+    console.log(message);
 
     let res = await sendMessage({
       address: mainClientAddress,
@@ -40,18 +44,23 @@ const join = async ({ client }) => {
   }
 };
 
-const sendLeaveMessage = ({ client, members }) => {
+const sendLeaveMessageForSubClient = ({ client, members }) => {
   const publicKey = client.getPublicKey();
 
   const content = {
     identifier: client.identifier,
   };
 
+  const filterOutMainClientAndTheSender = (memberIdentifier) =>
+    memberIdentifier !== client.identifier && memberIdentifier !== "";
+
+  // To everyone including the main client,
   const recipients = members
     .map((member) => member.identifier)
-    .filter((member) => member != client.identifier)
+    .filter(filterOutMainClientAndTheSender)
     .map((id) => `${id}.${publicKey}`);
 
+  // Adding the main client address
   recipients.push(publicKey);
 
   const message = generateMessage(REMOVE_MEMBER, content);
@@ -63,42 +72,46 @@ const makeSubClientMainClient = ({ client, members }) => {
   if (members.length === 0) {
     return;
   }
-  const memberToMakeSubClient = members.filter(
-    (member) => member.identifier !== ""
-  )[0].identifier;
+
+  const filterOutMainClient = (member) => member.identifier !== "";
+
+  const memberToMakeMainClient =
+    members.filter(filterOutMainClient)[0].identifier;
+
   const publicKey = client.getPublicKey();
 
-  const membersToUpdate = members
+  const identifiersOfMembersToBeUpdated = members
+    .filter(filterOutMainClient)
     .map((member) => member.identifier)
-    .filter((member) => member != memberToMakeSubClient);
+    .filter((memberIdentifier) => memberIdentifier != memberToMakeMainClient);
 
-  removeMemberFromOthers({
-    memberToRemove: memberToMakeSubClient,
+  makeTheMemberMainClient({
+    memberToMakeMainClient,
     client,
-    membersToUpdate,
+    identifiersOfMembersToBeUpdated,
   });
 
   const message = generateMessage(MAKE_SUBCLIENT_MAINCLIENT);
 
-  console.log(`${memberToMakeSubClient}.${publicKey}`);
-
-  client.send(`${memberToMakeSubClient}.${publicKey}`, message);
+  client.send(`${memberToMakeMainClient}.${publicKey}`, message);
 };
 
-const removeMemberFromOthers = ({
-  memberToRemove,
+const makeTheMemberMainClient = ({
+  memberToMakeMainClient,
   client,
-  membersToUpdate,
+  identifiersOfMembersToBeUpdated,
 }) => {
   const publicKey = client.getPublicKey();
 
   const content = {
-    identifier: memberToRemove,
+    identifier: memberToMakeMainClient,
   };
 
-  const recipients = membersToUpdate.map((id) => `${id}.${publicKey}`);
+  const recipients = identifiersOfMembersToBeUpdated.map(
+    (id) => `${id}.${publicKey}`
+  );
 
-  const message = generateMessage(REMOVE_MEMBER, content);
+  const message = generateMessage(MAKE_THE_MEMBER_MAINCLIENT, content);
   client.send(recipients, message);
 };
 
@@ -148,7 +161,7 @@ function handleMessageForMain(props) {
     getCanvasAsJSON,
     addMember,
     client,
-    removeMember,
+    removeSubClientMember,
     addObjectToCanvas,
     notifyJoin,
   } = props;
@@ -192,8 +205,9 @@ function handleMessageForMain(props) {
 
       return message;
     case REMOVE_MEMBER:
+      // The member has to be removed from the members list
       const memberToRemove = payload.content.identifier;
-      removeMember(memberToRemove);
+      removeSubClientMember(memberToRemove);
       break;
     case ADD_OBJECT:
       const newObject = payload.content.newObject;
@@ -205,10 +219,10 @@ function handleMessageForSub(props) {
   const {
     payload,
     addMember,
-    removeMember,
     makeThisMainClient,
     addObjectToCanvas,
     notifyJoin,
+    makeTheMemberMainClient,
   } = props;
 
   const type = payload.type;
@@ -221,11 +235,16 @@ function handleMessageForSub(props) {
       addMember({ identifier: newMember, name: newMemberName });
       break;
     case REMOVE_MEMBER:
+      // The member has to be removed from the members list
       const memberToRemove = payload.content.identifier;
-      removeMember(memberToRemove);
+      removeSubClientMember(memberToRemove);
       break;
     case MAKE_SUBCLIENT_MAINCLIENT:
       makeThisMainClient();
+      break;
+    case MAKE_THE_MEMBER_MAINCLIENT:
+      const memberToMakeMainClient = payload.content.identifier;
+      makeTheMemberMainClient(memberToMakeMainClient);
       break;
     case ADD_OBJECT:
       const newObject = payload.content.newObject;
@@ -280,7 +299,7 @@ const sendMessage = async ({ address, message, client }) => {
 export default {
   join,
   handleReception,
-  sendLeaveMessage,
+  sendLeaveMessageForSubClient,
   makeSubClientMainClient,
   sendObject,
 };

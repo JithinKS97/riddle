@@ -86,7 +86,7 @@ function Collaboration() {
   const registerLeave = () => {
     window.onbeforeunload = () => {
       if (!isMainClient) {
-        messageApi.sendLeaveMessage({
+        messageApi.sendLeaveMessageForSubClient({
           client: clientRef.current,
           members: membersRef.current,
         });
@@ -106,10 +106,11 @@ function Collaboration() {
       client,
       getCanvasAsJSON,
       addMember,
-      removeMember,
       makeThisMainClient,
       addObjectToCanvas,
       notifyJoin,
+      removeSubClientMember,
+      makeTheMemberMainClient,
     });
   };
 
@@ -175,11 +176,19 @@ function Collaboration() {
     });
   };
 
-  const removeMember = (memberToRemove) => {
-    return membersApi.removeMember({
+  const removeSubClientMember = (memberToRemove) => {
+    return membersApi.removeSubClientMember({
       members: membersRef.current,
       setMembers,
       memberToRemove,
+    });
+  };
+
+  const makeTheMemberMainClient = (memberToMakeMainClient) => {
+    return membersApi.makeTheMemberMainClient({
+      members: membersRef.current,
+      setMembers,
+      memberToMakeMainClient,
     });
   };
 
@@ -192,6 +201,7 @@ function Collaboration() {
       setClient,
       setLoading,
       createClient: nknApi.createClient,
+      handleSharePopupClose,
     });
   };
 
