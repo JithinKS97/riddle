@@ -6,8 +6,9 @@ import { useRef } from "react";
 import nknApi from "../services/nkn";
 import messageApi from "../services/message";
 import membersApi from "../services/members";
-import Members from "./Members";
 import Loading from "./Loading";
+import NamePopup from "./popups/NamePopup";
+import SharePopup from "./popups/SharePopup";
 
 function Collaboration() {
   const context = useContext(AppContext);
@@ -25,24 +26,14 @@ function Collaboration() {
   const canvasRef = useRef(null);
   const membersRef = useRef([]);
   const clientRef = useRef(null);
+  const [showNamePopup, setShowNamePopup] = useState(true);
+  const [showSharePopup, setShowSharePopup] = useState(true);
+  const [shareLink, setShareLink] = useState("");
+  const [name, setName] = useState("");
 
   useEffect(() => {
     clientRef.current = client;
   }, [client]);
-
-  useEffect(() => {
-    window.onbeforeunload = () => {
-      if (!isMainClient) {
-        messageApi.sendLeaveMessage({ client, members });
-      } else {
-        messageApi.makeSubClientMainClient({
-          client,
-          members,
-        });
-      }
-      return null;
-    };
-  });
 
   useEffect(() => {
     membersRef.current = members;
@@ -54,16 +45,25 @@ function Collaboration() {
     if (!id) {
       return;
     }
-    if (isSubClient) {
-      const newClient = nknApi.createClient({ id, isMainClient: false });
-      setClient(newClient);
-      newClient.onConnect(getCurrentState(newClient));
-    } else {
+    fillShareLink();
+    if (isMainClient) {
       client.onConnect(() => {
         setLoading(false);
       });
     }
   }, [id]);
+
+  const fillShareLink = () => {
+    const link = `localhost:3000/drawingboard/${id}`;
+    setShareLink(link);
+  };
+
+  const onNameSubmitInSubClient = () => {
+    setLoading(true);
+    const newClient = nknApi.createClient({ id, isMainClient: false });
+    setClient(newClient);
+    newClient.onConnect(getCurrentState(newClient));
+  };
 
   const getCurrentState = (client) => async () => {
     const { fabricJSON, currentMembers } = await messageApi.join({ client });
@@ -81,7 +81,22 @@ function Collaboration() {
       return;
     }
     client.onMessage(handleMessage);
+    registerLeave();
   }, [client]);
+
+  const registerLeave = () => {
+    window.onbeforeunload = () => {
+      if (!isMainClient) {
+        messageApi.sendLeaveMessage({ client, members });
+      } else {
+        messageApi.makeSubClientMainClient({
+          client,
+          members,
+        });
+      }
+      return null;
+    };
+  };
 
   const handleMessage = (message) => {
     return messageApi.handleReception({
@@ -93,6 +108,21 @@ function Collaboration() {
       makeThisMainClient,
       addObjectToCanvas,
     });
+  };
+
+  const handleNamePopupClose = () => {
+    setShowNamePopup(false);
+  };
+
+  const handleSharePopupClose = () => {
+    setShowSharePopup(false);
+  };
+
+  const handleNameSubmit = () => {
+    if (!isMainClient) {
+      onNameSubmitInSubClient();
+    }
+    handleNamePopupClose();
   };
 
   /**
@@ -161,9 +191,22 @@ function Collaboration() {
       <style>{style({ loading })}</style>
       {loading ? <Loading /> : null}
       <div className="canvas-outer">
+        <NamePopup
+          name={name}
+          setName={setName}
+          shareLink={shareLink}
+          show={showNamePopup}
+          onClose={handleNamePopupClose}
+          onNameSubmit={handleNameSubmit}
+        />
+        {!loading && isMainClient ? (
+          <SharePopup
+            show={showSharePopup}
+            onClose={handleSharePopupClose}
+            shareLink={shareLink}
+          />
+        ) : null}
         <Drawingboard onAddPath={onAddPath} ref={canvasRef} />
-        {isMainClient ? <div>This is main client</div> : null}
-        {/* <Members members={members} /> */}
       </div>
     </>
   );
