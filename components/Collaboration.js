@@ -10,6 +10,7 @@ import Loading from "./Loading";
 import NamePopup from "./popups/NamePopup";
 import SharePopup from "./popups/SharePopup";
 import { useToast } from "@chakra-ui/react";
+import { Button } from "@chakra-ui/react";
 
 function Collaboration() {
   const context = useContext(AppContext);
@@ -34,6 +35,11 @@ function Collaboration() {
 
   useEffect(() => {
     clientRef.current = client;
+    if (!clientRef.current) {
+      return;
+    }
+    clientRef.current.onMessage(handleMessage);
+    registerLeave();
   }, [client]);
 
   useEffect(() => {
@@ -62,13 +68,14 @@ function Collaboration() {
   const onNameSubmitInSubClient = () => {
     setLoading(true);
     const newClient = nknApi.createClient({ id, isMainClient: false });
+    newClient.name = name;
     setClient(newClient);
     newClient.onConnect(getCurrentState(newClient));
   };
 
-  const getCurrentState = (client) => async () => {
+  const getCurrentState = () => async () => {
     const { fabricJSON, currentMembers } = await messageApi.join({
-      client,
+      client: clientRef.current,
       name,
     });
     setCanvas(fabricJSON);
@@ -76,26 +83,17 @@ function Collaboration() {
     setLoading(false);
   };
 
-  /**
-   * Message handling
-   */
-
-  useEffect(() => {
-    if (!client) {
-      return;
-    }
-    client.onMessage(handleMessage);
-    registerLeave();
-  }, [client]);
-
   const registerLeave = () => {
     window.onbeforeunload = () => {
       if (!isMainClient) {
-        messageApi.sendLeaveMessage({ client, members });
+        messageApi.sendLeaveMessageForSubClient({
+          client: clientRef.current,
+          members: membersRef.current,
+        });
       } else {
         messageApi.makeSubClientMainClient({
-          client,
-          members,
+          client: clientRef.current,
+          members: membersRef.current,
         });
       }
       return null;
@@ -108,10 +106,12 @@ function Collaboration() {
       client,
       getCanvasAsJSON,
       addMember,
-      removeMember,
       makeThisMainClient,
       addObjectToCanvas,
       notifyJoin,
+      removeSubClientMember,
+      makeTheMemberMainClient,
+      notifyLeave,
     });
   };
 
@@ -126,6 +126,11 @@ function Collaboration() {
   const handleNameSubmit = () => {
     if (!isMainClient) {
       onNameSubmitInSubClient();
+    } else {
+      const updatedClientWithName = clientRef.current;
+      updatedClientWithName.name = name;
+      setClient(updatedClientWithName);
+      setMembers([{ name, identifier: "" }]);
     }
     handleNamePopupClose();
   };
@@ -163,19 +168,28 @@ function Collaboration() {
    * Membership
    */
 
-  const addMember = (newMember) => {
+  const addMember = ({ identifier, name }) => {
     return membersApi.addMember({
       members: membersRef.current,
       setMembers,
-      newMember,
+      identifier,
+      name,
     });
   };
 
-  const removeMember = (memberToRemove) => {
-    return membersApi.removeMember({
+  const removeSubClientMember = (memberToRemove) => {
+    return membersApi.removeSubClientMember({
       members: membersRef.current,
       setMembers,
       memberToRemove,
+    });
+  };
+
+  const makeTheMemberMainClient = (memberToMakeMainClient) => {
+    return membersApi.makeTheMemberMainClient({
+      members: membersRef.current,
+      setMembers,
+      memberToMakeMainClient,
     });
   };
 
@@ -183,11 +197,12 @@ function Collaboration() {
     return membersApi.makeThisMainClient({
       members: membersRef.current,
       setMembers,
-      client,
+      client: clientRef.current,
       setIsMainClient,
       setClient,
       setLoading,
       createClient: nknApi.createClient,
+      handleSharePopupClose,
     });
   };
 
@@ -201,6 +216,19 @@ function Collaboration() {
       duration: 2000,
       isClosable: true,
       status: "success",
+    });
+  };
+
+  const notifyLeave = (memberToLeave) => {
+    const member = membersRef.current.find(
+      (member) => member.identifier === memberToLeave
+    );
+    const name = member.name;
+    toast({
+      title: `${name} just left`,
+      duration: 2000,
+      isClosable: true,
+      status: "warning",
     });
   };
 
