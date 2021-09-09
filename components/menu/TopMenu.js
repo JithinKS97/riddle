@@ -1,20 +1,16 @@
 import { Flex, Button, HStack } from "@chakra-ui/react";
+import { FaPencilAlt } from "react-icons/fa";
+import { BiEraser } from "react-icons/bi";
 
 const TopMenu = () => {
   return (
     <Flex p="3" justifyContent="center" boxShadow="md">
       <HStack display="inline-block">
-        <Button size="sm" variant="primary">
-          Brush
+        <Button variant="menuButton">
+          <FaPencilAlt size="20px" color="black" />
         </Button>
-        <Button size="sm" variant="primary">
-          Brush size
-        </Button>
-        <Button size="sm" variant="primary">
-          Color
-        </Button>
-        <Button size="sm" variant="primary">
-          Select
+        <Button variant="menuButton">
+          <BiEraser size="20px" color="black" />
         </Button>
       </HStack>
     </Flex>

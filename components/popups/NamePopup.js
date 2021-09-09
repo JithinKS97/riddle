@@ -5,7 +5,6 @@ import {
   ModalHeader,
   ModalFooter,
   ModalBody,
-  ModalCloseButton,
   Button,
   Input,
 } from "@chakra-ui/react";
@@ -34,7 +33,7 @@ function BasicUsage(props) {
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Welcome to Riddle!</ModalHeader>
+          <ModalHeader>Welcome to Riddle whiteboard</ModalHeader>
 
           <ModalBody>
             <Input

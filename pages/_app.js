@@ -17,6 +17,18 @@ const theme = extendTheme({
             backgroundColor: "#4299E1",
           },
         },
+        menuButton: {
+          bg: "white",
+          color: "black",
+          borderRadius: "full",
+          _hover: {
+            backgroundColor: "lightgrey",
+          },
+          border: "1px solid grey",
+          _focus: {
+            boxShadow: "none",
+          },
+        },
       },
     },
   },
