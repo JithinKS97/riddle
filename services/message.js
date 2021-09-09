@@ -164,6 +164,7 @@ function handleMessageForMain(props) {
         client,
         newMember: identifier,
         membersToNotify,
+        newMemberName: name,
       });
 
       return message;
@@ -192,7 +193,8 @@ function handleMessageForSub(props) {
   switch (type) {
     case ADD_MEMBER:
       const newMember = payload.content.newMember;
-      notifyJoin();
+      const newMemberName = payload.content.newMemberName;
+      notifyJoin({ name: newMemberName });
       addMember(newMember);
       break;
     case REMOVE_MEMBER:
@@ -208,9 +210,15 @@ function handleMessageForSub(props) {
   }
 }
 
-const sentMemberUpdatesToAll = ({ client, newMember, membersToNotify }) => {
+const sentMemberUpdatesToAll = ({
+  client,
+  newMember,
+  membersToNotify,
+  newMemberName,
+}) => {
   const content = {
     newMember,
+    newMemberName,
   };
   const publicKey = client.getPublicKey();
   membersToNotify = membersToNotify.map((member) => `${member}.${publicKey}`);

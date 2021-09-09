@@ -198,7 +198,7 @@ function Collaboration() {
   const notifyJoin = ({ name }) => {
     toast({
       title: `${name} just joined`,
-      duration: 4000,
+      duration: 2000,
       isClosable: true,
       status: "success",
     });
