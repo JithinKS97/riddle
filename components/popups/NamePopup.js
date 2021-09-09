@@ -39,8 +39,9 @@ function BasicUsage(props) {
           <ModalFooter>
             <Button
               isDisabled={!name}
-              colorScheme="blue"
+              variant="primary"
               mr={3}
+              size="sm"
               onClick={onNameSubmit}
             >
               Submit

@@ -38,12 +38,7 @@ function LandingPage() {
             <Button
               position="relative"
               top="20px"
-              _hover={{
-                backgroundColor: "#4299E1",
-              }}
-              background="#1A365D"
-              color="white"
-              fontSize="20px"
+              variant="primary"
               onClick={handleCollaborationClick}
             >
               Start collaboration
@@ -70,7 +65,6 @@ const style = `
 .title {
   font-family: 'Caveat', cursive;
 }
-
 `;
 
 export default LandingPage;

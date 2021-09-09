@@ -2,22 +2,31 @@ import * as React from "react";
 import { useState } from "react";
 import { ChakraProvider } from "@chakra-ui/react";
 import { AppProvider } from "../context/App";
+import { BRUSH } from "../constant/mode";
 import { extendTheme } from "@chakra-ui/react";
 
-const colors = {
-  brand: {
-    900: "#1a365d",
-    800: "#153e75",
-    700: "#2a69ac",
+const theme = extendTheme({
+  components: {
+    Button: {
+      baseStyle: {},
+      variants: {
+        primary: {
+          bg: "#1A365D",
+          color: "white",
+          _hover: {
+            backgroundColor: "#4299E1",
+          },
+        },
+      },
+    },
   },
-};
-
-const theme = extendTheme({ colors });
+});
 
 function MyApp({ Component, pageProps }) {
   const [client, setClient] = useState(null);
   const [isMainClient, setIsMainClient] = useState(false);
   const [members, setMembers] = useState([]);
+  const [mode, setMode] = useState(BRUSH);
 
   const value = {
     client,

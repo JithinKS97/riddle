@@ -24,19 +24,22 @@ function BasicUsage(props) {
         <ModalOverlay />
         <ModalContent>
           <ModalHeader></ModalHeader>
-
           <ModalBody>
             <Text>Copy and share the link with others for them to join</Text>
             <InputGroup marginTop="20px" size="md">
               <Input isReadOnly value={shareLink} pr="4.5rem" />
               <InputRightElement width="4.5rem">
-                <Button onClick={onCopy} h="1.75rem" size="sm">
+                <Button
+                  variant="primary"
+                  onClick={onCopy}
+                  h="1.75rem"
+                  size="sm"
+                >
                   {hasCopied ? "Copied" : "Copy"}
                 </Button>
               </InputRightElement>
             </InputGroup>
           </ModalBody>
-
           <ModalFooter></ModalFooter>
         </ModalContent>
       </Modal>
