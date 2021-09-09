@@ -13,18 +13,24 @@ import {
 
 const join = async ({ client }) => {
   try {
-    const address = client.getPublicKey();
+    // public key is the address of the main client
+    const mainClientAddress = client.getPublicKey();
     const content = {
       identifier: client.identifier,
       name: client.name,
     };
     const message = generateMessage(JOIN, content);
 
-    let res = await sendMessage({ address, message, client });
+    let res = await sendMessage({
+      address: mainClientAddress,
+      message,
+      client,
+    });
     console.log("Received join acknowledge message and canvas data");
 
     res = JSON.parse(res);
 
+    // State of the canvas
     const fabricJSON = res.content.fabricJSON;
     const currentMembers = res.content.currentMembers;
 
@@ -150,13 +156,17 @@ function handleMessageForMain(props) {
 
   switch (type) {
     case JOIN:
+      // Identifier and name of the client who wants to join the room
       const identifier = payload.content.identifier;
       const name = payload.content.name;
 
       notifyJoin({ name });
 
+      // Add the member to the list of members
       const currentMembers = addMember({ identifier, name });
 
+      // When the main client receive JOIN request, it should send
+      // back the list of members already joined and the current state of the canvs
       const content = {
         fabricJSON: getCanvasAsJSON(),
         currentMembers,
@@ -164,13 +174,15 @@ function handleMessageForMain(props) {
 
       const message = generateMessage(JOIN_ACKNOWLEDGE, content);
 
+      const filterOutMainClientAndTheSender = (memberIdentifier) =>
+        memberIdentifier !== identifier && memberIdentifier !== "";
+
+      // These are the current members who should be notified of the new member
       const membersToNotify = currentMembers
         .map((member) => member.identifier)
-        .filter(
-          (memberIdentifier) =>
-            memberIdentifier !== identifier && memberIdentifier !== ""
-        );
+        .filter(filterOutMainClientAndTheSender);
 
+      // To all the members, send the identifier and name of the new member
       sentMemberUpdatesToAll({
         client,
         newMember: identifier,
