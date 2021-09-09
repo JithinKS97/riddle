@@ -11,12 +11,12 @@ import {
  * Functions related to joining and leaving
  */
 
-const join = async ({ client, name }) => {
+const join = async ({ client }) => {
   try {
     const address = client.getPublicKey();
     const content = {
       identifier: client.identifier,
-      name,
+      name: client.name,
     };
     const message = generateMessage(JOIN, content);
     let res = await sendMessage({ address, message, client });
@@ -41,6 +41,7 @@ const sendLeaveMessage = ({ client, members }) => {
   };
 
   const recipients = members
+    .map((member) => member.identifier)
     .filter((member) => member != client.identifier)
     .map((id) => `${id}.${publicKey}`);
 
@@ -55,12 +56,12 @@ const makeSubClientMainClient = ({ client, members }) => {
   if (members.length === 0) {
     return;
   }
-  const memberToMakeSubClient = members[0];
+  const memberToMakeSubClient = members[0].identifier;
   const publicKey = client.getPublicKey();
 
-  const membersToUpdate = members.filter(
-    (member) => member != memberToMakeSubClient
-  );
+  const membersToUpdate = members
+    .map((member) => member.identifier)
+    .filter((member) => member != memberToMakeSubClient);
 
   removeMemberFromOthers({
     memberToRemove: memberToMakeSubClient,
@@ -69,6 +70,8 @@ const makeSubClientMainClient = ({ client, members }) => {
   });
 
   const message = generateMessage(MAKE_SUBCLIENT_MAINCLIENT);
+
+  console.log(`${memberToMakeSubClient}.${publicKey}`);
 
   client.send(`${memberToMakeSubClient}.${publicKey}`, message);
 };
@@ -146,7 +149,11 @@ function handleMessageForMain(props) {
     case JOIN:
       const identifier = payload.content.identifier;
       const name = payload.content.name;
-      const currentMembers = addMember(identifier);
+
+      notifyJoin({ name });
+
+      const currentMembers = addMember({ identifier, name });
+
       const content = {
         fabricJSON: getCanvasAsJSON(),
         currentMembers,
@@ -154,11 +161,9 @@ function handleMessageForMain(props) {
 
       const message = generateMessage(JOIN_ACKNOWLEDGE, content);
 
-      const membersToNotify = currentMembers.filter(
-        (member) => member !== identifier
-      );
-
-      notifyJoin({ name });
+      const membersToNotify = currentMembers
+        .map((member) => member.identifier)
+        .filter((memberIdentifier) => memberIdentifier !== identifier);
 
       sentMemberUpdatesToAll({
         client,
@@ -195,7 +200,7 @@ function handleMessageForSub(props) {
       const newMember = payload.content.newMember;
       const newMemberName = payload.content.newMemberName;
       notifyJoin({ name: newMemberName });
-      addMember(newMember);
+      addMember({ identifier: newMember, name: newMemberName });
       break;
     case REMOVE_MEMBER:
       const memberToRemove = payload.content.identifier;
@@ -216,13 +221,19 @@ const sentMemberUpdatesToAll = ({
   membersToNotify,
   newMemberName,
 }) => {
+  console.log("Send member updates to all");
+
   const content = {
     newMember,
     newMemberName,
   };
   const publicKey = client.getPublicKey();
   membersToNotify = membersToNotify.map((member) => `${member}.${publicKey}`);
+
   const message = generateMessage(ADD_MEMBER, content);
+
+  console.log(membersToNotify, message);
+
   client.send(membersToNotify, message);
 };
 

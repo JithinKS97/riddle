@@ -1,13 +1,20 @@
-const addMember = ({ members, setMembers, newMember }) => {
-  if (!members.includes(newMember) && newMember) {
-    const updatedList = [...members, newMember];
+const addMember = ({ members, setMembers, identifier, name }) => {
+  console.log("Inside add member");
+  console.log({ members, setMembers, identifier, name });
+
+  const memberAlreadyNotPresent = !members
+    .map((member) => member.identifier)
+    .includes(identifier);
+
+  if (memberAlreadyNotPresent && identifier) {
+    const updatedList = [...members, { identifier, name }];
     setMembers(updatedList);
     return updatedList;
   }
 };
 
 const removeMember = ({ members, setMembers, memberToRemove }) => {
-  setMembers(members.filter((member) => member !== memberToRemove));
+  setMembers(members.filter((member) => member.identifier !== memberToRemove));
 };
 
 const makeThisMainClient = ({
@@ -20,7 +27,7 @@ const makeThisMainClient = ({
   createClient,
 }) => {
   const myIndentifier = client.identifier;
-  setMembers(members.filter((member) => member !== myIndentifier));
+  setMembers(members.filter((member) => member.identifier !== myIndentifier));
   setIsMainClient(true);
   const seed = client.getSeed();
   const updatedClient = createClient({ id: seed, isMainClient: true });

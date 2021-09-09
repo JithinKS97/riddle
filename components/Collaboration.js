@@ -34,6 +34,11 @@ function Collaboration() {
 
   useEffect(() => {
     clientRef.current = client;
+    if (!clientRef.current) {
+      return;
+    }
+    clientRef.current.onMessage(handleMessage);
+    registerLeave();
   }, [client]);
 
   useEffect(() => {
@@ -62,6 +67,7 @@ function Collaboration() {
   const onNameSubmitInSubClient = () => {
     setLoading(true);
     const newClient = nknApi.createClient({ id, isMainClient: false });
+    newClient.name = name;
     setClient(newClient);
     newClient.onConnect(getCurrentState(newClient));
   };
@@ -76,26 +82,17 @@ function Collaboration() {
     setLoading(false);
   };
 
-  /**
-   * Message handling
-   */
-
-  useEffect(() => {
-    if (!client) {
-      return;
-    }
-    client.onMessage(handleMessage);
-    registerLeave();
-  }, [client]);
-
   const registerLeave = () => {
     window.onbeforeunload = () => {
       if (!isMainClient) {
-        messageApi.sendLeaveMessage({ client, members });
+        messageApi.sendLeaveMessage({
+          client: clientRef.current,
+          members: membersRef.current,
+        });
       } else {
         messageApi.makeSubClientMainClient({
-          client,
-          members,
+          client: clientRef.current,
+          members: membersRef.current,
         });
       }
       return null;
@@ -126,6 +123,10 @@ function Collaboration() {
   const handleNameSubmit = () => {
     if (!isMainClient) {
       onNameSubmitInSubClient();
+    } else {
+      const updatedClientWithName = client;
+      updatedClientWithName.name = name;
+      setClient(updatedClientWithName);
     }
     handleNamePopupClose();
   };
@@ -163,11 +164,12 @@ function Collaboration() {
    * Membership
    */
 
-  const addMember = (newMember) => {
+  const addMember = ({ identifier, name }) => {
     return membersApi.addMember({
       members: membersRef.current,
       setMembers,
-      newMember,
+      identifier,
+      name,
     });
   };
 
@@ -209,6 +211,23 @@ function Collaboration() {
       <style>{style({ loading })}</style>
       {loading ? <Loading /> : null}
       <div className="canvas-outer">
+        <div>{isMainClient ? "This is main client" : null}</div>
+        <div>{JSON.stringify(members)}</div>
+        <button
+          onClick={() => {
+            if (!isMainClient) {
+              messageApi.sendLeaveMessage({ client, members });
+            } else {
+              console.log("Here");
+              messageApi.makeSubClientMainClient({
+                client,
+                members,
+              });
+            }
+          }}
+        >
+          Leave
+        </button>
         <NamePopup
           name={name}
           setName={setName}
