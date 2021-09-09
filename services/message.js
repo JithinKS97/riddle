@@ -128,12 +128,19 @@ const sendObject = ({ client, newObject, members }) => {
 
   const publicKey = client.getPublicKey();
 
+  const filterOutThisClientAndMainClient = (member) =>
+    member.identifier !== client.identifier && member.identifier !== "";
+
   if (!isMain(client)) {
-    members = members.filter((member) => member !== client.identifier);
-    members = members.map((member) => `${member}.${publicKey}`);
+    members = members
+      .filter(filterOutThisClientAndMainClient)
+      .map((member) => `${member.identifier}.${publicKey}`);
+
+    // Add main client address
     members.push(publicKey);
   } else {
-    members = members.map((member) => `${member}.${publicKey}`);
+    members.filter((member) => member.identifier !== "");
+    members = members.map((member) => `${member.identifier}.${publicKey}`);
   }
 
   client.send(members, message);
