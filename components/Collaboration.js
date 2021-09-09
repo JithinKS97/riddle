@@ -111,6 +111,7 @@ function Collaboration() {
       notifyJoin,
       removeSubClientMember,
       makeTheMemberMainClient,
+      notifyLeave,
     });
   };
 
@@ -126,7 +127,7 @@ function Collaboration() {
     if (!isMainClient) {
       onNameSubmitInSubClient();
     } else {
-      const updatedClientWithName = client;
+      const updatedClientWithName = clientRef.current;
       updatedClientWithName.name = name;
       setClient(updatedClientWithName);
       setMembers([{ name, identifier: "" }]);
@@ -196,7 +197,7 @@ function Collaboration() {
     return membersApi.makeThisMainClient({
       members: membersRef.current,
       setMembers,
-      client,
+      client: clientRef.current,
       setIsMainClient,
       setClient,
       setLoading,
@@ -218,25 +219,24 @@ function Collaboration() {
     });
   };
 
+  const notifyLeave = (memberToLeave) => {
+    const member = membersRef.current.find(
+      (member) => member.identifier === memberToLeave
+    );
+    const name = member.name;
+    toast({
+      title: `${name} just left`,
+      duration: 2000,
+      isClosable: true,
+      status: "warning",
+    });
+  };
+
   return (
     <>
       <style>{style({ loading })}</style>
       {loading ? <Loading /> : null}
       <div className="canvas-outer">
-        <div>{isMainClient ? "This is main client" : null}</div>
-        <div>{JSON.stringify(members)}</div>
-        <Button
-          onClick={() => {
-            if (isMainClient) {
-              messageApi.makeSubClientMainClient({
-                client: clientRef.current,
-                members: membersRef.current,
-              });
-            }
-          }}
-        >
-          Leave
-        </Button>
         <NamePopup
           name={name}
           setName={setName}

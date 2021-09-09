@@ -171,6 +171,7 @@ function handleMessageForMain(props) {
     removeSubClientMember,
     addObjectToCanvas,
     notifyJoin,
+    notifyLeave,
   } = props;
   const type = payload.type;
 
@@ -214,6 +215,7 @@ function handleMessageForMain(props) {
     case REMOVE_MEMBER:
       // The member has to be removed from the members list
       const memberToRemove = payload.content.identifier;
+      notifyLeave(memberToRemove);
       removeSubClientMember(memberToRemove);
       break;
     case ADD_OBJECT:
@@ -230,6 +232,8 @@ function handleMessageForSub(props) {
     addObjectToCanvas,
     notifyJoin,
     makeTheMemberMainClient,
+    removeSubClientMember,
+    notifyLeave,
   } = props;
 
   const type = payload.type;
@@ -244,13 +248,16 @@ function handleMessageForSub(props) {
     case REMOVE_MEMBER:
       // The member has to be removed from the members list
       const memberToRemove = payload.content.identifier;
+      notifyLeave(memberToRemove);
       removeSubClientMember(memberToRemove);
       break;
     case MAKE_SUBCLIENT_MAINCLIENT:
+      notifyLeave("");
       makeThisMainClient();
       break;
     case MAKE_THE_MEMBER_MAINCLIENT:
       const memberToMakeMainClient = payload.content.identifier;
+      notifyLeave("");
       makeTheMemberMainClient(memberToMakeMainClient);
       break;
     case ADD_OBJECT:

@@ -13,7 +13,7 @@ Result: In the main client's screen, the other client should be left
 
 Test 3
 
-1. Repeat the 1 in Test 1
+1. Repeat 1 in Test 1
 2. Close the main client
 
 Result: The main client is updated correctly
