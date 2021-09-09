@@ -30,7 +30,7 @@ function BasicUsage(props) {
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Welcome to Riddle!</ModalHeader>
+          <ModalHeader>Welcome to Riddle whiteboard !!!</ModalHeader>
 
           <ModalBody>
             <Input onChange={handleNameChange} placeholder="Enter your name" />
@@ -43,7 +43,7 @@ function BasicUsage(props) {
               mr={3}
               onClick={onNameSubmit}
             >
-              Submit1.
+              Submit
             </Button>
           </ModalFooter>
         </ModalContent>
