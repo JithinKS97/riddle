@@ -19,6 +19,7 @@ const join = async ({ client }) => {
       name: client.name,
     };
     const message = generateMessage(JOIN, content);
+
     let res = await sendMessage({ address, message, client });
     console.log("Received join acknowledge message and canvas data");
 
@@ -56,7 +57,9 @@ const makeSubClientMainClient = ({ client, members }) => {
   if (members.length === 0) {
     return;
   }
-  const memberToMakeSubClient = members[0].identifier;
+  const memberToMakeSubClient = members.filter(
+    (member) => member.identifier !== ""
+  )[0].identifier;
   const publicKey = client.getPublicKey();
 
   const membersToUpdate = members
@@ -163,7 +166,10 @@ function handleMessageForMain(props) {
 
       const membersToNotify = currentMembers
         .map((member) => member.identifier)
-        .filter((memberIdentifier) => memberIdentifier !== identifier);
+        .filter(
+          (memberIdentifier) =>
+            memberIdentifier !== identifier && memberIdentifier !== ""
+        );
 
       sentMemberUpdatesToAll({
         client,
@@ -221,8 +227,6 @@ const sentMemberUpdatesToAll = ({
   membersToNotify,
   newMemberName,
 }) => {
-  console.log("Send member updates to all");
-
   const content = {
     newMember,
     newMemberName,
@@ -231,8 +235,6 @@ const sentMemberUpdatesToAll = ({
   membersToNotify = membersToNotify.map((member) => `${member}.${publicKey}`);
 
   const message = generateMessage(ADD_MEMBER, content);
-
-  console.log(membersToNotify, message);
 
   client.send(membersToNotify, message);
 };

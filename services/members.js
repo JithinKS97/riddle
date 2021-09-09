@@ -14,7 +14,19 @@ const addMember = ({ members, setMembers, identifier, name }) => {
 };
 
 const removeMember = ({ members, setMembers, memberToRemove }) => {
-  setMembers(members.filter((member) => member.identifier !== memberToRemove));
+  const updatedMembers = members
+    .filter((member) => member.identifier !== "")
+    .map((member) => {
+      if (member.identifier === memberToRemove) {
+        return {
+          ...member,
+          identifier: "",
+        };
+      } else {
+        return member;
+      }
+    });
+  setMembers(updatedMembers);
 };
 
 const makeThisMainClient = ({
@@ -26,8 +38,22 @@ const makeThisMainClient = ({
   setLoading,
   createClient,
 }) => {
+  console.log("Make this main client");
   const myIndentifier = client.identifier;
-  setMembers(members.filter((member) => member.identifier !== myIndentifier));
+  const updatedMembers = members
+    .filter((member) => member.identifier !== "")
+    .map((member) => {
+      if (member.identifier === myIndentifier) {
+        return {
+          ...member,
+          identifier: "",
+        };
+      } else {
+        return member;
+      }
+    });
+  console.log(updatedMembers);
+  setMembers(updatedMembers);
   setIsMainClient(true);
   const seed = client.getSeed();
   const updatedClient = createClient({ id: seed, isMainClient: true });

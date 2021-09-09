@@ -10,6 +10,7 @@ import Loading from "./Loading";
 import NamePopup from "./popups/NamePopup";
 import SharePopup from "./popups/SharePopup";
 import { useToast } from "@chakra-ui/react";
+import { Button } from "@chakra-ui/react";
 
 function Collaboration() {
   const context = useContext(AppContext);
@@ -72,9 +73,9 @@ function Collaboration() {
     newClient.onConnect(getCurrentState(newClient));
   };
 
-  const getCurrentState = (client) => async () => {
+  const getCurrentState = () => async () => {
     const { fabricJSON, currentMembers } = await messageApi.join({
-      client,
+      client: clientRef.current,
       name,
     });
     setCanvas(fabricJSON);
@@ -127,6 +128,7 @@ function Collaboration() {
       const updatedClientWithName = client;
       updatedClientWithName.name = name;
       setClient(updatedClientWithName);
+      setMembers([{ name, identifier: "" }]);
     }
     handleNamePopupClose();
   };
@@ -213,21 +215,18 @@ function Collaboration() {
       <div className="canvas-outer">
         <div>{isMainClient ? "This is main client" : null}</div>
         <div>{JSON.stringify(members)}</div>
-        <button
+        <Button
           onClick={() => {
-            if (!isMainClient) {
-              messageApi.sendLeaveMessage({ client, members });
-            } else {
-              console.log("Here");
+            if (isMainClient) {
               messageApi.makeSubClientMainClient({
-                client,
-                members,
+                client: clientRef.current,
+                members: membersRef.current,
               });
             }
           }}
         >
           Leave
-        </button>
+        </Button>
         <NamePopup
           name={name}
           setName={setName}
