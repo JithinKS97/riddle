@@ -43,7 +43,7 @@ function BasicUsage(props) {
               mr={3}
               onClick={onNameSubmit}
             >
-              Submit
+              Submit1.
             </Button>
           </ModalFooter>
         </ModalContent>
