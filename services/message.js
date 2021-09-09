@@ -11,11 +11,12 @@ import {
  * Functions related to joining and leaving
  */
 
-const join = async ({ client }) => {
+const join = async ({ client, name }) => {
   try {
     const address = client.getPublicKey();
     const content = {
       identifier: client.identifier,
+      name,
     };
     const message = generateMessage(JOIN, content);
     let res = await sendMessage({ address, message, client });
@@ -137,12 +138,14 @@ function handleMessageForMain(props) {
     client,
     removeMember,
     addObjectToCanvas,
+    notifyJoin,
   } = props;
   const type = payload.type;
 
   switch (type) {
     case JOIN:
       const identifier = payload.content.identifier;
+      const name = payload.content.name;
       const currentMembers = addMember(identifier);
       const content = {
         fabricJSON: getCanvasAsJSON(),
@@ -154,6 +157,9 @@ function handleMessageForMain(props) {
       const membersToNotify = currentMembers.filter(
         (member) => member !== identifier
       );
+
+      notifyJoin({ name });
+
       sentMemberUpdatesToAll({
         client,
         newMember: identifier,
@@ -178,6 +184,7 @@ function handleMessageForSub(props) {
     removeMember,
     makeThisMainClient,
     addObjectToCanvas,
+    notifyJoin,
   } = props;
 
   const type = payload.type;
@@ -185,6 +192,7 @@ function handleMessageForSub(props) {
   switch (type) {
     case ADD_MEMBER:
       const newMember = payload.content.newMember;
+      notifyJoin();
       addMember(newMember);
       break;
     case REMOVE_MEMBER:

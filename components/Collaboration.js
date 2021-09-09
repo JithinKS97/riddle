@@ -9,6 +9,7 @@ import membersApi from "../services/members";
 import Loading from "./Loading";
 import NamePopup from "./popups/NamePopup";
 import SharePopup from "./popups/SharePopup";
+import { useToast } from "@chakra-ui/react";
 
 function Collaboration() {
   const context = useContext(AppContext);
@@ -29,6 +30,7 @@ function Collaboration() {
   const [showSharePopup, setShowSharePopup] = useState(true);
   const [shareLink, setShareLink] = useState("");
   const [name, setName] = useState("");
+  const toast = useToast();
 
   useEffect(() => {
     clientRef.current = client;
@@ -65,7 +67,10 @@ function Collaboration() {
   };
 
   const getCurrentState = (client) => async () => {
-    const { fabricJSON, currentMembers } = await messageApi.join({ client });
+    const { fabricJSON, currentMembers } = await messageApi.join({
+      client,
+      name,
+    });
     setCanvas(fabricJSON);
     setMembers(currentMembers);
     setLoading(false);
@@ -106,6 +111,7 @@ function Collaboration() {
       removeMember,
       makeThisMainClient,
       addObjectToCanvas,
+      notifyJoin,
     });
   };
 
@@ -182,6 +188,19 @@ function Collaboration() {
       setClient,
       setLoading,
       createClient: nknApi.createClient,
+    });
+  };
+
+  /**
+   * Notification
+   */
+
+  const notifyJoin = ({ name }) => {
+    toast({
+      title: `${name} just joined`,
+      duration: 4000,
+      isClosable: true,
+      status: "success",
     });
   };
 

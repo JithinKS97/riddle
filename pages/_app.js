@@ -38,7 +38,7 @@ function MyApp({ Component, pageProps }) {
   const [client, setClient] = useState(null);
   const [isMainClient, setIsMainClient] = useState(false);
   const [members, setMembers] = useState([]);
-  const [mode, setMode] = useState(BRUSH);
+  const [selectedTool, setSelectedTool] = useState(BRUSH);
 
   const value = {
     client,
@@ -47,6 +47,8 @@ function MyApp({ Component, pageProps }) {
     setIsMainClient,
     members,
     setMembers,
+    selectedTool,
+    setSelectedTool,
   };
 
   return (

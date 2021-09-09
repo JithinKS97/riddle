@@ -4,7 +4,7 @@ import { BiEraser } from "react-icons/bi";
 
 const TopMenu = () => {
   return (
-    <Flex p="3" justifyContent="center" boxShadow="md">
+    <Flex p="3" justifyContent="center" alignItems="flex-end" boxShadow="md">
       <HStack display="inline-block">
         <Button variant="menuButton">
           <FaPencilAlt size="20px" color="black" />
