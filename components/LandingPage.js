@@ -59,17 +59,18 @@ function LandingPage() {
 }
 
 const style = `
-@import url('https://fonts.googleapis.com/css2?family=Allison&family=Caveat&family=Dancing+Script&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;1,400&display=swap');
+@font-face {
+  font-family: "Caveat";
+  src: url("/fonts/caveat.ttf");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
 
 .title {
   font-family: 'Caveat', cursive;
 }
-.label {
-  font-family: 'Roboto', sans-serif;
-  font-size:20px;
-  font-weight:bold;
-}
+
 `;
 
 export default LandingPage;
