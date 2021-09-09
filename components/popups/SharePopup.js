@@ -18,6 +18,13 @@ function BasicUsage(props) {
   const { shareLink, onClose, show } = props;
   const { hasCopied, onCopy } = useClipboard(shareLink);
 
+  const handleCopyClick = () => {
+    setTimeout(() => {
+      onClose();
+    }, 800);
+    onCopy();
+  };
+
   return (
     <>
       <Modal width="50vw" isCentered onClose={onClose} isOpen={show}>
@@ -31,7 +38,7 @@ function BasicUsage(props) {
               <InputRightElement width="4.5rem">
                 <Button
                   variant="primary"
-                  onClick={onCopy}
+                  onClick={handleCopyClick}
                   h="1.75rem"
                   size="sm"
                 >

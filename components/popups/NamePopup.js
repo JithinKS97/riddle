@@ -20,6 +20,12 @@ function BasicUsage(props) {
     setName(e.target.value);
   };
 
+  const handleKeydown = (e) => {
+    if (e.key === "Enter" && name) {
+      onNameSubmit();
+    }
+  };
+
   return (
     <>
       <Modal
@@ -30,10 +36,15 @@ function BasicUsage(props) {
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Welcome to Riddle whiteboard !!!</ModalHeader>
+          <ModalHeader>Welcome to Riddle!</ModalHeader>
+          <ModalCloseButton isDisabled={!name} />
 
           <ModalBody>
-            <Input onChange={handleNameChange} placeholder="Enter your name" />
+            <Input
+              onKeyDown={handleKeydown}
+              onChange={handleNameChange}
+              placeholder="Enter your name"
+            />
           </ModalBody>
 
           <ModalFooter>
@@ -41,7 +52,7 @@ function BasicUsage(props) {
               isDisabled={!name}
               variant="primary"
               mr={3}
-              size="sm"
+              size={"sm"}
               onClick={onNameSubmit}
             >
               Submit
