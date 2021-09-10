@@ -30,7 +30,7 @@ function Collaboration() {
   const membersRef = useRef([]);
   const clientRef = useRef(null);
   const [showNamePopup, setShowNamePopup] = useState(true);
-  const [showSharePopup, setShowSharePopup] = useState(true);
+  const [showSharePopup, setShowSharePopup] = useState(false);
   const [showMembersPopup, setShowMembersPopup] = useState(false);
   const [shareLink, setShareLink] = useState("");
   const [name, setName] = useState("");
@@ -58,6 +58,7 @@ function Collaboration() {
     fillShareLink();
     if (isMainClient) {
       client.onConnect(() => {
+        setShowSharePopup(true);
         setLoading(false);
       });
     }
@@ -140,6 +141,10 @@ function Collaboration() {
 
   const onMembersIconClick = () => {
     setShowMembersPopup(true);
+  };
+
+  const onShareIconClick = () => {
+    setShowSharePopup(true);
   };
 
   const onMembersPopupCloseClick = () => {
@@ -247,7 +252,10 @@ function Collaboration() {
     <>
       <style>{style({ loading })}</style>
       {loading ? <Loading /> : null}
-      <TopMenu onMembersIconClick={onMembersIconClick} />
+      <TopMenu
+        onShareIconClick={onShareIconClick}
+        onMembersIconClick={onMembersIconClick}
+      />
       <div className="canvas-outer">
         <MembersPopup
           members={membersRef.current}
@@ -262,13 +270,11 @@ function Collaboration() {
           onClose={handleNamePopupClose}
           onNameSubmit={handleNameSubmit}
         />
-        {!loading && isMainClient && !showNamePopup ? (
-          <SharePopup
-            show={showSharePopup}
-            onClose={handleSharePopupClose}
-            shareLink={shareLink}
-          />
-        ) : null}
+        <SharePopup
+          show={showSharePopup && !showNamePopup}
+          onClose={handleSharePopupClose}
+          shareLink={shareLink}
+        />
         <Drawingboard onAddPath={onAddPath} ref={canvasRef} />
       </div>
     </>

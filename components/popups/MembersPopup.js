@@ -27,7 +27,7 @@ function MembersPopup(props) {
             <Center>
               <VStack>
                 {members.map(({ name }) => {
-                  return <Text fontSize="1xl">{name}</Text>;
+                  return <Text fontWeight="bold">{name}</Text>;
                 })}
               </VStack>
             </Center>
