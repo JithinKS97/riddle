@@ -10,7 +10,6 @@ import Loading from "./Loading";
 import NamePopup from "./popups/NamePopup";
 import SharePopup from "./popups/SharePopup";
 import { useToast } from "@chakra-ui/react";
-import { Button } from "@chakra-ui/react";
 import MembersPopup from "./popups/MembersPopup";
 import TopMenu from "./menu/TopMenu";
 
@@ -42,7 +41,11 @@ function Collaboration() {
       return;
     }
     clientRef.current.onMessage(handleMessage);
-    registerLeave();
+    return () => (clientRef.current.onMessage = () => {});
+  }, [client]);
+
+  useEffect(() => {
+    return registerLeave();
   }, [client]);
 
   useEffect(() => {
@@ -62,6 +65,7 @@ function Collaboration() {
         setLoading(false);
       });
     }
+    return () => (client.onConnect = () => {});
   }, [id]);
 
   const fillShareLink = () => {
@@ -102,6 +106,7 @@ function Collaboration() {
       }
       return null;
     };
+    return () => (window.onbeforeunload = null);
   };
 
   const handleMessage = (message) => {
