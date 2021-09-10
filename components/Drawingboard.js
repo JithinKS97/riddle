@@ -11,7 +11,7 @@ const Drawingboard = forwardRef((props, ref) => {
     canvas = createCanvas();
     canvas.freeDrawingBrush.color = "black";
     canvas.freeDrawingBrush.width = 3;
-    registerEvents();
+    return registerEvents();
   }, []);
 
   const createCanvas = () => {
@@ -34,6 +34,11 @@ const Drawingboard = forwardRef((props, ref) => {
         id: uuidv4(),
       });
     });
+
+    return () => {
+      canvas.on("path:created", null);
+      canvas.on("path:added", null);
+    };
   };
 
   useImperativeHandle(ref, () => {
