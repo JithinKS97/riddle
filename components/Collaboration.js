@@ -65,7 +65,7 @@ function Collaboration() {
         setLoading(false);
       });
     }
-    return () => (client.onConnect = null);
+    return () => (client.onConnect = () => {});
   }, [id]);
 
   const fillShareLink = () => {

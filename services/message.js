@@ -112,7 +112,7 @@ const makeTheMemberMainClient = ({
   );
 
   const message = generateMessage(MAKE_THE_MEMBER_MAINCLIENT, content);
-  client.send(recipients, message);
+  sendMessage({ address: recipients, message, client });
 };
 
 /**
@@ -143,7 +143,7 @@ const sendObject = ({ client, newObject, members }) => {
     members = members.map((member) => `${member.identifier}.${publicKey}`);
   }
 
-  client.send(members, message);
+  sendMessage({ address: members, message, client });
 };
 
 /**
@@ -281,7 +281,7 @@ const sentMemberUpdatesToAll = ({
 
   const message = generateMessage(ADD_MEMBER, content);
 
-  client.send(membersToNotify, message);
+  sendMessage({ address: membersToNotify, message, client });
 };
 
 /**
@@ -302,12 +302,16 @@ const isMain = (client) => {
 };
 
 const sendMessage = async ({ address, message, client }) => {
-  console.log(`Sending message...`);
-  console.log(JSON.parse(message));
-  console.log(`to address ${address}`);
+  try {
+    console.log(`Sending message...`);
+    console.log(JSON.parse(message));
+    console.log(`to address ${address}`);
 
-  const res = await client.send(address, message);
-  return res;
+    const res = await client.send(address, message);
+    return res;
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 export default {
