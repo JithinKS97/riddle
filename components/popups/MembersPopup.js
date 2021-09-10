@@ -26,8 +26,12 @@ function MembersPopup(props) {
           <ModalBody alignItems="center">
             <Center>
               <VStack>
-                {members.map(({ name }) => {
-                  return <Text fontWeight="bold">{name}</Text>;
+                {members.map(({ name, identifier }) => {
+                  return (
+                    <Text key={identifier} fontWeight="bold">
+                      {name}
+                    </Text>
+                  );
                 })}
               </VStack>
             </Center>
