@@ -26,13 +26,14 @@ function SharePopup(props) {
 
   return (
     <>
-      <Modal width="50vw" isCentered onClose={onClose} isOpen={show}>
+      <Modal size="xl" isCentered onClose={onClose} isOpen={show}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader></ModalHeader>
+          <ModalHeader>
+            Copy the link and share with others for them to join
+          </ModalHeader>
           <ModalBody>
-            <Text>Copy and share the link with others for them to join</Text>
-            <InputGroup marginTop="20px" size="md">
+            <InputGroup size="md">
               <Input isReadOnly value={shareLink} pr="4.5rem" />
               <InputRightElement width="4.5rem">
                 <Button

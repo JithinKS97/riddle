@@ -6,8 +6,9 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
-  ListItem,
-  UnorderedList,
+  Text,
+  Center,
+  VStack,
 } from "@chakra-ui/react";
 
 function MembersPopup(props) {
@@ -15,17 +16,21 @@ function MembersPopup(props) {
 
   return (
     <>
-      <Modal onClose={onClose} isCentered isOpen={show}>
+      <Modal size="sm" onClose={onClose} isCentered isOpen={show}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Members present in the room</ModalHeader>
+          <ModalHeader alignSelf="center">
+            Members present in the room
+          </ModalHeader>
           <ModalCloseButton />
-          <ModalBody>
-            <UnorderedList>
-              {members.map(({ name }) => {
-                return <ListItem>{name}</ListItem>;
-              })}
-            </UnorderedList>
+          <ModalBody alignItems="center">
+            <Center>
+              <VStack>
+                {members.map(({ name }) => {
+                  return <Text fontSize="1xl">{name}</Text>;
+                })}
+              </VStack>
+            </Center>
           </ModalBody>
           <ModalFooter></ModalFooter>
         </ModalContent>

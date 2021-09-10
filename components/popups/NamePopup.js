@@ -33,13 +33,13 @@ function NamePopup(props) {
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Welcome to Riddle whiteboard</ModalHeader>
+          <ModalHeader>Enter your name and continue</ModalHeader>
 
           <ModalBody>
             <Input
               onKeyDown={handleKeydown}
               onChange={handleNameChange}
-              placeholder="Enter your name"
+              placeholder="Enter here"
             />
           </ModalBody>
 
