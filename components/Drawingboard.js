@@ -114,13 +114,13 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
   const addObject = (newObject) => {
     fabric.util.enlivenObjects([newObject], (objects) => {
       objects.forEach((object) => {
+        canvas.add(object);
         animatePath(object, 0, 1);
       });
     });
   };
 
   const animatePath = (pathObject, startValue, endValue, onComplete) => {
-    canvas.add(pathObject);
     fabric.util.animate({
       startValue,
       endValue,
