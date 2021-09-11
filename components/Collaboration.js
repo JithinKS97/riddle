@@ -86,6 +86,7 @@ function Collaboration() {
     const { fabricJSON, currentMembers } = await messageApi.join({
       client: clientRef.current,
       name,
+      goBack,
     });
     setCanvas(fabricJSON);
     setMembers(currentMembers);
@@ -261,6 +262,11 @@ function Collaboration() {
       isClosable: true,
       status: "warning",
     });
+  };
+
+  const goBack = (id) => {
+    setLoading(false);
+    router.push(`/`);
   };
 
   return (

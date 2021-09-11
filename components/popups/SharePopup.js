@@ -29,7 +29,9 @@ function SharePopup(props) {
       <Modal size="xl" isCentered onClose={onClose} isOpen={show}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Share the room id with others to join</ModalHeader>
+          <ModalHeader>
+            Anybody with the below Id can join this room
+          </ModalHeader>
           <ModalBody>
             <InputGroup size="md">
               <Input isReadOnly value={shareLink} pr="4.5rem" />

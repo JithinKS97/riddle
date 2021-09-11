@@ -13,7 +13,7 @@ import {
  * Functions related to joining and leaving
  */
 
-const join = async ({ client }) => {
+const join = async ({ client, goBack }) => {
   try {
     // public key is the address of the main client
     const mainClientAddress = client.getPublicKey();
@@ -39,7 +39,8 @@ const join = async ({ client }) => {
 
     return { fabricJSON, currentMembers };
   } catch (err) {
-    console.log("Join request failed");
+    alert("Unable to join room");
+    goBack();
   }
 };
 
