@@ -139,9 +139,11 @@ const sendObject = ({ client, newObject, members }) => {
     // Add main client address
     members.push(publicKey);
   } else {
-    members.filter((member) => member.identifier !== "");
+    members = members.filter((member) => member.identifier !== "");
     members = members.map((member) => `${member.identifier}.${publicKey}`);
   }
+
+  console.log(members);
 
   sendMessage({ address: members, message, client });
 };

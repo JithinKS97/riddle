@@ -1,11 +1,12 @@
 import { fabric } from "fabric";
 import { forwardRef, useEffect, useImperativeHandle } from "react";
 import { v4 as uuidv4 } from "uuid";
+import { PENCIL, ERASER } from "../constant/mode";
 
 let canvas;
 
 const Drawingboard = forwardRef((props, ref) => {
-  const { onAddPath } = props;
+  const { onAddPath, selectedTool } = props;
 
   useEffect(() => {
     canvas = createCanvas();
@@ -13,6 +14,16 @@ const Drawingboard = forwardRef((props, ref) => {
     canvas.freeDrawingBrush.width = 3;
     return registerEvents();
   }, []);
+
+  useEffect(() => {
+    if (selectedTool === PENCIL) {
+      canvas.isDrawingMode = true;
+      canvas.renderAll();
+    } else {
+      canvas.isDrawingMode = false;
+      canvas.renderAll();
+    }
+  }, [selectedTool]);
 
   const createCanvas = () => {
     const canvasConfig = {
@@ -32,6 +43,7 @@ const Drawingboard = forwardRef((props, ref) => {
     canvas.on("object:added", (res) => {
       res.target.set({
         id: uuidv4(),
+        hoverCursor: "pointer",
       });
     });
 
@@ -88,11 +100,12 @@ const Drawingboard = forwardRef((props, ref) => {
   );
 });
 
-const style = `
+const style = ({ selectedTool }) => `
     .canvas-box {
         display:inline-block;
         width:100vw;
         height:100vh;
+        cursor: ${selectedTool ? "pointer" : "normal"};
     }
 `;
 

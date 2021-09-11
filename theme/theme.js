@@ -17,7 +17,8 @@ const theme = extendTheme({
           color: "black",
           borderRadius: "full",
           _hover: {
-            backgroundColor: "lightgrey",
+            backgroundColor: "#c8c8c8",
+            color: "white",
           },
           border: "1px solid grey",
           _focus: {
