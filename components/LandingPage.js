@@ -46,7 +46,7 @@ function LandingPage() {
       <RoomJoinPopup onClose={closeRoomJoinPopup} show={showRoomJoinPopup} />
       <Center h="100vh">
         <ScaleFade initialScale={0.9} in={show}>
-          <HStack position="relative" left="110px">
+          <HStack position="relative" left="120px">
             <VStack>
               <Text color="#2C5282" className="title" fontSize="9xl">
                 Riddle
