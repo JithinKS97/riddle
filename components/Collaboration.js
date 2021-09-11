@@ -43,7 +43,7 @@ function Collaboration() {
       return;
     }
     clientRef.current.onMessage(handleMessage);
-    return () => (clientRef.current.onMessage = () => {});
+    return () => clientRef.current.onMessage(null);
   }, [client]);
 
   useEffect(() => {
@@ -67,7 +67,6 @@ function Collaboration() {
         setLoading(false);
       });
     }
-    return () => (client.onConnect = () => {});
   }, [id]);
 
   const fillShareLink = () => {
@@ -123,6 +122,7 @@ function Collaboration() {
       removeSubClientMember,
       makeTheMemberMainClient,
       notifyLeave,
+      removeObject: canvasRef.current.removeObject,
     });
   };
 
@@ -176,9 +176,17 @@ function Collaboration() {
   };
 
   const onAddPath = (path) => {
-    messageApi.sendObject({
+    messageApi.addObjectOnOthersCanvas({
       client: clientRef.current,
       newObject: path,
+      members: membersRef.current,
+    });
+  };
+
+  const onObjectRemove = (id) => {
+    messageApi.removeObjectFromOthersCanvas({
+      client: clientRef.current,
+      id,
       members: membersRef.current,
     });
   };
@@ -287,6 +295,7 @@ function Collaboration() {
         <Drawingboard
           selectedTool={selectedTool}
           onAddPath={onAddPath}
+          onObjectRemove={onObjectRemove}
           ref={canvasRef}
         />
       </div>

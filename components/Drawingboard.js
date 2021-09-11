@@ -6,14 +6,21 @@ import { PENCIL, ERASER } from "../constant/mode";
 let canvas;
 
 const Drawingboard = forwardRef((props, ref) => {
-  const { onAddPath, selectedTool } = props;
+  const { onAddPath, onObjectRemove, selectedTool } = props;
 
   useEffect(() => {
     canvas = createCanvas();
     canvas.freeDrawingBrush.color = "black";
     canvas.freeDrawingBrush.width = 3;
-    return registerEvents();
+    canvas.hoverCursor = `pointer`;
   }, []);
+
+  useEffect(() => {
+    if (!canvas) {
+      return;
+    }
+    return registerEvents();
+  }, [canvas, selectedTool]);
 
   useEffect(() => {
     if (selectedTool === PENCIL) {
@@ -37,19 +44,39 @@ const Drawingboard = forwardRef((props, ref) => {
 
   const registerEvents = () => {
     canvas.on("path:created", (res) => {
-      onAddPath(res.path);
+      res.path.set({
+        id: uuidv4(),
+      });
+      onAddPath(res.path.toObject(["id"]));
     });
 
-    canvas.on("object:added", (res) => {
-      res.target.set({
-        id: uuidv4(),
-        hoverCursor: "pointer",
-      });
+    canvas.on("mouse:down", function (options) {
+      if (options.target && selectedTool === ERASER) {
+        canvas.remove(options.target);
+        canvas.renderAll();
+      }
+    });
+
+    canvas.on("mouse:over", function (options) {
+      if (options.target && selectedTool === ERASER) {
+        options.target.set("opacity", 0.5);
+        canvas.renderAll();
+      }
+    });
+
+    canvas.on("mouse:out", function (options) {
+      if (options.target && selectedTool === ERASER) {
+        options.target.set("opacity", 1);
+        canvas.renderAll();
+      }
+    });
+
+    canvas.on("object:removed", function (options) {
+      onObjectRemove(options.target.id);
     });
 
     return () => {
-      canvas.on("path:created", null);
-      canvas.on("path:added", null);
+      canvas.__eventListeners = {};
     };
   };
 
@@ -58,11 +85,24 @@ const Drawingboard = forwardRef((props, ref) => {
       getCanvasAsJSON,
       loadFromJSON,
       addObject,
+      removeObject,
     };
   });
 
+  const removeObject = (id) => {
+    if (!id) {
+      return;
+    }
+    canvas.getObjects().forEach((object) => {
+      if (object.id === id) {
+        canvas.remove(object);
+        canvas.renderAll();
+      }
+    });
+  };
+
   const getCanvasAsJSON = () => {
-    return canvas.toJSON();
+    return canvas.toJSON(["id"]);
   };
 
   const loadFromJSON = (fabricJSON) => {

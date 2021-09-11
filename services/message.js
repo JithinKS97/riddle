@@ -6,6 +6,7 @@ import {
   MAKE_SUBCLIENT_MAINCLIENT,
   ADD_OBJECT,
   MAKE_THE_MEMBER_MAINCLIENT,
+  REMOVE_OBJECT,
 } from "../constant/message";
 
 /**
@@ -22,8 +23,6 @@ const join = async ({ client }) => {
     };
 
     const message = generateMessage(JOIN, content);
-
-    console.log(message);
 
     let res = await sendMessage({
       address: mainClientAddress,
@@ -119,13 +118,25 @@ const makeTheMemberMainClient = ({
  * Canvas functions
  */
 
-const sendObject = ({ client, newObject, members }) => {
+const addObjectOnOthersCanvas = ({ client, newObject, members }) => {
   const content = {
     newObject,
   };
 
   const message = generateMessage(ADD_OBJECT, content);
+  sendCanvasUpdate({ client, members, message });
+};
 
+const removeObjectFromOthersCanvas = ({ client, id, members }) => {
+  const content = {
+    id,
+  };
+
+  const message = generateMessage(REMOVE_OBJECT, content);
+  sendCanvasUpdate({ client, members, message });
+};
+
+const sendCanvasUpdate = ({ client, members, message }) => {
   const publicKey = client.getPublicKey();
 
   const filterOutThisClientAndMainClient = (member) =>
@@ -143,7 +154,9 @@ const sendObject = ({ client, newObject, members }) => {
     members = members.map((member) => `${member.identifier}.${publicKey}`);
   }
 
-  console.log(members);
+  if (members.length === 0) {
+    return;
+  }
 
   sendMessage({ address: members, message, client });
 };
@@ -174,6 +187,7 @@ function handleMessageForMain(props) {
     addObjectToCanvas,
     notifyJoin,
     notifyLeave,
+    removeObject,
   } = props;
   const type = payload.type;
 
@@ -223,6 +237,10 @@ function handleMessageForMain(props) {
     case ADD_OBJECT:
       const newObject = payload.content.newObject;
       addObjectToCanvas(newObject);
+      break;
+    case REMOVE_OBJECT:
+      const id = payload.content.id;
+      removeObject(id);
   }
 }
 
@@ -236,6 +254,7 @@ function handleMessageForSub(props) {
     makeTheMemberMainClient,
     removeSubClientMember,
     notifyLeave,
+    removeObject,
   } = props;
 
   const type = payload.type;
@@ -265,6 +284,10 @@ function handleMessageForSub(props) {
     case ADD_OBJECT:
       const newObject = payload.content.newObject;
       addObjectToCanvas(newObject);
+      break;
+    case REMOVE_OBJECT:
+      const id = payload.content.id;
+      removeObject(id);
   }
 }
 
@@ -305,9 +328,11 @@ const isMain = (client) => {
 
 const sendMessage = async ({ address, message, client }) => {
   try {
+    console.log("");
     console.log(`Sending message...`);
     console.log(JSON.parse(message));
     console.log(`to address ${address}`);
+    console.log("");
 
     const res = await client.send(address, message);
     return res;
@@ -321,5 +346,6 @@ export default {
   handleReception,
   sendLeaveMessageForSubClient,
   makeSubClientMainClient,
-  sendObject,
+  addObjectOnOthersCanvas,
+  removeObjectFromOthersCanvas,
 };
