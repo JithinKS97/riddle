@@ -7,12 +7,14 @@ import {
   ModalBody,
   Button,
   Input,
+  ModalCloseButton,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { useRouter } from "next/router";
+import { isValidId } from "../../services/nkn";
 
 const RoomJoinPopup = (props) => {
-  const { show } = props;
+  const { show, onClose } = props;
 
   const router = useRouter();
 
@@ -23,16 +25,20 @@ const RoomJoinPopup = (props) => {
   };
 
   const handleGoToRoom = () => {
+    if (!isValidId(roomId)) {
+      alert("Invalid room id");
+      return;
+    }
     router.push(`/drawingboard/${roomId}`);
   };
 
   return (
     <>
-      <Modal closeOnOverlayClick={false} isCentered isOpen={show}>
+      <Modal onClose={onClose} isCentered isOpen={show}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Enter the room id</ModalHeader>
-
+          <ModalCloseButton />
           <ModalBody>
             <Input onChange={handleRoomIdEnter} placeholder="Enter here" />
           </ModalBody>

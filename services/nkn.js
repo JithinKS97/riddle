@@ -9,6 +9,17 @@ export const createClient = ({ id: seed, isMainClient } = {}) => {
   return client;
 };
 
+export const isValidId = (id) => {
+  try {
+    new nkn.Client({
+      seed: id,
+    });
+    return true;
+  } catch (err) {
+    return false;
+  }
+};
+
 export default {
   createClient,
 };

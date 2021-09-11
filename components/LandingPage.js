@@ -36,10 +36,14 @@ function LandingPage() {
     setShowRoomJoinPopup(true);
   };
 
+  const closeRoomJoinPopup = () => {
+    setShowRoomJoinPopup(false);
+  };
+
   return (
     <>
       <style>{style}</style>
-      <RoomJoinPopup show={showRoomJoinPopup} />
+      <RoomJoinPopup onClose={closeRoomJoinPopup} show={showRoomJoinPopup} />
       <Center h="100vh">
         <ScaleFade initialScale={0.9} in={show}>
           <HStack position="relative" left="110px">
