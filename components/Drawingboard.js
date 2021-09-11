@@ -5,7 +5,7 @@ import { PENCIL, ERASER } from "../constant/mode";
 
 let canvas;
 
-const Drawingboard = forwardRef((props, ref) => {
+const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
   const { onAddPath, onObjectRemove, selectedTool } = props;
 
   useEffect(() => {
@@ -149,4 +149,4 @@ const style = ({ selectedTool }) => `
     }
 `;
 
-export default Drawingboard;
+export default DrawingboardContainer;
