@@ -70,8 +70,8 @@ function Collaboration() {
   }, [id]);
 
   const fillShareLink = () => {
-    const link = `localhost:3000/drawingboard/${id}`;
-    setShareLink(link);
+    const roomId = id;
+    setShareLink(roomId);
   };
 
   const onNameSubmitInSubClient = () => {
