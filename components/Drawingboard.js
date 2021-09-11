@@ -95,7 +95,9 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
     }
     canvas.getObjects().forEach((object) => {
       if (object.id === id) {
-        canvas.remove(object);
+        animatePath(object, 1, 0, () => {
+          canvas.remove(object);
+        });
         canvas.renderAll();
       }
     });
@@ -112,21 +114,22 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
   const addObject = (newObject) => {
     fabric.util.enlivenObjects([newObject], (objects) => {
       objects.forEach((object) => {
-        animatePath(object);
+        animatePath(object, 0, 1);
       });
     });
   };
 
-  const animatePath = (pathObject) => {
+  const animatePath = (pathObject, startValue, endValue, onComplete) => {
     canvas.add(pathObject);
     fabric.util.animate({
-      startValue: 0,
-      endValue: 1,
-      duration: 100,
+      startValue,
+      endValue,
+      duration: 150,
       onChange: function (value) {
         pathObject.opacity = value;
         canvas.renderAll();
       },
+      onComplete,
     });
   };
 
