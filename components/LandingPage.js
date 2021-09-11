@@ -3,8 +3,6 @@ import nknApi from "../services/nkn";
 import { AppContext } from "../context/App";
 import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import Cover from "../public/pencil.gif";
-import Image from "next/image";
 import { ScaleFade } from "@chakra-ui/react";
 
 function LandingPage() {
@@ -56,7 +54,7 @@ function LandingPage() {
               </Button>
             </VStack>
             <Box position="relative" left="20px">
-              <Image width="300px" height="300px" src={Cover}></Image>
+              <img width="300px" height="300px" src={"pencil.gif"}></img>
             </Box>
           </HStack>
         </ScaleFade>
