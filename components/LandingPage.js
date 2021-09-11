@@ -4,11 +4,13 @@ import { AppContext } from "../context/App";
 import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { ScaleFade } from "@chakra-ui/react";
+import RoomJoinPopup from "./popups/RoomJoinPopup";
 
 function LandingPage() {
   const context = useContext(AppContext);
   const { setClient, setIsMainClient } = context;
   const router = useRouter();
+  const [showRoomJoinPopup, setShowRoomJoinPopup] = useState(false);
 
   const handleCollaborationClick = () => {
     setIsMainClient(true);
@@ -30,12 +32,21 @@ function LandingPage() {
     });
   }, []);
 
+  const handleJoinRoomClick = () => {
+    setShowRoomJoinPopup(true);
+  };
+
+  const closeRoomJoinPopup = () => {
+    setShowRoomJoinPopup(false);
+  };
+
   return (
     <>
       <style>{style}</style>
+      <RoomJoinPopup onClose={closeRoomJoinPopup} show={showRoomJoinPopup} />
       <Center h="100vh">
         <ScaleFade initialScale={0.9} in={show}>
-          <HStack position="relative" left="110px">
+          <HStack position="relative" left="120px">
             <VStack>
               <Text color="#2C5282" className="title" fontSize="9xl">
                 Riddle
@@ -50,7 +61,15 @@ function LandingPage() {
                 variant="primary"
                 onClick={handleCollaborationClick}
               >
-                Start collaboration
+                Create a room
+              </Button>
+              <Button
+                onClick={handleJoinRoomClick}
+                position="relative"
+                top="30px"
+                variant="primary"
+              >
+                Join a room
               </Button>
             </VStack>
             <Box position="relative" left="20px">
