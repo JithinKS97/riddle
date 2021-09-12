@@ -3,6 +3,12 @@ import { FaPencilAlt } from "react-icons/fa";
 import { BiEraser, BiShareAlt } from "react-icons/bi";
 import { BsFillPeopleFill } from "react-icons/bs";
 import { PENCIL, ERASER } from "../../constant/mode";
+import {
+  Slider,
+  SliderTrack,
+  SliderFilledTrack,
+  SliderThumb,
+} from "@chakra-ui/react";
 
 const TopMenu = ({
   onMembersIconClick,
@@ -23,20 +29,37 @@ const TopMenu = ({
       <style>{style}</style>
       <Menu>
         <Flex width="100vw" p="3" justifyContent="space-between" boxShadow="md">
-          <HStack display="inline-block">
+          <Flex justifyContent="row">
             <Button
               onClick={handlePencilClick}
               className={selectedTool === PENCIL ? "selected" : "normal"}
             >
               <FaPencilAlt size="20px" />
             </Button>
+            <Slider
+              marginLeft="4"
+              width="100px"
+              aria-label="slider-ex-1"
+              defaultValue={30}
+            >
+              <SliderTrack>
+                <SliderFilledTrack />
+              </SliderTrack>
+              <SliderThumb
+                _hover={{ backgroundColor: "black" }}
+                borderWidth="2px"
+                borderColor="black"
+                boxShadow="xs"
+              />
+            </Slider>
             <Button
+              marginLeft="4"
               className={selectedTool === ERASER ? "selected" : "normal"}
               onClick={handleEraserClick}
             >
               <BiEraser size="20px" />
             </Button>
-          </HStack>
+          </Flex>
           <HStack position="relative" right="0">
             <Button onClick={onMembersIconClick} variant="menuButton">
               <BsFillPeopleFill size="20px" color="black" />

@@ -6,6 +6,7 @@ export const createClient = ({ id: seed, isMainClient } = {}) => {
     seed,
     identifier: !isMainClient ? uuidv4() : undefined,
   });
+  console.log(client);
   return client;
 };
 
