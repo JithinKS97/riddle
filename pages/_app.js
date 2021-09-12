@@ -11,6 +11,7 @@ function MyApp({ Component, pageProps }) {
   const [members, setMembers] = useState([]);
   const [selectedTool, setSelectedTool] = useState(PENCIL);
   const [brushSize, setBrushSize] = useState(5);
+  const [selectedColor, setSelectedColor] = useState("black");
 
   const value = {
     client,
@@ -23,6 +24,8 @@ function MyApp({ Component, pageProps }) {
     setSelectedTool,
     brushSize,
     setBrushSize,
+    selectedColor,
+    setSelectedColor,
   };
 
   return (

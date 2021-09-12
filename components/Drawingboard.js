@@ -8,7 +8,7 @@ let canvas;
 
 const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
   const context = useContext(AppContext);
-  const { selectedTool, brushSize } = context;
+  const { selectedTool, brushSize, selectedColor } = context;
   const { onAddPath, onObjectRemove } = props;
 
   useEffect(() => {
@@ -17,6 +17,11 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
     canvas.freeDrawingBrush.width = 3;
     canvas.hoverCursor = `pointer`;
   }, []);
+
+  useEffect(() => {
+    canvas.freeDrawingBrush.color = selectedColor;
+    canvas.renderAll();
+  }, [selectedColor]);
 
   useEffect(() => {
     if (!canvas) {
