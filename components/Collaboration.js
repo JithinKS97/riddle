@@ -190,8 +190,12 @@ function Collaboration() {
     });
   };
 
-  const addObjectToCanvas = (newObject) => {
-    canvasRef.current.addObject(newObject);
+  const addObjectToCanvas = (newObject, fromAddress) => {
+    const nameOfTheAdder = membersApi.getName({
+      id: fromAddress,
+      members: membersRef.current,
+    });
+    canvasRef.current.addObject(newObject, nameOfTheAdder);
   };
 
   /**

@@ -123,7 +123,7 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
     canvas.loadFromJSON(fabricJSON);
   };
 
-  const addObject = (newObject) => {
+  const addObject = (newObject, nameOfTheAdder) => {
     fabric.util.enlivenObjects([newObject], (objects) => {
       objects.forEach((object) => {
         canvas.add(object);

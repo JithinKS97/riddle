@@ -86,9 +86,24 @@ const makeThisMainClient = ({
   });
 };
 
+const getName = ({ id, members }) => {
+  const words = id.split(".");
+  const firstWord = words[0];
+  const isMainClient = words.length === 1;
+
+  if (isMainClient) {
+    const member = members.find((member) => member.identifier === "");
+    return member.name;
+  } else {
+    const member = members.find((member) => member.identifier === firstWord);
+    return member.name;
+  }
+};
+
 export default {
   addMember,
   makeThisMainClient,
   removeSubClientMember,
   makeTheMemberMainClient,
+  getName,
 };

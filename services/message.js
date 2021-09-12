@@ -169,12 +169,13 @@ const sendCanvasUpdate = ({ client, members, message }) => {
 function handleReception(props) {
   const { client, message } = props;
 
-  let payload = JSON.parse(message.payload);
+  const payload = JSON.parse(message.payload);
+  const src = message.src;
 
   if (isMain(client)) {
-    return handleMessageForMain({ ...props, payload });
+    return handleMessageForMain({ ...props, payload, src });
   } else {
-    return handleMessageForSub({ ...props, payload });
+    return handleMessageForSub({ ...props, payload, src });
   }
 }
 
@@ -189,6 +190,7 @@ function handleMessageForMain(props) {
     notifyJoin,
     notifyLeave,
     removeObject,
+    src,
   } = props;
   const type = payload.type;
 
@@ -237,7 +239,7 @@ function handleMessageForMain(props) {
       break;
     case ADD_OBJECT:
       const newObject = payload.content.newObject;
-      addObjectToCanvas(newObject);
+      addObjectToCanvas(newObject, src);
       break;
     case REMOVE_OBJECT:
       const id = payload.content.id;
@@ -256,6 +258,7 @@ function handleMessageForSub(props) {
     removeSubClientMember,
     notifyLeave,
     removeObject,
+    src,
   } = props;
 
   const type = payload.type;
@@ -284,7 +287,7 @@ function handleMessageForSub(props) {
       break;
     case ADD_OBJECT:
       const newObject = payload.content.newObject;
-      addObjectToCanvas(newObject);
+      addObjectToCanvas(newObject, src);
       break;
     case REMOVE_OBJECT:
       const id = payload.content.id;
