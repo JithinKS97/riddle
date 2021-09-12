@@ -1,12 +1,15 @@
 import { fabric } from "fabric";
-import { forwardRef, useEffect, useImperativeHandle } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useContext } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { PENCIL, ERASER } from "../constant/mode";
+import { AppContext } from ".././context/App";
 
 let canvas;
 
 const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
-  const { onAddPath, onObjectRemove, selectedTool } = props;
+  const context = useContext(AppContext);
+  const { selectedTool } = context;
+  const { onAddPath, onObjectRemove } = props;
 
   useEffect(() => {
     canvas = createCanvas();

@@ -9,13 +9,14 @@ import {
   SliderFilledTrack,
   SliderThumb,
 } from "@chakra-ui/react";
+import { AppContext } from ".././../context/App";
+import { useContext } from "react";
 
-const TopMenu = ({
-  onMembersIconClick,
-  onShareIconClick,
-  setSelectedTool,
-  selectedTool,
-}) => {
+const TopMenu = ({ onMembersIconClick, onShareIconClick }) => {
+  const context = useContext(AppContext);
+
+  const { selectedTool, setSelectedTool } = context;
+
   const handlePencilClick = () => {
     setSelectedTool(PENCIL);
   };

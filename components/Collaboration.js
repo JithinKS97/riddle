@@ -22,8 +22,6 @@ function Collaboration() {
     setMembers,
     isMainClient,
     setIsMainClient,
-    selectedTool,
-    setSelectedTool,
   } = context;
   const router = useRouter();
   const [loading, setLoading] = useState(true);
@@ -276,8 +274,6 @@ function Collaboration() {
       <TopMenu
         onShareIconClick={onShareIconClick}
         onMembersIconClick={onMembersIconClick}
-        setSelectedTool={setSelectedTool}
-        selectedTool={selectedTool}
       />
       <div className="canvas-outer">
         <MembersPopup
@@ -299,7 +295,6 @@ function Collaboration() {
           shareLink={shareLink}
         />
         <Drawingboard
-          selectedTool={selectedTool}
           onAddPath={onAddPath}
           onObjectRemove={onObjectRemove}
           ref={canvasRef}
