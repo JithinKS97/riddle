@@ -15,7 +15,7 @@ import { useContext } from "react";
 const TopMenu = ({ onMembersIconClick, onShareIconClick }) => {
   const context = useContext(AppContext);
 
-  const { selectedTool, setSelectedTool } = context;
+  const { selectedTool, setSelectedTool, setBrushSize } = context;
 
   const handlePencilClick = () => {
     setSelectedTool(PENCIL);
@@ -23,6 +23,11 @@ const TopMenu = ({ onMembersIconClick, onShareIconClick }) => {
 
   const handleEraserClick = () => {
     setSelectedTool(ERASER);
+  };
+
+  const handleSliderChange = (e) => {
+    setSelectedTool(PENCIL);
+    setBrushSize(e / 10);
   };
 
   return (
@@ -41,7 +46,10 @@ const TopMenu = ({ onMembersIconClick, onShareIconClick }) => {
               marginLeft="4"
               width="100px"
               aria-label="slider-ex-1"
-              defaultValue={30}
+              defaultValue={50}
+              onChange={handleSliderChange}
+              min={10}
+              max={150}
             >
               <SliderTrack>
                 <SliderFilledTrack />

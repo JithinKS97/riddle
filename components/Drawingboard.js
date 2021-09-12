@@ -8,7 +8,7 @@ let canvas;
 
 const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
   const context = useContext(AppContext);
-  const { selectedTool } = context;
+  const { selectedTool, brushSize } = context;
   const { onAddPath, onObjectRemove } = props;
 
   useEffect(() => {
@@ -24,6 +24,11 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
     }
     return registerEvents();
   }, [canvas, selectedTool]);
+
+  useEffect(() => {
+    canvas.freeDrawingBrush.width = brushSize;
+    canvas.renderAll();
+  }, [brushSize]);
 
   useEffect(() => {
     if (selectedTool === PENCIL) {
