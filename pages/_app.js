@@ -9,7 +9,7 @@ function MyApp({ Component, pageProps }) {
   const [client, setClient] = useState(null);
   const [isMainClient, setIsMainClient] = useState(false);
   const [members, setMembers] = useState([]);
-  const [selectedTool, setSelectedTool] = useState(PENCIL);
+  const [selectedMode, setSelectedMode] = useState(PENCIL);
   const [brushSize, setBrushSize] = useState(5);
   const [selectedColor, setSelectedColor] = useState("black");
 
@@ -20,8 +20,8 @@ function MyApp({ Component, pageProps }) {
     setIsMainClient,
     members,
     setMembers,
-    selectedTool,
-    setSelectedTool,
+    selectedMode,
+    setSelectedMode,
     brushSize,
     setBrushSize,
     selectedColor,

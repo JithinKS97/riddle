@@ -9,48 +9,51 @@ import {
   SliderThumb,
   MenuButton,
   MenuList,
-  Container,
   Box,
-  MenuItem,
 } from "@chakra-ui/react";
 import { FaPencilAlt } from "react-icons/fa";
 import { BiEraser, BiShareAlt } from "react-icons/bi";
 import { BsFillPeopleFill } from "react-icons/bs";
-import { PENCIL, ERASER } from "../../constant/mode";
+import { PENCIL, ERASER, SELECT } from "../../constant/mode";
 import { AppContext } from ".././../context/App";
-import { useContext, useRef } from "react";
+import { useContext } from "react";
 import React from "react";
-import { SwatchesPicker } from "react-color";
+import { TwitterPicker } from "react-color";
 
 const TopMenu = ({ onMembersIconClick, onShareIconClick }) => {
   const context = useContext(AppContext);
 
   const {
-    selectedTool,
-    setSelectedTool,
+    selectedMode,
+    setSelectedMode,
     setBrushSize,
     selectedColor,
     setSelectedColor,
   } = context;
 
-  const menuRef = useRef(null);
-
   const handlePencilClick = () => {
-    setSelectedTool(PENCIL);
+    changeToPencilMode(PENCIL);
   };
 
   const handleEraserClick = () => {
-    setSelectedTool(ERASER);
+    setSelectedMode(ERASER);
   };
 
   const handleSliderChange = (e) => {
-    setSelectedTool(PENCIL);
+    setSelectedMode(PENCIL);
     setBrushSize(e / 10);
   };
 
   const handleColorChange = (e) => {
     setSelectedColor(e.hex);
-    setSelectedTool(PENCIL);
+  };
+
+  const chngeToSelectMode = () => {
+    setSelectedMode(SELECT);
+  };
+
+  const changeToPencilMode = () => {
+    setSelectedMode(PENCIL);
   };
 
   return (
@@ -61,7 +64,7 @@ const TopMenu = ({ onMembersIconClick, onShareIconClick }) => {
           <Flex justifyContent="row">
             <Button
               onClick={handlePencilClick}
-              className={selectedTool === PENCIL ? "selected" : "normal"}
+              className={selectedMode === PENCIL ? "selected" : "normal"}
             >
               <FaPencilAlt size="20px" />
             </Button>
@@ -84,7 +87,14 @@ const TopMenu = ({ onMembersIconClick, onShareIconClick }) => {
                 boxShadow="xs"
               />
             </Slider>
-            <Menu>
+            <Menu
+              onOpen={chngeToSelectMode}
+              onClose={() => {
+                setTimeout(() => {
+                  changeToPencilMode();
+                }, 10);
+              }}
+            >
               <MenuButton
                 _active={{
                   bg: "white",
@@ -93,20 +103,25 @@ const TopMenu = ({ onMembersIconClick, onShareIconClick }) => {
                 marginLeft="4"
                 as={Button}
               >
-                <Box width="15px" height="15px" bg={selectedColor} />
+                <Box
+                  boxShadow="xs"
+                  width="15px"
+                  height="15px"
+                  bg={selectedColor}
+                />
               </MenuButton>
-              <MenuList border="none" boxShadow="none" marginTop="3">
-                <MenuItem
-                  _hover={{ bg: "transparent" }}
-                  _focus={{ bg: "transparent" }}
-                >
-                  <SwatchesPicker onChangeComplete={handleColorChange} />
-                </MenuItem>
+              <MenuList
+                className="colorpicker"
+                border="none"
+                boxShadow="none"
+                marginTop="3"
+              >
+                <TwitterPicker Button onChangeComplete={handleColorChange} />
               </MenuList>
             </Menu>
             <Button
               marginLeft="4"
-              className={selectedTool === ERASER ? "selected" : "normal"}
+              className={selectedMode === ERASER ? "selected" : "normal"}
               onClick={handleEraserClick}
             >
               <BiEraser size="20px" />

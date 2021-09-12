@@ -8,7 +8,7 @@ let canvas;
 
 const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
   const context = useContext(AppContext);
-  const { selectedTool, brushSize, selectedColor } = context;
+  const { selectedMode, setSelectedMode, brushSize, selectedColor } = context;
   const { onAddPath, onObjectRemove } = props;
 
   useEffect(() => {
@@ -28,7 +28,7 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
       return;
     }
     return registerEvents();
-  }, [canvas, selectedTool]);
+  }, [canvas, selectedMode]);
 
   useEffect(() => {
     canvas.freeDrawingBrush.width = brushSize;
@@ -36,14 +36,13 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
   }, [brushSize]);
 
   useEffect(() => {
-    if (selectedTool === PENCIL) {
+    if (selectedMode === PENCIL) {
       canvas.isDrawingMode = true;
-      canvas.renderAll();
     } else {
       canvas.isDrawingMode = false;
-      canvas.renderAll();
     }
-  }, [selectedTool]);
+    canvas.renderAll();
+  }, [selectedMode]);
 
   const createCanvas = () => {
     const canvasConfig = {
@@ -64,21 +63,21 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
     });
 
     canvas.on("mouse:down", function (options) {
-      if (options.target && selectedTool === ERASER) {
+      if (options.target && selectedMode === ERASER) {
         canvas.remove(options.target);
         canvas.renderAll();
       }
     });
 
     canvas.on("mouse:over", function (options) {
-      if (options.target && selectedTool === ERASER) {
+      if (options.target && selectedMode === ERASER) {
         options.target.set("opacity", 0.5);
         canvas.renderAll();
       }
     });
 
     canvas.on("mouse:out", function (options) {
-      if (options.target && selectedTool === ERASER) {
+      if (options.target && selectedMode === ERASER) {
         options.target.set("opacity", 1);
         canvas.renderAll();
       }
@@ -156,12 +155,12 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
   );
 });
 
-const style = ({ selectedTool }) => `
+const style = ({ selectedMode }) => `
     .canvas-box {
         display:inline-block;
         width:100vw;
         height:100vh;
-        cursor: ${selectedTool ? "pointer" : "normal"};
+        cursor: ${selectedMode ? "pointer" : "normal"};
     }
 `;
 
