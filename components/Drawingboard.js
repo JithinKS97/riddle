@@ -115,6 +115,17 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
       }
     });
 
+    canvas.on("mouse:wheel", function (option) {
+      var delta = option.e.deltaY;
+      var zoom = canvas.getZoom();
+      zoom *= 0.999 ** delta;
+      if (zoom > 20) zoom = 20;
+      if (zoom < 0.01) zoom = 0.01;
+      canvas.zoomToPoint({ x: option.e.offsetX, y: option.e.offsetY }, zoom);
+      option.e.preventDefault();
+      option.e.stopPropagation();
+    });
+
     return () => {
       canvas.__eventListeners = {};
     };
