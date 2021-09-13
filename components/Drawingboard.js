@@ -57,10 +57,17 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
       canvas.hoverCursor = "pointer";
     }
     if (selectedMode === PAN) {
+      disableSelectForObjects();
       canvas.defaultCursor = "grab";
       canvas.hoverCursor = "grab";
     }
   }, [selectedMode]);
+
+  const disableSelectForObjects = () => {
+    canvas.getObjects().forEach((object) => {
+      object.selectable = false;
+    });
+  };
 
   const registerEvents = () => {
     canvas.on("path:created", (res) => {
@@ -74,11 +81,6 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
       if (options.target && selectedMode === ERASER) {
         canvas.remove(options.target);
         canvas.renderAll();
-      }
-      if (selectedMode === PAN) {
-        canvas.getObjects().forEach((object) => {
-          object.selectable = false;
-        });
       }
       mousePressed = true;
     });
