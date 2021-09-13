@@ -53,6 +53,12 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
       canvas.isDrawingMode = true;
     } else {
       canvas.isDrawingMode = false;
+      canvas.defaultCursor = "pointer";
+      canvas.hoverCursor = "pointer";
+    }
+    if (selectedMode === PAN) {
+      canvas.defaultCursor = "grab";
+      canvas.hoverCursor = "grab";
     }
   }, [selectedMode]);
 
@@ -68,6 +74,11 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
       if (options.target && selectedMode === ERASER) {
         canvas.remove(options.target);
         canvas.renderAll();
+      }
+      if (selectedMode === PAN) {
+        canvas.getObjects().forEach((object) => {
+          object.selectable = false;
+        });
       }
       mousePressed = true;
     });
