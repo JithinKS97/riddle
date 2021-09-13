@@ -189,11 +189,13 @@ const style = `
   .selected {
     color:white;
     background-color:black;
+    border:1px solid black;
     border-radius:20px;
   }
   .selected:hover {
     color:white;
     background-color:black;
+    border:1px solid black;
     border-radius:20px;
   }
   .color-picker {

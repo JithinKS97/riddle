@@ -71,6 +71,7 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
 
   const registerEvents = () => {
     canvas.on("path:created", (res) => {
+      console.log(res.path);
       res.path.set({
         id: uuidv4(),
       });
