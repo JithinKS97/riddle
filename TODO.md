@@ -1,3 +1,7 @@
-1. To improve the user experience of the eraser
-2. Transform of groups
-3. Color palette
+## Features
+
+1. Select
+2. Transform - translate, rotate, scale
+3. Undo?
+4. Change stroke and fill of selected shape?
+5. Display name of the person who made the interaction
