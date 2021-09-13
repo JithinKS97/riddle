@@ -1,21 +1,34 @@
 import { fabric } from "fabric";
 import { forwardRef, useEffect, useImperativeHandle, useContext } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { PENCIL, ERASER } from "../constant/mode";
+import { PENCIL, ERASER, PAN } from "../constant/mode";
 import { AppContext } from ".././context/App";
 
-let canvas;
+let canvas, mousePressed;
+
+const createCanvas = (window) => {
+  const topBarClass = "css-198em1k";
+  const canvasConfig = {
+    isDrawingMode: true,
+    width: window.innerWidth,
+    height:
+      window.innerHeight -
+      document.getElementsByClassName(topBarClass)[0].offsetHeight,
+    backgroundColor: "rgba(0,0,0,0)",
+    selection: false,
+  };
+  return new fabric.Canvas("c", canvasConfig);
+};
 
 const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
   const context = useContext(AppContext);
-  const { selectedMode, setSelectedMode, brushSize, selectedColor } = context;
+  const { selectedMode, brushSize, selectedColor } = context;
   const { onAddPath, onObjectRemove } = props;
 
   useEffect(() => {
-    canvas = createCanvas();
+    canvas = createCanvas(window);
     canvas.freeDrawingBrush.color = "black";
     canvas.freeDrawingBrush.width = 3;
-    canvas.hoverCursor = `pointer`;
   }, []);
 
   useEffect(() => {
@@ -40,19 +53,14 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
       canvas.isDrawingMode = true;
     } else {
       canvas.isDrawingMode = false;
+      canvas.defaultCursor = "pointer";
+      canvas.hoverCursor = "pointer";
     }
-    canvas.renderAll();
+    if (selectedMode === PAN) {
+      canvas.defaultCursor = "grab";
+      canvas.hoverCursor = "grab";
+    }
   }, [selectedMode]);
-
-  const createCanvas = () => {
-    const canvasConfig = {
-      isDrawingMode: true,
-      width: window.innerWidth,
-      height: window.innerHeight,
-      backgroundColor: "rgba(0,0,0,0)",
-    };
-    return new fabric.Canvas("c", canvasConfig);
-  };
 
   const registerEvents = () => {
     canvas.on("path:created", (res) => {
@@ -67,6 +75,16 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
         canvas.remove(options.target);
         canvas.renderAll();
       }
+      if (selectedMode === PAN) {
+        canvas.getObjects().forEach((object) => {
+          object.selectable = false;
+        });
+      }
+      mousePressed = true;
+    });
+
+    canvas.on("mouse:up", function () {
+      mousePressed = false;
     });
 
     canvas.on("mouse:over", function (options) {
@@ -85,6 +103,14 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
 
     canvas.on("object:removed", function (options) {
       onObjectRemove(options.target.id);
+    });
+
+    canvas.on("mouse:move", function (event) {
+      if (mousePressed && selectedMode === PAN) {
+        const mEvent = event.e;
+        const delta = new fabric.Point(mEvent.movementX, mEvent.movementY);
+        canvas.relativePan(delta);
+      }
     });
 
     return () => {
@@ -155,12 +181,9 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
   );
 });
 
-const style = ({ selectedMode }) => `
+const style = ({}) => `
     .canvas-box {
         display:inline-block;
-        width:100vw;
-        height:100vh;
-        cursor: ${selectedMode ? "pointer" : "normal"};
     }
 `;
 

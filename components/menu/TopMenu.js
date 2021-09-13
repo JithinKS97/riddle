@@ -13,12 +13,26 @@ import {
 } from "@chakra-ui/react";
 import { FaPencilAlt } from "react-icons/fa";
 import { BiEraser, BiShareAlt } from "react-icons/bi";
+import { FiMove } from "react-icons/fi";
 import { BsFillPeopleFill } from "react-icons/bs";
-import { PENCIL, ERASER, SELECT } from "../../constant/mode";
+import { PENCIL, ERASER, SELECT, PAN } from "../../constant/mode";
 import { AppContext } from ".././../context/App";
 import { useContext } from "react";
 import React from "react";
 import { TwitterPicker } from "react-color";
+
+const colors = [
+  "#000000",
+  "#FF6900",
+  "#FCB900",
+  "#7BDCB5",
+  "#00D084",
+  "#8ED1FC",
+  "#0693E3",
+  "#EB144C",
+  "#F78DA7",
+  "#9900EF",
+];
 
 const TopMenu = ({ onMembersIconClick, onShareIconClick }) => {
   const context = useContext(AppContext);
@@ -54,6 +68,10 @@ const TopMenu = ({ onMembersIconClick, onShareIconClick }) => {
 
   const changeToPencilMode = () => {
     setSelectedMode(PENCIL);
+  };
+
+  const changeToPanMode = () => {
+    setSelectedMode(PAN);
   };
 
   return (
@@ -116,7 +134,10 @@ const TopMenu = ({ onMembersIconClick, onShareIconClick }) => {
                 boxShadow="none"
                 marginTop="3"
               >
-                <TwitterPicker Button onChangeComplete={handleColorChange} />
+                <TwitterPicker
+                  colors={colors}
+                  onChangeComplete={handleColorChange}
+                />
               </MenuList>
             </Menu>
             <Button
@@ -125,6 +146,13 @@ const TopMenu = ({ onMembersIconClick, onShareIconClick }) => {
               onClick={handleEraserClick}
             >
               <BiEraser size="20px" />
+            </Button>
+            <Button
+              className={selectedMode === PAN ? "selected" : "normal"}
+              marginLeft="4"
+              onClick={changeToPanMode}
+            >
+              <FiMove size="20px" />
             </Button>
           </Flex>
           <HStack position="relative" right="0">
