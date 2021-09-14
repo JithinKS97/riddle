@@ -86,7 +86,6 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
 
   const registerEvents = () => {
     canvas.on("path:created", (res) => {
-      console.log(res.path);
       res.path.set({
         id: uuidv4(),
       });
@@ -141,10 +140,20 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
 
     canvas.on("object:modified", () => {
       const modifiedObjects = canvas.getActiveObjects();
+
+      canvas.discardActiveObject();
+
       const modifiedObjectsJSONList = modifiedObjects.map((object) =>
         object.toObject(["id"])
       );
-      console.log(modifiedObjectsJSONList);
+
+      let selection = new fabric.ActiveSelection(modifiedObjects, {
+        canvas: canvas,
+      });
+
+      canvas.setActiveObject(selection); // Profi
+
+      onAddObjects(modifiedObjectsJSONList);
     });
 
     addKeyDownEventListeners();
@@ -185,11 +194,29 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
     canvas.loadFromJSON(fabricJSON);
   };
 
-  const addObjects = (objects, nameOfTheAdder) => {
-    fabric.util.enlivenObjects(objects, (objects) => {
-      objects.forEach((object) => {
-        canvas.add(object);
-        animatePath(object, 0, 1);
+  const addObjects = (objectsToAdd, nameOfTheAdder) => {
+    const idsOfObjectsCurrentlyPresent = canvas
+      .getObjects()
+      .map((object) => object.id);
+
+    fabric.util.enlivenObjects(objectsToAdd, (enlivenedObjectsToAdd) => {
+      console.log(enlivenedObjectsToAdd);
+
+      enlivenedObjectsToAdd.forEach((enlivenedObjectToAdd) => {
+        const objectAlreadyExist = idsOfObjectsCurrentlyPresent.includes(
+          enlivenedObjectToAdd.id
+        );
+        if (!objectAlreadyExist) {
+          canvas.add(enlivenedObjectToAdd);
+          animatePath(enlivenedObjectToAdd, 0, 1);
+        } else {
+          let objectToModify = canvas
+            .getObjects()
+            .find((object) => object.id === enlivenedObjectToAdd.id);
+          canvas.remove(objectToModify);
+          canvas.add(enlivenedObjectToAdd);
+          canvas.renderAll();
+        }
       });
     });
   };
