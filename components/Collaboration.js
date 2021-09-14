@@ -121,7 +121,7 @@ function Collaboration() {
       removeSubClientMember,
       makeTheMemberMainClient,
       notifyLeave,
-      removeObject: canvasRef.current.removeObject,
+      removeObjects: canvasRef.current.removeObjects,
     });
   };
 
@@ -182,10 +182,10 @@ function Collaboration() {
     });
   };
 
-  const onObjectRemove = (id) => {
-    messageApi.removeObjectFromOthersCanvas({
+  const onObjectsRemove = (ids) => {
+    messageApi.removeObjectsFromOthersCanvas({
       client: clientRef.current,
-      id,
+      ids,
       members: membersRef.current,
     });
   };
@@ -300,7 +300,7 @@ function Collaboration() {
         />
         <Drawingboard
           onAddPath={onAddPath}
-          onObjectRemove={onObjectRemove}
+          onObjectsRemove={onObjectsRemove}
           ref={canvasRef}
         />
       </div>

@@ -15,11 +15,12 @@ import { FaPencilAlt } from "react-icons/fa";
 import { BiEraser, BiShareAlt } from "react-icons/bi";
 import { FiMove } from "react-icons/fi";
 import { BsFillPeopleFill } from "react-icons/bs";
-import { PENCIL, ERASER, SELECT, PAN } from "../../constant/mode";
+import { PENCIL, ERASER, SELECT, PAN, NONE } from "../../constant/mode";
 import { AppContext } from ".././../context/App";
 import { useContext } from "react";
 import React from "react";
 import { TwitterPicker } from "react-color";
+import { AiOutlineSelect } from "react-icons/ai";
 
 const colors = [
   "#000000",
@@ -62,7 +63,7 @@ const TopMenu = ({ onMembersIconClick, onShareIconClick }) => {
     setSelectedColor(e.hex);
   };
 
-  const chngeToSelectMode = () => {
+  const changeToSelectMode = () => {
     setSelectedMode(SELECT);
   };
 
@@ -72,6 +73,10 @@ const TopMenu = ({ onMembersIconClick, onShareIconClick }) => {
 
   const changeToPanMode = () => {
     setSelectedMode(PAN);
+  };
+
+  const changeToNoneMode = () => {
+    setSelectedMode(NONE);
   };
 
   return (
@@ -106,7 +111,7 @@ const TopMenu = ({ onMembersIconClick, onShareIconClick }) => {
               />
             </Slider>
             <Menu
-              onOpen={chngeToSelectMode}
+              onOpen={changeToNoneMode}
               onClose={() => {
                 setTimeout(() => {
                   changeToPencilMode();
@@ -142,10 +147,10 @@ const TopMenu = ({ onMembersIconClick, onShareIconClick }) => {
             </Menu>
             <Button
               marginLeft="4"
-              className={selectedMode === ERASER ? "selected" : "normal"}
-              onClick={handleEraserClick}
+              onClick={changeToSelectMode}
+              className={selectedMode === SELECT ? "selected" : "normal"}
             >
-              <BiEraser size="20px" />
+              <AiOutlineSelect size="20px" />
             </Button>
             <Button
               className={selectedMode === PAN ? "selected" : "normal"}

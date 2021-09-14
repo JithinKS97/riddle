@@ -1,7 +1,7 @@
 import { fabric } from "fabric";
 import { forwardRef, useEffect, useImperativeHandle, useContext } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { PENCIL, ERASER, PAN } from "../constant/mode";
+import { PENCIL, ERASER, PAN, SELECT, NONE } from "../constant/mode";
 import { AppContext } from ".././context/App";
 
 let canvas, mousePressed;
@@ -15,7 +15,6 @@ const createCanvas = (window) => {
       window.innerHeight -
       document.getElementsByClassName(topBarClass)[0].offsetHeight,
     backgroundColor: "rgba(0,0,0,0)",
-    selection: false,
   };
   return new fabric.Canvas("c", canvasConfig);
 };
@@ -23,7 +22,7 @@ const createCanvas = (window) => {
 const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
   const context = useContext(AppContext);
   const { selectedMode, brushSize, selectedColor } = context;
-  const { onAddPath, onObjectRemove } = props;
+  const { onAddPath, onObjectsRemove } = props;
 
   useEffect(() => {
     canvas = createCanvas(window);
@@ -49,23 +48,39 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
   }, [brushSize]);
 
   useEffect(() => {
-    if (selectedMode === PENCIL) {
-      canvas.isDrawingMode = true;
-    } else {
-      canvas.isDrawingMode = false;
-      canvas.defaultCursor = "pointer";
-      canvas.hoverCursor = "pointer";
-    }
-    if (selectedMode === PAN) {
-      disableSelectForObjects();
-      canvas.defaultCursor = "grab";
-      canvas.hoverCursor = "grab";
+    switch (selectedMode) {
+      case PENCIL:
+        canvas.isDrawingMode = true;
+        break;
+      case SELECT:
+        enableSelectForObjects();
+        canvas.defaultCursor = "auto";
+        canvas.hoverCursor = "move";
+        canvas.isDrawingMode = false;
+        break;
+      case PAN:
+        disableSelectForObjects();
+        canvas.isDrawingMode = false;
+        canvas.defaultCursor = "grab";
+        canvas.hoverCursor = "grab";
+        break;
+      case NONE:
+        disableSelectForObjects();
+        canvas.isDrawingMode = false;
+        canvas.defaultCursor = "auto";
+        canvas.hoverCursor = "auto";
     }
   }, [selectedMode]);
 
   const disableSelectForObjects = () => {
     canvas.getObjects().forEach((object) => {
       object.selectable = false;
+    });
+  };
+
+  const enableSelectForObjects = () => {
+    canvas.getObjects().forEach((object) => {
+      object.selectable = true;
     });
   };
 
@@ -104,10 +119,6 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
       }
     });
 
-    canvas.on("object:removed", function (options) {
-      onObjectRemove(options.target.id);
-    });
-
     canvas.on("mouse:move", function (event) {
       if (mousePressed && selectedMode === PAN) {
         const mEvent = event.e;
@@ -127,6 +138,8 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
       option.e.stopPropagation();
     });
 
+    addKeyDownEventListeners();
+
     return () => {
       canvas.__eventListeners = {};
     };
@@ -137,16 +150,16 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
       getCanvasAsJSON,
       loadFromJSON,
       addObject,
-      removeObject,
+      removeObjects,
     };
   });
 
-  const removeObject = (id) => {
-    if (!id) {
+  const removeObjects = (ids) => {
+    if (!ids) {
       return;
     }
     canvas.getObjects().forEach((object) => {
-      if (object.id === id) {
+      if (ids.includes(object.id)) {
         animatePath(object, 1, 0, () => {
           canvas.remove(object);
         });
@@ -185,10 +198,35 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
     });
   };
 
+  const addKeyDownEventListeners = () => {
+    document.onkeydown = handleKeyDown;
+    return () => {
+      document.onkeydown = null;
+    };
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Backspace") {
+      deleteSelectedItems();
+    }
+  };
+
+  const deleteSelectedItems = () => {
+    const selectedObjects = canvas.getActiveObjects();
+    const ids = selectedObjects.map((selectedObject) => selectedObject.id);
+    canvas.getObjects().forEach((object) => {
+      if (ids.includes(object.id)) {
+        canvas.remove(object);
+      }
+    });
+    onObjectsRemove(ids);
+    canvas.discardActiveObject();
+  };
+
   return (
     <>
       <style>{style}</style>
-      <div className="canvas-box">
+      <div onKeyDown={handleKeyDown} className="canvas-box">
         <canvas id="c"></canvas>
       </div>
     </>
