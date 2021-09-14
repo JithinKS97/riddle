@@ -139,21 +139,21 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
     });
 
     canvas.on("object:modified", () => {
-      const modifiedObjects = canvas.getActiveObjects();
-
-      canvas.discardActiveObject();
-
-      const modifiedObjectsJSONList = modifiedObjects.map((object) =>
-        object.toObject(["id"])
-      );
-
-      let selection = new fabric.ActiveSelection(modifiedObjects, {
-        canvas: canvas,
-      });
-
-      canvas.setActiveObject(selection); // Profi
-
-      onAddObjects(modifiedObjectsJSONList);
+      const modifiedObjects = canvas.getActiveObject();
+      if (!modifiedObjects._objects) {
+        const objectJSON = modifiedObjects.toObject(["id"]);
+        onAddObjects([objectJSON]);
+      } else {
+        canvas.discardActiveObject();
+        const objectsJSON = modifiedObjects._objects.map((object) =>
+          object.toJSON(["id"])
+        );
+        onAddObjects(objectsJSON);
+        let selection = new fabric.ActiveSelection(modifiedObjects._objects, {
+          canvas,
+        });
+        canvas.setActiveObject(selection);
+      }
     });
 
     addKeyDownEventListeners();
