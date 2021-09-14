@@ -22,7 +22,7 @@ const createCanvas = (window) => {
 const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
   const context = useContext(AppContext);
   const { selectedMode, brushSize, selectedColor } = context;
-  const { onAddPath, onObjectsRemove } = props;
+  const { onAddObjects, onObjectsRemove } = props;
 
   useEffect(() => {
     canvas = createCanvas(window);
@@ -90,7 +90,8 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
       res.path.set({
         id: uuidv4(),
       });
-      onAddPath(res.path.toObject(["id"]));
+      const newObject = res.path.toObject(["id"]);
+      onAddObjects([newObject]);
     });
 
     canvas.on("mouse:down", function (options) {
@@ -138,6 +139,14 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
       option.e.stopPropagation();
     });
 
+    canvas.on("object:modified", () => {
+      const modifiedObjects = canvas.getActiveObjects();
+      const modifiedObjectsJSONList = modifiedObjects.map((object) =>
+        object.toObject(["id"])
+      );
+      console.log(modifiedObjectsJSONList);
+    });
+
     addKeyDownEventListeners();
 
     return () => {
@@ -149,7 +158,7 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
     return {
       getCanvasAsJSON,
       loadFromJSON,
-      addObject,
+      addObjects,
       removeObjects,
     };
   });
@@ -176,8 +185,8 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
     canvas.loadFromJSON(fabricJSON);
   };
 
-  const addObject = (newObject, nameOfTheAdder) => {
-    fabric.util.enlivenObjects([newObject], (objects) => {
+  const addObjects = (objects, nameOfTheAdder) => {
+    fabric.util.enlivenObjects(objects, (objects) => {
       objects.forEach((object) => {
         canvas.add(object);
         animatePath(object, 0, 1);

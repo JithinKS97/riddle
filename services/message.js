@@ -4,7 +4,7 @@ import {
   REMOVE_MEMBER,
   ADD_MEMBER,
   MAKE_SUBCLIENT_MAINCLIENT,
-  ADD_OBJECT,
+  ADD_OBJECTS,
   MAKE_THE_MEMBER_MAINCLIENT,
   REMOVE_OBJECTS,
 } from "../constant/message";
@@ -119,12 +119,12 @@ const makeTheMemberMainClient = ({
  * Canvas functions
  */
 
-const addObjectOnOthersCanvas = ({ client, newObject, members }) => {
+const addObjectsToOthersCanvas = ({ client, objects, members }) => {
   const content = {
-    newObject,
+    objects,
   };
 
-  const message = generateMessage(ADD_OBJECT, content);
+  const message = generateMessage(ADD_OBJECTS, content);
   sendCanvasUpdate({ client, members, message });
 };
 
@@ -186,7 +186,7 @@ function handleMessageForMain(props) {
     addMember,
     client,
     removeSubClientMember,
-    addObjectToCanvas,
+    addObjectsToCanvas,
     notifyJoin,
     notifyLeave,
     removeObjects,
@@ -237,9 +237,9 @@ function handleMessageForMain(props) {
       notifyLeave(memberToRemove);
       removeSubClientMember(memberToRemove);
       break;
-    case ADD_OBJECT:
-      const newObject = payload.content.newObject;
-      addObjectToCanvas(newObject, src);
+    case ADD_OBJECTS:
+      const objects = payload.content.objects;
+      addObjectsToCanvas(objects, src);
       break;
     case REMOVE_OBJECTS:
       const ids = payload.content.ids;
@@ -252,7 +252,7 @@ function handleMessageForSub(props) {
     payload,
     addMember,
     makeThisMainClient,
-    addObjectToCanvas,
+    addObjectsToCanvas,
     notifyJoin,
     makeTheMemberMainClient,
     removeSubClientMember,
@@ -285,9 +285,9 @@ function handleMessageForSub(props) {
       notifyLeave("");
       makeTheMemberMainClient(memberToMakeMainClient);
       break;
-    case ADD_OBJECT:
-      const newObject = payload.content.newObject;
-      addObjectToCanvas(newObject, src);
+    case ADD_OBJECTS:
+      const objects = payload.content.objects;
+      addObjectsToCanvas(objects, src);
       break;
     case REMOVE_OBJECTS:
       const ids = payload.content.ids;
@@ -350,6 +350,6 @@ export default {
   handleReception,
   sendLeaveMessageForSubClient,
   makeSubClientMainClient,
-  addObjectOnOthersCanvas,
+  addObjectsToOthersCanvas,
   removeObjectsFromOthersCanvas,
 };

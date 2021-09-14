@@ -116,7 +116,7 @@ function Collaboration() {
       getCanvasAsJSON,
       addMember,
       makeThisMainClient,
-      addObjectToCanvas,
+      addObjectsToCanvas,
       notifyJoin,
       removeSubClientMember,
       makeTheMemberMainClient,
@@ -174,10 +174,10 @@ function Collaboration() {
     });
   };
 
-  const onAddPath = (path) => {
-    messageApi.addObjectOnOthersCanvas({
+  const onAddObjects = (objects) => {
+    messageApi.addObjectsToOthersCanvas({
       client: clientRef.current,
-      newObject: path,
+      objects,
       members: membersRef.current,
     });
   };
@@ -190,12 +190,12 @@ function Collaboration() {
     });
   };
 
-  const addObjectToCanvas = (newObject, fromAddress) => {
+  const addObjectsToCanvas = (objects, fromAddress) => {
     const nameOfTheAdder = membersApi.getName({
       id: fromAddress,
       members: membersRef.current,
     });
-    canvasRef.current.addObject(newObject, nameOfTheAdder);
+    canvasRef.current.addObjects(objects, nameOfTheAdder);
   };
 
   /**
@@ -266,7 +266,7 @@ function Collaboration() {
     });
   };
 
-  const goBack = (id) => {
+  const goBack = () => {
     setLoading(false);
     router.push(`/`);
   };
@@ -299,7 +299,7 @@ function Collaboration() {
           shareLink={shareLink}
         />
         <Drawingboard
-          onAddPath={onAddPath}
+          onAddObjects={onAddObjects}
           onObjectsRemove={onObjectsRemove}
           ref={canvasRef}
         />
