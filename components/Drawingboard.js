@@ -213,12 +213,16 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
           let objectToModify = canvas
             .getObjects()
             .find((object) => object.id === enlivenedObjectToAdd.id);
-          canvas.remove(objectToModify);
-          canvas.add(enlivenedObjectToAdd);
-          canvas.renderAll();
+          replaceObject(objectToModify, enlivenedObjectToAdd);
         }
       });
     });
+  };
+
+  const replaceObject = (objectToBeReplaced, objectToReplaceWith) => {
+    canvas.remove(objectToBeReplaced);
+    canvas.add(objectToReplaceWith);
+    canvas.renderAll();
   };
 
   const animatePath = (pathObject, startValue, endValue, onComplete) => {
