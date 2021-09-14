@@ -1,7 +1,7 @@
 import { fabric } from "fabric";
 import { forwardRef, useEffect, useImperativeHandle, useContext } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { PENCIL, ERASER, PAN } from "../constant/mode";
+import { PENCIL, ERASER, PAN, SELECT, NONE } from "../constant/mode";
 import { AppContext } from ".././context/App";
 
 let canvas, mousePressed;
@@ -15,7 +15,6 @@ const createCanvas = (window) => {
       window.innerHeight -
       document.getElementsByClassName(topBarClass)[0].offsetHeight,
     backgroundColor: "rgba(0,0,0,0)",
-    selection: false,
   };
   return new fabric.Canvas("c", canvasConfig);
 };
@@ -23,7 +22,7 @@ const createCanvas = (window) => {
 const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
   const context = useContext(AppContext);
   const { selectedMode, brushSize, selectedColor } = context;
-  const { onAddPath, onObjectRemove } = props;
+  const { onAddObjects, onObjectsRemove } = props;
 
   useEffect(() => {
     canvas = createCanvas(window);
@@ -49,17 +48,27 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
   }, [brushSize]);
 
   useEffect(() => {
-    if (selectedMode === PENCIL) {
-      canvas.isDrawingMode = true;
-    } else {
-      canvas.isDrawingMode = false;
-      canvas.defaultCursor = "pointer";
-      canvas.hoverCursor = "pointer";
-    }
-    if (selectedMode === PAN) {
-      disableSelectForObjects();
-      canvas.defaultCursor = "grab";
-      canvas.hoverCursor = "grab";
+    switch (selectedMode) {
+      case PENCIL:
+        canvas.isDrawingMode = true;
+        break;
+      case SELECT:
+        enableSelectForObjects();
+        canvas.defaultCursor = "auto";
+        canvas.hoverCursor = "move";
+        canvas.isDrawingMode = false;
+        break;
+      case PAN:
+        disableSelectForObjects();
+        canvas.isDrawingMode = false;
+        canvas.defaultCursor = "grab";
+        canvas.hoverCursor = "grab";
+        break;
+      case NONE:
+        disableSelectForObjects();
+        canvas.isDrawingMode = false;
+        canvas.defaultCursor = "auto";
+        canvas.hoverCursor = "auto";
     }
   }, [selectedMode]);
 
@@ -69,13 +78,19 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
     });
   };
 
+  const enableSelectForObjects = () => {
+    canvas.getObjects().forEach((object) => {
+      object.selectable = true;
+    });
+  };
+
   const registerEvents = () => {
     canvas.on("path:created", (res) => {
-      console.log(res.path);
       res.path.set({
         id: uuidv4(),
       });
-      onAddPath(res.path.toObject(["id"]));
+      const newObject = res.path.toObject(["id"]);
+      onAddObjects([newObject]);
     });
 
     canvas.on("mouse:down", function (options) {
@@ -104,10 +119,6 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
       }
     });
 
-    canvas.on("object:removed", function (options) {
-      onObjectRemove(options.target.id);
-    });
-
     canvas.on("mouse:move", function (event) {
       if (mousePressed && selectedMode === PAN) {
         const mEvent = event.e;
@@ -127,6 +138,27 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
       option.e.stopPropagation();
     });
 
+    canvas.on("object:modified", () => {
+      const modifiedObjects = canvas.getActiveObject();
+      if (!modifiedObjects._objects) {
+        const objectJSON = modifiedObjects.toObject(["id"]);
+        onAddObjects([objectJSON]);
+      } else {
+        canvas.discardActiveObject();
+        const objectsJSON = modifiedObjects._objects.map((object) =>
+          object.toJSON(["id"])
+        );
+        // Todo - Restore state of rotation also
+        onAddObjects(objectsJSON);
+        let selection = new fabric.ActiveSelection(modifiedObjects._objects, {
+          canvas,
+        });
+        canvas.setActiveObject(selection);
+      }
+    });
+
+    addKeyDownEventListeners();
+
     return () => {
       canvas.__eventListeners = {};
     };
@@ -136,17 +168,17 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
     return {
       getCanvasAsJSON,
       loadFromJSON,
-      addObject,
-      removeObject,
+      addObjects,
+      removeObjects,
     };
   });
 
-  const removeObject = (id) => {
-    if (!id) {
+  const removeObjects = (ids) => {
+    if (!ids) {
       return;
     }
     canvas.getObjects().forEach((object) => {
-      if (object.id === id) {
+      if (ids.includes(object.id)) {
         animatePath(object, 1, 0, () => {
           canvas.remove(object);
         });
@@ -163,13 +195,35 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
     canvas.loadFromJSON(fabricJSON);
   };
 
-  const addObject = (newObject, nameOfTheAdder) => {
-    fabric.util.enlivenObjects([newObject], (objects) => {
-      objects.forEach((object) => {
-        canvas.add(object);
-        animatePath(object, 0, 1);
+  const addObjects = (objectsToAdd, nameOfTheAdder) => {
+    const idsOfObjectsCurrentlyPresent = canvas
+      .getObjects()
+      .map((object) => object.id);
+
+    fabric.util.enlivenObjects(objectsToAdd, (enlivenedObjectsToAdd) => {
+      console.log(enlivenedObjectsToAdd);
+
+      enlivenedObjectsToAdd.forEach((enlivenedObjectToAdd) => {
+        const objectAlreadyExist = idsOfObjectsCurrentlyPresent.includes(
+          enlivenedObjectToAdd.id
+        );
+        if (!objectAlreadyExist) {
+          canvas.add(enlivenedObjectToAdd);
+          animatePath(enlivenedObjectToAdd, 0, 1);
+        } else {
+          let objectToModify = canvas
+            .getObjects()
+            .find((object) => object.id === enlivenedObjectToAdd.id);
+          replaceObject(objectToModify, enlivenedObjectToAdd);
+        }
       });
     });
+  };
+
+  const replaceObject = (objectToBeReplaced, objectToReplaceWith) => {
+    canvas.remove(objectToBeReplaced);
+    canvas.add(objectToReplaceWith);
+    canvas.renderAll();
   };
 
   const animatePath = (pathObject, startValue, endValue, onComplete) => {
@@ -185,10 +239,35 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
     });
   };
 
+  const addKeyDownEventListeners = () => {
+    document.onkeydown = handleKeyDown;
+    return () => {
+      document.onkeydown = null;
+    };
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Backspace" || e.key === "Delete") {
+      deleteSelectedItems();
+    }
+  };
+
+  const deleteSelectedItems = () => {
+    const selectedObjects = canvas.getActiveObjects();
+    const ids = selectedObjects.map((selectedObject) => selectedObject.id);
+    canvas.getObjects().forEach((object) => {
+      if (ids.includes(object.id)) {
+        canvas.remove(object);
+      }
+    });
+    onObjectsRemove(ids);
+    canvas.discardActiveObject();
+  };
+
   return (
     <>
       <style>{style}</style>
-      <div className="canvas-box">
+      <div onKeyDown={handleKeyDown} className="canvas-box">
         <canvas id="c"></canvas>
       </div>
     </>
