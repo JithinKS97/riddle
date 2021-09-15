@@ -35,7 +35,7 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
   useEffect(() => {
     console.log(selectedColor);
     canvas.freeDrawingBrush.color = selectedColor;
-    changePropertyOfObjects("stroke", selectedColor);
+    changePropertyOfSelectedObjects("stroke", selectedColor);
     canvas.renderAll();
   }, [selectedColor]);
 
@@ -48,7 +48,7 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
 
   useEffect(() => {
     canvas.freeDrawingBrush.width = brushSize;
-    changePropertyOfObjects("strokeWidth", brushSize);
+    changePropertyOfSelectedObjects("strokeWidth", brushSize);
     canvas.renderAll();
   }, [brushSize]);
 
@@ -336,7 +336,7 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
     canvas.discardActiveObject();
   };
 
-  const changePropertyOfObjects = (property, value) => {
+  const changePropertyOfSelectedObjects = (property, value) => {
     const selectedObjects = canvas.getActiveObjects();
     if (selectedObjects.length === 0) {
       return;
