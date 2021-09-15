@@ -179,9 +179,15 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
     }
     canvas.getObjects().forEach((object) => {
       if (ids.includes(object.id)) {
-        animatePath(object, 1, 0, () => {
-          canvas.remove(object);
-        });
+        animateObject(
+          object,
+          1,
+          0,
+          () => {
+            canvas.remove(object);
+          },
+          "opacity"
+        );
         canvas.renderAll();
       }
     });
@@ -209,7 +215,7 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
         );
         if (!objectAlreadyExist) {
           canvas.add(enlivenedObjectToAdd);
-          animatePath(enlivenedObjectToAdd, 0, 1);
+          animateObject(enlivenedObjectToAdd, 0, 1, undefined, "opacity");
         } else {
           let objectToModify = canvas
             .getObjects()
@@ -221,21 +227,53 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
   };
 
   const replaceObject = (objectToBeReplaced, objectToReplaceWith) => {
-    canvas.remove(objectToBeReplaced);
-    canvas.add(objectToReplaceWith);
-    canvas.renderAll();
+    parametersToLook.forEach((parameter) => {
+      if (objectToBeReplaced[parameter] !== objectToReplaceWith[parameter]) {
+        if (parameter === "angle") {
+          // Todo - Animate rotate also
+          canvas.remove(objectToBeReplaced);
+          canvas.add(objectToReplaceWith);
+          canvas.renderAll();
+        } else {
+          animateObject(
+            objectToBeReplaced,
+            objectToBeReplaced[parameter],
+            objectToReplaceWith[parameter],
+            undefined,
+            parameter
+          );
+        }
+      }
+    });
   };
 
-  const animatePath = (pathObject, startValue, endValue, onComplete) => {
+  const parametersToLook = [
+    "top",
+    "left",
+    "angle",
+    "scaleX",
+    "scaleY",
+    "skewX",
+    "skewY",
+  ];
+
+  const animateObject = (
+    object,
+    startValue,
+    endValue,
+    onComplete,
+    parameter
+  ) => {
     fabric.util.animate({
       startValue,
       endValue,
       duration: 150,
       onChange: function (value) {
-        pathObject.opacity = value;
+        object[parameter] = value;
         canvas.renderAll();
       },
       onComplete,
+      easing: fabric.util.ease.easeInOutQuad,
     });
   };
 
