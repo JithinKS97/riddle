@@ -281,7 +281,7 @@ function Collaboration() {
       />
       <div className="canvas-outer">
         <MembersPopup
-          members={membersRef.current}
+          members={members}
           onClose={onMembersPopupCloseClick}
           show={showMembersPopup}
         />
