@@ -6,6 +6,8 @@ import { AppContext } from ".././context/App";
 
 let canvas, mousePressed;
 
+fabric.Object.prototype.originX = fabric.Object.prototype.originY = "center";
+
 const createCanvas = (window) => {
   const topBarClass = "css-198em1k";
   const canvasConfig = {
@@ -217,6 +219,9 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
           canvas.add(enlivenedObjectToAdd);
           animateObject(enlivenedObjectToAdd, 0, 1, undefined, "opacity");
         } else {
+          // This is required as if somebody else tries to move the object
+          // It has to be with respect to the canvas
+          canvas.discardActiveObject();
           let objectToModify = canvas
             .getObjects()
             .find((object) => object.id === enlivenedObjectToAdd.id);
@@ -229,22 +234,30 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
   const replaceObject = (objectToBeReplaced, objectToReplaceWith) => {
     parametersToLook.forEach((parameter) => {
       if (objectToBeReplaced[parameter] !== objectToReplaceWith[parameter]) {
+        canvas.deactivateA;
         if (parameter === "angle") {
           // Todo - Animate rotate also
-          canvas.remove(objectToBeReplaced);
-          canvas.add(objectToReplaceWith);
-          canvas.renderAll();
-        } else {
-          animateObject(
-            objectToBeReplaced,
+          const angleDifference = getAngleDifference(
             objectToBeReplaced[parameter],
-            objectToReplaceWith[parameter],
-            undefined,
-            parameter
+            objectToReplaceWith[parameter]
           );
+          objectToReplaceWith[parameter] =
+            objectToBeReplaced[parameter] + angleDifference;
         }
+        animateObject(
+          objectToBeReplaced,
+          objectToBeReplaced[parameter],
+          objectToReplaceWith[parameter],
+          undefined,
+          parameter
+        );
       }
     });
+  };
+
+  const getAngleDifference = (angle1, angle2) => {
+    const diff = ((angle2 - angle1 + 180) % 360) - 180;
+    return diff < -180 ? diff + 360 : diff;
   };
 
   const parametersToLook = [
@@ -272,7 +285,12 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
         object[parameter] = value;
         canvas.renderAll();
       },
-      onComplete,
+      onComplete: () => {
+        if (onComplete) {
+          onComplete();
+        }
+        object.setCoords();
+      },
       easing: fabric.util.ease.easeInOutQuad,
     });
   };
