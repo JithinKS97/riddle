@@ -156,6 +156,9 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
 
   const sendUpdatedObjectsToOthers = () => {
     const modifiedObjects = canvas.getActiveObject();
+    if (!modifiedObjects) {
+      return;
+    }
     if (!modifiedObjects._objects) {
       const objectJSON = modifiedObjects.toObject(["id"]);
       onAddObjects([objectJSON]);
