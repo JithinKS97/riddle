@@ -33,7 +33,9 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
   }, []);
 
   useEffect(() => {
+    console.log(selectedColor);
     canvas.freeDrawingBrush.color = selectedColor;
+    changePropertyOfSelectedObjects("stroke", selectedColor);
     canvas.renderAll();
   }, [selectedColor]);
 
@@ -46,6 +48,7 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
 
   useEffect(() => {
     canvas.freeDrawingBrush.width = brushSize;
+    changePropertyOfSelectedObjects("strokeWidth", brushSize);
     canvas.renderAll();
   }, [brushSize]);
 
@@ -141,22 +144,7 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
     });
 
     canvas.on("object:modified", () => {
-      const modifiedObjects = canvas.getActiveObject();
-      if (!modifiedObjects._objects) {
-        const objectJSON = modifiedObjects.toObject(["id"]);
-        onAddObjects([objectJSON]);
-      } else {
-        canvas.discardActiveObject();
-        const objectsJSON = modifiedObjects._objects.map((object) =>
-          object.toJSON(["id"])
-        );
-        // Todo - Restore state of rotation also
-        onAddObjects(objectsJSON);
-        let selection = new fabric.ActiveSelection(modifiedObjects._objects, {
-          canvas,
-        });
-        canvas.setActiveObject(selection);
-      }
+      sendUpdatedObjectsToOthers();
     });
 
     addKeyDownEventListeners();
@@ -164,6 +152,25 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
     return () => {
       canvas.__eventListeners = {};
     };
+  };
+
+  const sendUpdatedObjectsToOthers = () => {
+    const modifiedObjects = canvas.getActiveObject();
+    if (!modifiedObjects._objects) {
+      const objectJSON = modifiedObjects.toObject(["id"]);
+      onAddObjects([objectJSON]);
+    } else {
+      canvas.discardActiveObject();
+      const objectsJSON = modifiedObjects._objects.map((object) =>
+        object.toJSON(["id"])
+      );
+      // Todo - Restore state of rotation also
+      onAddObjects(objectsJSON);
+      let selection = new fabric.ActiveSelection(modifiedObjects._objects, {
+        canvas,
+      });
+      canvas.setActiveObject(selection);
+    }
   };
 
   useImperativeHandle(ref, () => {
@@ -204,13 +211,13 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
   };
 
   const addObjects = (objectsToAdd, nameOfTheAdder) => {
+    console.log(objectsToAdd);
+
     const idsOfObjectsCurrentlyPresent = canvas
       .getObjects()
       .map((object) => object.id);
 
     fabric.util.enlivenObjects(objectsToAdd, (enlivenedObjectsToAdd) => {
-      console.log(enlivenedObjectsToAdd);
-
       enlivenedObjectsToAdd.forEach((enlivenedObjectToAdd) => {
         const objectAlreadyExist = idsOfObjectsCurrentlyPresent.includes(
           enlivenedObjectToAdd.id
@@ -234,7 +241,13 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
   const replaceObject = (objectToBeReplaced, objectToReplaceWith) => {
     parametersToLook.forEach((parameter) => {
       if (objectToBeReplaced[parameter] !== objectToReplaceWith[parameter]) {
-        canvas.deactivateA;
+        if (parameter === "stroke" || parameter === "strokeWidth") {
+          canvas.remove(objectToBeReplaced);
+          canvas.add(objectToReplaceWith);
+          canvas.renderAll();
+          return;
+        }
+
         if (parameter === "angle") {
           // Todo - Animate rotate also
           const angleDifference = getAngleDifference(
@@ -244,6 +257,7 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
           objectToReplaceWith[parameter] =
             objectToBeReplaced[parameter] + angleDifference;
         }
+
         animateObject(
           objectToBeReplaced,
           objectToBeReplaced[parameter],
@@ -268,6 +282,8 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
     "scaleY",
     "skewX",
     "skewY",
+    "stroke",
+    "strokeWidth",
   ];
 
   const animateObject = (
@@ -318,6 +334,22 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
     });
     onObjectsRemove(ids);
     canvas.discardActiveObject();
+  };
+
+  const changePropertyOfSelectedObjects = (property, value) => {
+    const selectedObjects = canvas.getActiveObjects();
+    if (selectedObjects.length === 0) {
+      return;
+    }
+    const ids = selectedObjects.map((selectedObject) => selectedObject.id);
+    canvas.getObjects().forEach((object) => {
+      if (ids.includes(object.id)) {
+        object.set({
+          [property]: value,
+        });
+      }
+    });
+    sendUpdatedObjectsToOthers();
   };
 
   return (

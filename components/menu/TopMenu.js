@@ -96,7 +96,7 @@ const TopMenu = ({ onMembersIconClick, onShareIconClick }) => {
               width="100px"
               aria-label="slider-ex-1"
               defaultValue={50}
-              onChange={handleSliderChange}
+              onChangeEnd={handleSliderChange}
               min={10}
               max={150}
             >
@@ -139,10 +139,7 @@ const TopMenu = ({ onMembersIconClick, onShareIconClick }) => {
                 boxShadow="none"
                 marginTop="3"
               >
-                <TwitterPicker
-                  colors={colors}
-                  onChangeComplete={handleColorChange}
-                />
+                <TwitterPicker colors={colors} onChange={handleColorChange} />
               </MenuList>
             </Menu>
             <Button
