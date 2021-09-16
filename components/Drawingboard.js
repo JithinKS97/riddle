@@ -78,14 +78,16 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
   }, [selectedMode]);
 
   const disableSelectForObjects = () => {
+    canvas.selection = false;
     canvas.getObjects().forEach((object) => {
-      object.selectable = false;
+      object.set({ selectable: false });
     });
   };
 
   const enableSelectForObjects = () => {
+    canvas.selection = true;
     canvas.getObjects().forEach((object) => {
-      object.selectable = true;
+      object.set({ selectable: true });
     });
   };
 

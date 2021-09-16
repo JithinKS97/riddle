@@ -12,12 +12,12 @@ import {
   Box,
 } from "@chakra-ui/react";
 import { FaPencilAlt } from "react-icons/fa";
-import { BiEraser, BiShareAlt } from "react-icons/bi";
+import { BiShareAlt } from "react-icons/bi";
 import { FiMove } from "react-icons/fi";
 import { BsFillPeopleFill } from "react-icons/bs";
 import { PENCIL, ERASER, SELECT, PAN, NONE } from "../../constant/mode";
 import { AppContext } from ".././../context/App";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import React from "react";
 import { TwitterPicker } from "react-color";
 import { AiOutlineSelect } from "react-icons/ai";
@@ -46,12 +46,10 @@ const TopMenu = ({ onMembersIconClick, onShareIconClick }) => {
     setSelectedColor,
   } = context;
 
+  const [currentMode, setCurrentMode] = useState();
+
   const handlePencilClick = () => {
     changeToPencilMode(PENCIL);
-  };
-
-  const handleEraserClick = () => {
-    setSelectedMode(ERASER);
   };
 
   const handleSliderChange = (e) => {
@@ -76,6 +74,7 @@ const TopMenu = ({ onMembersIconClick, onShareIconClick }) => {
   };
 
   const changeToNoneMode = () => {
+    setCurrentMode(selectedMode);
     setSelectedMode(NONE);
   };
 
@@ -114,7 +113,7 @@ const TopMenu = ({ onMembersIconClick, onShareIconClick }) => {
               onOpen={changeToNoneMode}
               onClose={() => {
                 setTimeout(() => {
-                  changeToPencilMode();
+                  setSelectedMode(currentMode);
                 }, 10);
               }}
             >
