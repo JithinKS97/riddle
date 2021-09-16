@@ -29,6 +29,12 @@ function Collaboration() {
   const [name, setName] = useState("");
   const toast = useToast();
 
+  const isHostRef = useRef(isHost);
+
+  useEffect(() => {
+    isHostRef.current = isHost;
+  }, [isHost]);
+
   useEffect(() => {
     clientRef.current = client;
     if (!clientRef.current) {
@@ -106,9 +112,6 @@ function Collaboration() {
   };
 
   const handleMessage = (message) => {
-    const isHost =
-      clientRef.current.getPublicKey() === router.query.hostAddress;
-
     return messageApi.handleReception({
       message,
       client,
@@ -120,7 +123,7 @@ function Collaboration() {
       removeSubClientMember,
       makeTheMemberMainClient,
       notifyLeave,
-      isHost,
+      isHost: isHostRef.current,
       hostAddress,
       removeObjects: canvasRef.current.removeObjects,
     });
@@ -135,7 +138,7 @@ function Collaboration() {
   };
 
   const handleNameSubmit = () => {
-    if (!isHost) {
+    if (!isHostRef.current) {
       onNameSubmitInSubClient();
     } else {
       const updatedClientWithName = clientRef.current;
@@ -196,7 +199,7 @@ function Collaboration() {
     const nameOfTheAdder = membersApi.getName({
       id: fromAddress,
       members: membersRef.current,
-      isHost,
+      isHost: isHostRef.current,
       hostAddress,
     });
     canvasRef.current.addObjects(objects, nameOfTheAdder);
