@@ -149,23 +149,11 @@ const removeObjectsFromOthersCanvas = ({ client, ids, members }) => {
   sendCanvasUpdate({ client, members, message });
 };
 
-const sendCanvasUpdate = ({
-  client,
-  members,
-  message,
-  hostAddress,
-  isHost,
-}) => {
-  if (!isHost) {
-    const filterOutThisClientAndMainClient = (member) =>
-      member.identifier !== client.publicKey &&
-      member.identifier !== hostAddress;
+const sendCanvasUpdate = ({ client, members, message }) => {
+  const filterOutThisClient = (member) =>
+    member.identifier !== client.getPublicKey();
 
-    members = members.filter(filterOutThisClientAndMainClient);
-  } else {
-    const filterOutMainClient = (member) => member.identifier !== hostAddress;
-    members = members.filter(filterOutMainClient);
-  }
+  members = members.filter(filterOutThisClient);
 
   members = members.map((member) => member.identifier);
 
