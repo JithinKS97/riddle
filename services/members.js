@@ -14,23 +14,16 @@ const makeTheMemberMainClient = ({
   members,
   setMembers,
   memberToMakeMainClient,
+  hostAddress,
+  changeRouteShallow,
+  fillShareLink,
 }) => {
-  const filterOutMainClient = (member) => member.identifier !== "";
+  const filterOutMainClient = (member) => member.identifier !== hostAddress;
 
-  const makeTheIdOfNewMainClientAsEmpty = (member) => {
-    if (member.identifier === memberToMakeMainClient) {
-      return {
-        ...member,
-        identifier: "",
-      };
-    } else {
-      return member;
-    }
-  };
+  const updatedMembers = members.filter(filterOutMainClient);
 
-  const updatedMembers = members
-    .filter(filterOutMainClient)
-    .map(makeTheIdOfNewMainClientAsEmpty);
+  changeRouteShallow(memberToMakeMainClient);
+  fillShareLink(memberToMakeMainClient);
 
   setMembers(updatedMembers);
 };
@@ -44,60 +37,31 @@ const removeSubClientMember = ({ members, setMembers, memberToRemove }) => {
 };
 
 const makeThisMainClient = ({
-  client,
   members,
   setMembers,
-  setIsMainClient,
-  setClient,
-  setLoading,
-  createClient,
-  handleSharePopupClose,
+  setIsHost,
+  hostAddress,
+  fillShareLink,
+  client,
+  changeRouteShallow,
 }) => {
-  const myIndentifier = client.identifier;
+  const publicKey = client.getPublicKey();
 
-  const filterOutCurrentMainClient = (member) => member.identifier !== "";
-  const makeTheIdentifierOfThisClientAsEmptyString = (member) => {
-    if (member.identifier === myIndentifier) {
-      return {
-        ...member,
-        identifier: "",
-      };
-    } else {
-      return member;
-    }
-  };
+  const filterOutCurrentMainClient = (member) =>
+    member.identifier !== hostAddress;
 
-  const updatedMembers = members
-    .filter(filterOutCurrentMainClient)
-    .map(makeTheIdentifierOfThisClientAsEmptyString);
+  const updatedMembers = members.filter(filterOutCurrentMainClient);
 
   setMembers(updatedMembers);
-  setIsMainClient(true);
+  setIsHost(true);
 
-  const seed = client.getSeed();
-  const updatedClient = createClient({ id: seed, isMainClient: true });
-
-  setLoading(true);
-  setClient(updatedClient);
-
-  updatedClient.onConnect(() => {
-    handleSharePopupClose(false);
-    setLoading(false);
-  });
+  changeRouteShallow(publicKey);
+  fillShareLink(publicKey);
 };
 
 const getName = ({ id, members }) => {
-  const words = id.split(".");
-  const firstWord = words[0];
-  const isMainClient = words.length === 1;
-
-  if (isMainClient) {
-    const member = members.find((member) => member.identifier === "");
-    return member.name;
-  } else {
-    const member = members.find((member) => member.identifier === firstWord);
-    return member.name;
-  }
+  const member = members.find((member) => member.identifier === id);
+  return member.name;
 };
 
 export default {

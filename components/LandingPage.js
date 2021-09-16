@@ -8,20 +8,20 @@ import RoomJoinPopup from "./popups/RoomJoinPopup";
 
 function LandingPage() {
   const context = useContext(AppContext);
-  const { setClient, setIsMainClient } = context;
+  const { setClient, setIsHost } = context;
   const router = useRouter();
   const [showRoomJoinPopup, setShowRoomJoinPopup] = useState(false);
 
   const handleCollaborationClick = () => {
-    setIsMainClient(true);
-    const client = nknApi.createClient({ isMainClient: true });
-    const seed = client.getSeed();
+    setIsHost(true);
+    const client = nknApi.createClient();
+    const hostAddress = client.getPublicKey();
     setClient(client);
-    goToCollabPage(seed);
+    goToCollabPage(hostAddress);
   };
 
-  const goToCollabPage = (id) => {
-    router.push(`drawingboard/${id}`);
+  const goToCollabPage = (hostAddress) => {
+    router.push(`drawingboard/${hostAddress}`);
   };
 
   const [show, setShow] = useState(false);

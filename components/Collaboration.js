@@ -12,17 +12,11 @@ import SharePopup from "./popups/SharePopup";
 import { useToast } from "@chakra-ui/react";
 import MembersPopup from "./popups/MembersPopup";
 import TopMenu from "./menu/TopMenu";
+import { Button, Box } from "@chakra-ui/react";
 
 function Collaboration() {
   const context = useContext(AppContext);
-  const {
-    client,
-    setClient,
-    members,
-    setMembers,
-    isMainClient,
-    setIsMainClient,
-  } = context;
+  const { client, setClient, members, setMembers, isHost, setIsHost } = context;
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const canvasRef = useRef(null);
@@ -34,66 +28,47 @@ function Collaboration() {
   const [shareLink, setShareLink] = useState("");
   const [name, setName] = useState("");
   const toast = useToast();
+  const isHostRef = useRef(isHost);
+  const { hostAddress } = router.query;
+
+  /////////////////////////////////////////////////
+  ///// Refistering events related to nkn client///
+  ////////////////////////////////////////////////
 
   useEffect(() => {
     clientRef.current = client;
-    if (!clientRef.current) {
+    if (!client) {
       return;
     }
-    clientRef.current.onMessage(handleMessage);
-    return () => clientRef.current.onMessage(null);
+    client.onMessage(handleMessage);
+    return () => client.onMessage(null);
   }, [client]);
+
+  const handleMessage = (message) => {
+    return messageApi.handleReception({
+      message,
+      client,
+      getCanvasAsJSON,
+      addMember,
+      makeThisMainClient,
+      addObjectsToCanvas,
+      notifyJoin,
+      removeSubClientMember,
+      makeTheMemberMainClient,
+      notifyLeave,
+      isHost: isHostRef.current,
+      hostAddress,
+      removeObjects: canvasRef.current.removeObjects,
+    });
+  };
 
   useEffect(() => {
     return registerLeave();
   }, [client]);
 
-  useEffect(() => {
-    membersRef.current = members;
-  }, [members]);
-
-  // Getting the current canvas state
-  const { id } = router.query;
-  useEffect(() => {
-    if (!id) {
-      return;
-    }
-    fillShareLink();
-    if (isMainClient) {
-      client.onConnect(() => {
-        setShowSharePopup(true);
-        setLoading(false);
-      });
-    }
-  }, [id]);
-
-  const fillShareLink = () => {
-    const roomId = id;
-    setShareLink(roomId);
-  };
-
-  const onNameSubmitInSubClient = () => {
-    setLoading(true);
-    const newClient = nknApi.createClient({ id, isMainClient: false });
-    newClient.name = name;
-    setClient(newClient);
-    newClient.onConnect(getCurrentState(newClient));
-  };
-
-  const getCurrentState = () => async () => {
-    const { fabricJSON, currentMembers } = await messageApi.join({
-      client: clientRef.current,
-      name,
-      goBack,
-    });
-    setCanvas(fabricJSON);
-    setMembers(currentMembers);
-    setLoading(false);
-  };
-
   const registerLeave = () => {
     window.onbeforeunload = () => {
-      if (!isMainClient) {
+      if (!isHostRef.current) {
         messageApi.sendLeaveMessageForSubClient({
           client: clientRef.current,
           members: membersRef.current,
@@ -109,20 +84,54 @@ function Collaboration() {
     return () => (window.onbeforeunload = null);
   };
 
-  const handleMessage = (message) => {
-    return messageApi.handleReception({
-      message,
-      client,
-      getCanvasAsJSON,
-      addMember,
-      makeThisMainClient,
-      addObjectsToCanvas,
-      notifyJoin,
-      removeSubClientMember,
-      makeTheMemberMainClient,
-      notifyLeave,
-      removeObjects: canvasRef.current.removeObjects,
+  //////////////////////////////////////////////
+  //////////// Updating references ////////////
+  ////////////////////////////////////////////
+
+  useEffect(() => {
+    isHostRef.current = isHost;
+  }, [isHost]);
+
+  useEffect(() => {
+    membersRef.current = members;
+  }, [members]);
+
+  useEffect(() => {
+    if (!hostAddress) {
+      return;
+    }
+    fillShareLink();
+    if (isHostRef.current) {
+      client.onConnect(() => {
+        setShowSharePopup(true);
+        setLoading(false);
+      });
+    }
+  }, [hostAddress]);
+
+  const fillShareLink = () => {
+    const id = hostAddress;
+    setShareLink(id);
+  };
+
+  const onNameSubmitInSubClient = () => {
+    setLoading(true);
+    const newClient = nknApi.createClient();
+    newClient.name = name;
+    setClient(newClient);
+    newClient.onConnect(getCurrentState(newClient));
+  };
+
+  const getCurrentState = () => async () => {
+    const { fabricJSON, currentMembers } = await messageApi.join({
+      client: clientRef.current,
+      name,
+      goBack,
+      hostAddress,
     });
+    setCanvas(fabricJSON);
+    setMembers(currentMembers);
+    setLoading(false);
   };
 
   const handleNamePopupClose = () => {
@@ -134,13 +143,13 @@ function Collaboration() {
   };
 
   const handleNameSubmit = () => {
-    if (!isMainClient) {
+    if (!isHostRef.current) {
       onNameSubmitInSubClient();
     } else {
       const updatedClientWithName = clientRef.current;
       updatedClientWithName.name = name;
       setClient(updatedClientWithName);
-      setMembers([{ name, identifier: "" }]);
+      setMembers([{ name, identifier: hostAddress }]);
     }
     handleNamePopupClose();
   };
@@ -179,6 +188,7 @@ function Collaboration() {
       client: clientRef.current,
       objects,
       members: membersRef.current,
+      hostAddress,
     });
   };
 
@@ -194,6 +204,8 @@ function Collaboration() {
     const nameOfTheAdder = membersApi.getName({
       id: fromAddress,
       members: membersRef.current,
+      isHost: isHostRef.current,
+      hostAddress,
     });
     canvasRef.current.addObjects(objects, nameOfTheAdder);
   };
@@ -224,6 +236,9 @@ function Collaboration() {
       members: membersRef.current,
       setMembers,
       memberToMakeMainClient,
+      hostAddress,
+      changeRouteShallow,
+      fillShareLink,
     });
   };
 
@@ -232,11 +247,14 @@ function Collaboration() {
       members: membersRef.current,
       setMembers,
       client: clientRef.current,
-      setIsMainClient,
       setClient,
       setLoading,
       createClient: nknApi.createClient,
       handleSharePopupClose,
+      hostAddress,
+      setIsHost,
+      changeRouteShallow,
+      fillShareLink,
     });
   };
 
@@ -275,6 +293,11 @@ function Collaboration() {
     if (canvasRef.current) {
       canvasRef.current.resetZoomAndPan();
     }
+  };
+
+  const changeRouteShallow = (hostAddress) => {
+    console.log("Shallow route");
+    router.push(`/drawingboard/${hostAddress}`, undefined, { shallow: true });
   };
 
   return (

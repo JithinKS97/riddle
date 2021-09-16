@@ -13,22 +13,24 @@ import {
  * Functions related to joining and leaving
  */
 
-const join = async ({ client, goBack }) => {
+const join = async ({ client, goBack, hostAddress }) => {
   try {
     // public key is the address of the main client
-    const mainClientAddress = client.getPublicKey();
+    const myAddress = client.getPublicKey();
+
     const content = {
-      identifier: client.identifier,
+      identifier: myAddress,
       name: client.name,
     };
 
     const message = generateMessage(JOIN, content);
 
     let res = await sendMessage({
-      address: mainClientAddress,
+      address: hostAddress,
       message,
       client,
     });
+
     console.log("Received join acknowledge message and canvas data");
 
     res = JSON.parse(res);
@@ -48,20 +50,18 @@ const sendLeaveMessageForSubClient = ({ client, members }) => {
   const publicKey = client.getPublicKey();
 
   const content = {
-    identifier: client.identifier,
+    identifier: publicKey,
   };
 
-  const filterOutMainClientAndTheSender = (memberIdentifier) =>
-    memberIdentifier !== client.identifier && memberIdentifier !== "";
+  console.log(content);
+
+  const filterOutThisClient = (memberIdentifier) =>
+    memberIdentifier !== publicKey;
 
   // To everyone including the main client,
   const recipients = members
     .map((member) => member.identifier)
-    .filter(filterOutMainClientAndTheSender)
-    .map((id) => `${id}.${publicKey}`);
-
-  // Adding the main client address
-  recipients.push(publicKey);
+    .filter(filterOutThisClient);
 
   const message = generateMessage(REMOVE_MEMBER, content);
 
@@ -73,12 +73,12 @@ const makeSubClientMainClient = ({ client, members }) => {
     return;
   }
 
-  const filterOutMainClient = (member) => member.identifier !== "";
+  const publicKey = client.getPublicKey();
+
+  const filterOutMainClient = (member) => member.identifier !== publicKey;
 
   const memberToMakeMainClient =
     members.filter(filterOutMainClient)[0].identifier;
-
-  const publicKey = client.getPublicKey();
 
   const identifiersOfMembersToBeUpdated = members
     .filter(filterOutMainClient)
@@ -93,7 +93,7 @@ const makeSubClientMainClient = ({ client, members }) => {
 
   const message = generateMessage(MAKE_SUBCLIENT_MAINCLIENT);
 
-  client.send(`${memberToMakeMainClient}.${publicKey}`, message);
+  client.send(memberToMakeMainClient, message);
 };
 
 const makeTheMemberMainClient = ({
@@ -101,25 +101,25 @@ const makeTheMemberMainClient = ({
   client,
   identifiersOfMembersToBeUpdated,
 }) => {
-  const publicKey = client.getPublicKey();
-
   const content = {
     identifier: memberToMakeMainClient,
   };
 
-  const recipients = identifiersOfMembersToBeUpdated.map(
-    (id) => `${id}.${publicKey}`
-  );
-
   const message = generateMessage(MAKE_THE_MEMBER_MAINCLIENT, content);
-  sendMessage({ address: recipients, message, client });
+  sendMessage({ address: identifiersOfMembersToBeUpdated, message, client });
 };
 
 /**
  * Canvas functions
  */
 
-const addObjectsToOthersCanvas = ({ client, objects, members }) => {
+const addObjectsToOthersCanvas = ({
+  client,
+  objects,
+  members,
+  hostAddress,
+  isHost,
+}) => {
   if (!client) {
     return;
   }
@@ -129,7 +129,7 @@ const addObjectsToOthersCanvas = ({ client, objects, members }) => {
   };
 
   const message = generateMessage(ADD_OBJECTS, content);
-  sendCanvasUpdate({ client, members, message });
+  sendCanvasUpdate({ client, members, message, hostAddress, isHost });
 };
 
 const removeObjectsFromOthersCanvas = ({ client, ids, members }) => {
@@ -142,22 +142,12 @@ const removeObjectsFromOthersCanvas = ({ client, ids, members }) => {
 };
 
 const sendCanvasUpdate = ({ client, members, message }) => {
-  const publicKey = client.getPublicKey();
+  const filterOutThisClient = (member) =>
+    member.identifier !== client.getPublicKey();
 
-  const filterOutThisClientAndMainClient = (member) =>
-    member.identifier !== client.identifier && member.identifier !== "";
+  members = members.filter(filterOutThisClient);
 
-  if (!isMain(client)) {
-    members = members
-      .filter(filterOutThisClientAndMainClient)
-      .map((member) => `${member.identifier}.${publicKey}`);
-
-    // Add main client address
-    members.push(publicKey);
-  } else {
-    members = members.filter((member) => member.identifier !== "");
-    members = members.map((member) => `${member.identifier}.${publicKey}`);
-  }
+  members = members.map((member) => member.identifier);
 
   if (members.length === 0) {
     return;
@@ -171,19 +161,19 @@ const sendCanvasUpdate = ({ client, members, message }) => {
  */
 
 function handleReception(props) {
-  const { client, message } = props;
+  const { client, message, isHost } = props;
 
   const payload = JSON.parse(message.payload);
   const src = message.src;
 
-  if (isMain(client)) {
-    return handleMessageForMain({ ...props, payload, src });
+  if (isHost) {
+    return handleMessageForHost({ ...props, payload, src });
   } else {
     return handleMessageForSub({ ...props, payload, src });
   }
 }
 
-function handleMessageForMain(props) {
+function handleMessageForHost(props) {
   const {
     payload,
     getCanvasAsJSON,
@@ -195,6 +185,7 @@ function handleMessageForMain(props) {
     notifyLeave,
     removeObjects,
     src,
+    hostAddress,
   } = props;
   const type = payload.type;
 
@@ -209,8 +200,8 @@ function handleMessageForMain(props) {
       // Add the member to the list of members
       const currentMembers = addMember({ identifier, name });
 
-      // When the main client receive JOIN request, it should send
-      // back the list of members already joined and the current state of the canvs
+      // // When the main client receive JOIN request, it should send
+      // // back the list of members already joined and the current state of the canvs
       const content = {
         fabricJSON: getCanvasAsJSON(),
         currentMembers,
@@ -219,9 +210,9 @@ function handleMessageForMain(props) {
       const message = generateMessage(JOIN_ACKNOWLEDGE, content);
 
       const filterOutMainClientAndTheSender = (memberIdentifier) =>
-        memberIdentifier !== identifier && memberIdentifier !== "";
+        memberIdentifier !== identifier && memberIdentifier !== hostAddress;
 
-      // These are the current members who should be notified of the new member
+      // // These are the current members who should be notified of the new member
       const membersToNotify = currentMembers
         .map((member) => member.identifier)
         .filter(filterOutMainClientAndTheSender);
@@ -263,6 +254,7 @@ function handleMessageForSub(props) {
     notifyLeave,
     removeObjects,
     src,
+    hostAddress,
   } = props;
 
   const type = payload.type;
@@ -276,17 +268,18 @@ function handleMessageForSub(props) {
       break;
     case REMOVE_MEMBER:
       // The member has to be removed from the members list
+      console.log(payload);
       const memberToRemove = payload.content.identifier;
       notifyLeave(memberToRemove);
       removeSubClientMember(memberToRemove);
       break;
     case MAKE_SUBCLIENT_MAINCLIENT:
-      notifyLeave("");
+      notifyLeave(hostAddress);
       makeThisMainClient();
       break;
     case MAKE_THE_MEMBER_MAINCLIENT:
       const memberToMakeMainClient = payload.content.identifier;
-      notifyLeave("");
+      notifyLeave(hostAddress);
       makeTheMemberMainClient(memberToMakeMainClient);
       break;
     case ADD_OBJECTS:
@@ -309,11 +302,8 @@ const sentMemberUpdatesToAll = ({
     newMember,
     newMemberName,
   };
-  const publicKey = client.getPublicKey();
-  membersToNotify = membersToNotify.map((member) => `${member}.${publicKey}`);
 
   const message = generateMessage(ADD_MEMBER, content);
-
   sendMessage({ address: membersToNotify, message, client });
 };
 

@@ -1,12 +1,7 @@
 import nkn from "nkn-sdk";
-import { v4 as uuidv4 } from "uuid";
 
-export const createClient = ({ id: seed, isMainClient } = {}) => {
-  const client = new nkn.Client({
-    seed,
-    identifier: !isMainClient ? uuidv4() : undefined,
-  });
-  console.log(client);
+export const createClient = () => {
+  const client = new nkn.Client();
   return client;
 };
 
