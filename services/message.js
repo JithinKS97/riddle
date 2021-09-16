@@ -73,12 +73,12 @@ const makeSubClientMainClient = ({ client, members }) => {
     return;
   }
 
-  const filterOutMainClient = (member) => member.identifier !== "";
+  const publicKey = client.getPublicKey();
+
+  const filterOutMainClient = (member) => member.identifier !== publicKey;
 
   const memberToMakeMainClient =
     members.filter(filterOutMainClient)[0].identifier;
-
-  const publicKey = client.getPublicKey();
 
   const identifiersOfMembersToBeUpdated = members
     .filter(filterOutMainClient)
@@ -93,7 +93,7 @@ const makeSubClientMainClient = ({ client, members }) => {
 
   const message = generateMessage(MAKE_SUBCLIENT_MAINCLIENT);
 
-  client.send(`${memberToMakeMainClient}.${publicKey}`, message);
+  client.send(memberToMakeMainClient, message);
 };
 
 const makeTheMemberMainClient = ({
@@ -101,18 +101,12 @@ const makeTheMemberMainClient = ({
   client,
   identifiersOfMembersToBeUpdated,
 }) => {
-  const publicKey = client.getPublicKey();
-
   const content = {
     identifier: memberToMakeMainClient,
   };
 
-  const recipients = identifiersOfMembersToBeUpdated.map(
-    (id) => `${id}.${publicKey}`
-  );
-
   const message = generateMessage(MAKE_THE_MEMBER_MAINCLIENT, content);
-  sendMessage({ address: recipients, message, client });
+  sendMessage({ address: identifiersOfMembersToBeUpdated, message, client });
 };
 
 /**
@@ -260,6 +254,7 @@ function handleMessageForSub(props) {
     notifyLeave,
     removeObjects,
     src,
+    hostAddress,
   } = props;
 
   const type = payload.type;
@@ -279,12 +274,12 @@ function handleMessageForSub(props) {
       removeSubClientMember(memberToRemove);
       break;
     case MAKE_SUBCLIENT_MAINCLIENT:
-      notifyLeave("");
+      notifyLeave(hostAddress);
       makeThisMainClient();
       break;
     case MAKE_THE_MEMBER_MAINCLIENT:
       const memberToMakeMainClient = payload.content.identifier;
-      notifyLeave("");
+      notifyLeave(hostAddress);
       makeTheMemberMainClient(memberToMakeMainClient);
       break;
     case ADD_OBJECTS:

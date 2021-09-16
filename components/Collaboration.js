@@ -16,16 +16,7 @@ import { Button } from "@chakra-ui/react";
 
 function Collaboration() {
   const context = useContext(AppContext);
-  const {
-    client,
-    setClient,
-    members,
-    setMembers,
-    isMainClient,
-    setIsMainClient,
-    isHost,
-    setIsHost,
-  } = context;
+  const { client, setClient, members, setMembers, isHost, setIsHost } = context;
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const canvasRef = useRef(null);
@@ -127,6 +118,7 @@ function Collaboration() {
       makeTheMemberMainClient,
       notifyLeave,
       isHost,
+      hostAddress,
       removeObjects: canvasRef.current.removeObjects,
     });
   };
@@ -233,6 +225,9 @@ function Collaboration() {
       members: membersRef.current,
       setMembers,
       memberToMakeMainClient,
+      hostAddress,
+      changeRouteShallow,
+      fillShareLink,
     });
   };
 
@@ -241,11 +236,14 @@ function Collaboration() {
       members: membersRef.current,
       setMembers,
       client: clientRef.current,
-      setIsMainClient,
       setClient,
       setLoading,
       createClient: nknApi.createClient,
       handleSharePopupClose,
+      hostAddress,
+      setIsHost,
+      changeRouteShallow,
+      fillShareLink,
     });
   };
 
@@ -284,6 +282,11 @@ function Collaboration() {
     if (canvasRef.current) {
       canvasRef.current.resetZoomAndPan();
     }
+  };
+
+  const changeRouteShallow = (hostAddress) => {
+    console.log("Shallow route");
+    router.push(`/drawingboard/${hostAddress}`, undefined, { shallow: true });
   };
 
   return (
