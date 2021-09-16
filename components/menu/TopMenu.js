@@ -20,7 +20,7 @@ import { AppContext } from ".././../context/App";
 import { useContext, useState } from "react";
 import React from "react";
 import { TwitterPicker } from "react-color";
-import { AiOutlineSelect } from "react-icons/ai";
+import { AiOutlineSelect, AiOutlineHome } from "react-icons/ai";
 
 const colors = [
   "#000000",
@@ -35,7 +35,7 @@ const colors = [
   "#9900EF",
 ];
 
-const TopMenu = ({ onMembersIconClick, onShareIconClick }) => {
+const TopMenu = ({ onMembersIconClick, onShareIconClick, resetZoomAndPan }) => {
   const context = useContext(AppContext);
 
   const {
@@ -76,6 +76,10 @@ const TopMenu = ({ onMembersIconClick, onShareIconClick }) => {
   const changeToNoneMode = () => {
     setCurrentMode(selectedMode);
     setSelectedMode(NONE);
+  };
+
+  const resetCanvasZoomAndPan = () => {
+    resetZoomAndPan();
   };
 
   return (
@@ -154,6 +158,13 @@ const TopMenu = ({ onMembersIconClick, onShareIconClick }) => {
               onClick={changeToPanMode}
             >
               <FiMove size="20px" />
+            </Button>
+            <Button
+              variant="menuButton"
+              marginLeft="4"
+              onClick={resetCanvasZoomAndPan}
+            >
+              <AiOutlineHome color="black" size="20px" />
             </Button>
           </Flex>
           <HStack position="relative" right="0">

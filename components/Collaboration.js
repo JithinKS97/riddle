@@ -271,6 +271,12 @@ function Collaboration() {
     router.push(`/`);
   };
 
+  const resetCanvasZoomAndPan = () => {
+    if (canvasRef.current) {
+      canvasRef.current.resetZoomAndPan();
+    }
+  };
+
   return (
     <>
       <style>{style({ loading })}</style>
@@ -278,6 +284,7 @@ function Collaboration() {
       <TopMenu
         onShareIconClick={onShareIconClick}
         onMembersIconClick={onMembersIconClick}
+        resetZoomAndPan={resetCanvasZoomAndPan}
       />
       <div className="canvas-outer">
         <MembersPopup

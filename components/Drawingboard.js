@@ -178,12 +178,18 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
     }
   };
 
+  const resetZoomAndPan = () => {
+    canvas.setZoom(1);
+    canvas.absolutePan({ x: 0, y: 0 });
+  };
+
   useImperativeHandle(ref, () => {
     return {
       getCanvasAsJSON,
       loadFromJSON,
       addObjects,
       removeObjects,
+      resetZoomAndPan,
     };
   });
 
