@@ -12,7 +12,7 @@ import SharePopup from "./popups/SharePopup";
 import { useToast } from "@chakra-ui/react";
 import MembersPopup from "./popups/MembersPopup";
 import TopMenu from "./menu/TopMenu";
-import { Button } from "@chakra-ui/react";
+import { Button, Box } from "@chakra-ui/react";
 
 function Collaboration() {
   const context = useContext(AppContext);
@@ -106,6 +106,9 @@ function Collaboration() {
   };
 
   const handleMessage = (message) => {
+    const isHost =
+      clientRef.current.getPublicKey() === router.query.hostAddress;
+
     return messageApi.handleReception({
       message,
       client,
@@ -294,23 +297,7 @@ function Collaboration() {
       <style>{style({ loading })}</style>
       {loading ? <Loading /> : null}
       <div>{JSON.stringify(members)}</div>
-      <Button
-        onClick={() => {
-          if (!isHost) {
-            messageApi.sendLeaveMessageForSubClient({
-              client: clientRef.current,
-              members: membersRef.current,
-            });
-          } else {
-            messageApi.makeSubClientMainClient({
-              client: clientRef.current,
-              members: membersRef.current,
-            });
-          }
-        }}
-      >
-        Leave
-      </Button>
+      <Box>{isHost ? "Iam the host" : null}</Box>
       <TopMenu
         onShareIconClick={onShareIconClick}
         onMembersIconClick={onMembersIconClick}
