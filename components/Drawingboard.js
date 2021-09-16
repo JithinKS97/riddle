@@ -166,6 +166,7 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
     addKeyDownEventListeners();
 
     return () => {
+      document.onkeydown = null;
       canvas.__eventListeners = {};
     };
   };
@@ -343,9 +344,6 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
 
   const addKeyDownEventListeners = () => {
     document.onkeydown = handleKeyDown;
-    return () => {
-      document.onkeydown = null;
-    };
   };
 
   const handleKeyDown = (e) => {
