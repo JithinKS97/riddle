@@ -28,39 +28,80 @@ function Collaboration() {
   const [shareLink, setShareLink] = useState("");
   const [name, setName] = useState("");
   const toast = useToast();
-
   const isHostRef = useRef(isHost);
+  const { hostAddress } = router.query;
+
+  /////////////////////////////////////////////////
+  ///// Refistering events related to nkn client///
+  ////////////////////////////////////////////////
+
+  useEffect(() => {
+    clientRef.current = client;
+    if (!client) {
+      return;
+    }
+    client.onMessage(handleMessage);
+    return () => client.onMessage(null);
+  }, [client]);
+
+  const handleMessage = (message) => {
+    return messageApi.handleReception({
+      message,
+      client,
+      getCanvasAsJSON,
+      addMember,
+      makeThisMainClient,
+      addObjectsToCanvas,
+      notifyJoin,
+      removeSubClientMember,
+      makeTheMemberMainClient,
+      notifyLeave,
+      isHost: isHostRef.current,
+      hostAddress,
+      removeObjects: canvasRef.current.removeObjects,
+    });
+  };
+
+  useEffect(() => {
+    return registerLeave();
+  }, [client]);
+
+  const registerLeave = () => {
+    window.onbeforeunload = () => {
+      if (!isHostRef.current) {
+        messageApi.sendLeaveMessageForSubClient({
+          client: clientRef.current,
+          members: membersRef.current,
+        });
+      } else {
+        messageApi.makeSubClientMainClient({
+          client: clientRef.current,
+          members: membersRef.current,
+        });
+      }
+      return null;
+    };
+    return () => (window.onbeforeunload = null);
+  };
+
+  //////////////////////////////////////////////
+  //////////// Updating references ////////////
+  ////////////////////////////////////////////
 
   useEffect(() => {
     isHostRef.current = isHost;
   }, [isHost]);
 
   useEffect(() => {
-    clientRef.current = client;
-    if (!clientRef.current) {
-      return;
-    }
-    clientRef.current.onMessage(handleMessage);
-    return () => clientRef.current.onMessage(null);
-  }, [client]);
-
-  useEffect(() => {
-    return registerLeave();
-  }, [client]);
-
-  useEffect(() => {
     membersRef.current = members;
   }, [members]);
-
-  // Getting the current canvas state
-  const { hostAddress } = router.query;
 
   useEffect(() => {
     if (!hostAddress) {
       return;
     }
     fillShareLink();
-    if (isHost) {
+    if (isHostRef.current) {
       client.onConnect(() => {
         setShowSharePopup(true);
         setLoading(false);
@@ -91,42 +132,6 @@ function Collaboration() {
     setCanvas(fabricJSON);
     setMembers(currentMembers);
     setLoading(false);
-  };
-
-  const registerLeave = () => {
-    window.onbeforeunload = () => {
-      if (!isHost) {
-        messageApi.sendLeaveMessageForSubClient({
-          client: clientRef.current,
-          members: membersRef.current,
-        });
-      } else {
-        messageApi.makeSubClientMainClient({
-          client: clientRef.current,
-          members: membersRef.current,
-        });
-      }
-      return null;
-    };
-    return () => (window.onbeforeunload = null);
-  };
-
-  const handleMessage = (message) => {
-    return messageApi.handleReception({
-      message,
-      client,
-      getCanvasAsJSON,
-      addMember,
-      makeThisMainClient,
-      addObjectsToCanvas,
-      notifyJoin,
-      removeSubClientMember,
-      makeTheMemberMainClient,
-      notifyLeave,
-      isHost: isHostRef.current,
-      hostAddress,
-      removeObjects: canvasRef.current.removeObjects,
-    });
   };
 
   const handleNamePopupClose = () => {
@@ -299,8 +304,6 @@ function Collaboration() {
     <>
       <style>{style({ loading })}</style>
       {loading ? <Loading /> : null}
-      <div>{JSON.stringify(members)}</div>
-      <Box>{isHost ? "Iam the host" : null}</Box>
       <TopMenu
         onShareIconClick={onShareIconClick}
         onMembersIconClick={onMembersIconClick}
