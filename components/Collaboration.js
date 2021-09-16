@@ -12,6 +12,7 @@ import SharePopup from "./popups/SharePopup";
 import { useToast } from "@chakra-ui/react";
 import MembersPopup from "./popups/MembersPopup";
 import TopMenu from "./menu/TopMenu";
+import { Button } from "@chakra-ui/react";
 
 function Collaboration() {
   const context = useContext(AppContext);
@@ -97,7 +98,7 @@ function Collaboration() {
 
   const registerLeave = () => {
     window.onbeforeunload = () => {
-      if (!isMainClient) {
+      if (!isHost) {
         messageApi.sendLeaveMessageForSubClient({
           client: clientRef.current,
           members: membersRef.current,
@@ -290,6 +291,23 @@ function Collaboration() {
       <style>{style({ loading })}</style>
       {loading ? <Loading /> : null}
       <div>{JSON.stringify(members)}</div>
+      <Button
+        onClick={() => {
+          if (!isHost) {
+            messageApi.sendLeaveMessageForSubClient({
+              client: clientRef.current,
+              members: membersRef.current,
+            });
+          } else {
+            messageApi.makeSubClientMainClient({
+              client: clientRef.current,
+              members: membersRef.current,
+            });
+          }
+        }}
+      >
+        Leave
+      </Button>
       <TopMenu
         onShareIconClick={onShareIconClick}
         onMembersIconClick={onMembersIconClick}

@@ -50,20 +50,18 @@ const sendLeaveMessageForSubClient = ({ client, members }) => {
   const publicKey = client.getPublicKey();
 
   const content = {
-    identifier: client.identifier,
+    identifier: publicKey,
   };
 
-  const filterOutMainClientAndTheSender = (memberIdentifier) =>
-    memberIdentifier !== client.identifier && memberIdentifier !== "";
+  console.log(content);
+
+  const filterOutThisClient = (memberIdentifier) =>
+    memberIdentifier !== publicKey;
 
   // To everyone including the main client,
   const recipients = members
     .map((member) => member.identifier)
-    .filter(filterOutMainClientAndTheSender)
-    .map((id) => `${id}.${publicKey}`);
-
-  // Adding the main client address
-  recipients.push(publicKey);
+    .filter(filterOutThisClient);
 
   const message = generateMessage(REMOVE_MEMBER, content);
 
@@ -225,13 +223,13 @@ function handleMessageForHost(props) {
         .map((member) => member.identifier)
         .filter(filterOutMainClientAndTheSender);
 
-      // // To all the members, send the identifier and name of the new member
-      // sentMemberUpdatesToAll({
-      //   client,
-      //   newMember: identifier,
-      //   membersToNotify,
-      //   newMemberName: name,
-      // });
+      // To all the members, send the identifier and name of the new member
+      sentMemberUpdatesToAll({
+        client,
+        newMember: identifier,
+        membersToNotify,
+        newMemberName: name,
+      });
 
       return message;
     case REMOVE_MEMBER:
@@ -275,6 +273,7 @@ function handleMessageForSub(props) {
       break;
     case REMOVE_MEMBER:
       // The member has to be removed from the members list
+      console.log(payload);
       const memberToRemove = payload.content.identifier;
       notifyLeave(memberToRemove);
       removeSubClientMember(memberToRemove);
@@ -308,11 +307,8 @@ const sentMemberUpdatesToAll = ({
     newMember,
     newMemberName,
   };
-  const publicKey = client.getPublicKey();
-  membersToNotify = membersToNotify.map((member) => `${member}.${publicKey}`);
 
   const message = generateMessage(ADD_MEMBER, content);
-
   sendMessage({ address: membersToNotify, message, client });
 };
 
