@@ -1,5 +1,5 @@
 # Riddle
-Try using in IPFS
+Try using here
 
 http://nknriddle.xyz/
 
