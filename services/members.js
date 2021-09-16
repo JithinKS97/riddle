@@ -59,14 +59,9 @@ const makeThisMainClient = ({
   fillShareLink(publicKey);
 };
 
-const getName = ({ id, members, isHost, hostAddress }) => {
-  if (isHost) {
-    const member = members.find((member) => member.identifier === hostAddress);
-    return member.name;
-  } else {
-    const member = members.find((member) => member.identifier === id);
-    return member.name;
-  }
+const getName = ({ id, members }) => {
+  const member = members.find((member) => member.identifier === id);
+  return member.name;
 };
 
 export default {

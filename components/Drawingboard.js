@@ -242,8 +242,7 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
   };
 
   const addObjects = (objectsToAdd, nameOfTheAdder) => {
-    console.log(objectsToAdd);
-
+    console.log(nameOfTheAdder);
     const idsOfObjectsCurrentlyPresent = canvas
       .getObjects()
       .map((object) => object.id);
