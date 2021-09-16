@@ -13,22 +13,24 @@ import {
  * Functions related to joining and leaving
  */
 
-const join = async ({ client, goBack }) => {
+const join = async ({ client, goBack, hostAddress }) => {
   try {
     // public key is the address of the main client
-    const mainClientAddress = client.getPublicKey();
+    const myAddress = client.getPublicKey();
+
     const content = {
-      identifier: client.identifier,
+      identifier: myAddress,
       name: client.name,
     };
 
     const message = generateMessage(JOIN, content);
 
     let res = await sendMessage({
-      address: mainClientAddress,
+      address: hostAddress,
       message,
       client,
     });
+
     console.log("Received join acknowledge message and canvas data");
 
     res = JSON.parse(res);
@@ -119,7 +121,13 @@ const makeTheMemberMainClient = ({
  * Canvas functions
  */
 
-const addObjectsToOthersCanvas = ({ client, objects, members }) => {
+const addObjectsToOthersCanvas = ({
+  client,
+  objects,
+  members,
+  hostAddress,
+  isHost,
+}) => {
   if (!client) {
     return;
   }
@@ -129,7 +137,7 @@ const addObjectsToOthersCanvas = ({ client, objects, members }) => {
   };
 
   const message = generateMessage(ADD_OBJECTS, content);
-  sendCanvasUpdate({ client, members, message });
+  sendCanvasUpdate({ client, members, message, hostAddress, isHost });
 };
 
 const removeObjectsFromOthersCanvas = ({ client, ids, members }) => {
@@ -141,23 +149,25 @@ const removeObjectsFromOthersCanvas = ({ client, ids, members }) => {
   sendCanvasUpdate({ client, members, message });
 };
 
-const sendCanvasUpdate = ({ client, members, message }) => {
-  const publicKey = client.getPublicKey();
+const sendCanvasUpdate = ({
+  client,
+  members,
+  message,
+  hostAddress,
+  isHost,
+}) => {
+  if (!isHost) {
+    const filterOutThisClientAndMainClient = (member) =>
+      member.identifier !== client.publicKey &&
+      member.identifier !== hostAddress;
 
-  const filterOutThisClientAndMainClient = (member) =>
-    member.identifier !== client.identifier && member.identifier !== "";
-
-  if (!isMain(client)) {
-    members = members
-      .filter(filterOutThisClientAndMainClient)
-      .map((member) => `${member.identifier}.${publicKey}`);
-
-    // Add main client address
-    members.push(publicKey);
+    members = members.filter(filterOutThisClientAndMainClient);
   } else {
-    members = members.filter((member) => member.identifier !== "");
-    members = members.map((member) => `${member.identifier}.${publicKey}`);
+    const filterOutMainClient = (member) => member.identifier !== hostAddress;
+    members = members.filter(filterOutMainClient);
   }
+
+  members = members.map((member) => member.identifier);
 
   if (members.length === 0) {
     return;
@@ -171,19 +181,19 @@ const sendCanvasUpdate = ({ client, members, message }) => {
  */
 
 function handleReception(props) {
-  const { client, message } = props;
+  const { client, message, isHost } = props;
 
   const payload = JSON.parse(message.payload);
   const src = message.src;
 
-  if (isMain(client)) {
-    return handleMessageForMain({ ...props, payload, src });
+  if (isHost) {
+    return handleMessageForHost({ ...props, payload, src });
   } else {
     return handleMessageForSub({ ...props, payload, src });
   }
 }
 
-function handleMessageForMain(props) {
+function handleMessageForHost(props) {
   const {
     payload,
     getCanvasAsJSON,
@@ -195,6 +205,7 @@ function handleMessageForMain(props) {
     notifyLeave,
     removeObjects,
     src,
+    hostAddress,
   } = props;
   const type = payload.type;
 
@@ -209,8 +220,8 @@ function handleMessageForMain(props) {
       // Add the member to the list of members
       const currentMembers = addMember({ identifier, name });
 
-      // When the main client receive JOIN request, it should send
-      // back the list of members already joined and the current state of the canvs
+      // // When the main client receive JOIN request, it should send
+      // // back the list of members already joined and the current state of the canvs
       const content = {
         fabricJSON: getCanvasAsJSON(),
         currentMembers,
@@ -219,20 +230,20 @@ function handleMessageForMain(props) {
       const message = generateMessage(JOIN_ACKNOWLEDGE, content);
 
       const filterOutMainClientAndTheSender = (memberIdentifier) =>
-        memberIdentifier !== identifier && memberIdentifier !== "";
+        memberIdentifier !== identifier && memberIdentifier !== hostAddress;
 
-      // These are the current members who should be notified of the new member
+      // // These are the current members who should be notified of the new member
       const membersToNotify = currentMembers
         .map((member) => member.identifier)
         .filter(filterOutMainClientAndTheSender);
 
-      // To all the members, send the identifier and name of the new member
-      sentMemberUpdatesToAll({
-        client,
-        newMember: identifier,
-        membersToNotify,
-        newMemberName: name,
-      });
+      // // To all the members, send the identifier and name of the new member
+      // sentMemberUpdatesToAll({
+      //   client,
+      //   newMember: identifier,
+      //   membersToNotify,
+      //   newMemberName: name,
+      // });
 
       return message;
     case REMOVE_MEMBER:

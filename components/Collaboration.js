@@ -22,6 +22,8 @@ function Collaboration() {
     setMembers,
     isMainClient,
     setIsMainClient,
+    isHost,
+    setIsHost,
   } = context;
   const router = useRouter();
   const [loading, setLoading] = useState(true);
@@ -53,28 +55,29 @@ function Collaboration() {
   }, [members]);
 
   // Getting the current canvas state
-  const { id } = router.query;
+  const { hostAddress } = router.query;
+
   useEffect(() => {
-    if (!id) {
+    if (!hostAddress) {
       return;
     }
     fillShareLink();
-    if (isMainClient) {
+    if (isHost) {
       client.onConnect(() => {
         setShowSharePopup(true);
         setLoading(false);
       });
     }
-  }, [id]);
+  }, [hostAddress]);
 
   const fillShareLink = () => {
-    const roomId = id;
-    setShareLink(roomId);
+    const id = hostAddress;
+    setShareLink(id);
   };
 
   const onNameSubmitInSubClient = () => {
     setLoading(true);
-    const newClient = nknApi.createClient({ id, isMainClient: false });
+    const newClient = nknApi.createClient();
     newClient.name = name;
     setClient(newClient);
     newClient.onConnect(getCurrentState(newClient));
@@ -85,6 +88,7 @@ function Collaboration() {
       client: clientRef.current,
       name,
       goBack,
+      hostAddress,
     });
     setCanvas(fabricJSON);
     setMembers(currentMembers);
@@ -121,6 +125,7 @@ function Collaboration() {
       removeSubClientMember,
       makeTheMemberMainClient,
       notifyLeave,
+      isHost,
       removeObjects: canvasRef.current.removeObjects,
     });
   };
@@ -134,13 +139,13 @@ function Collaboration() {
   };
 
   const handleNameSubmit = () => {
-    if (!isMainClient) {
+    if (!isHost) {
       onNameSubmitInSubClient();
     } else {
       const updatedClientWithName = clientRef.current;
       updatedClientWithName.name = name;
       setClient(updatedClientWithName);
-      setMembers([{ name, identifier: "" }]);
+      setMembers([{ name, identifier: hostAddress }]);
     }
     handleNamePopupClose();
   };
@@ -179,6 +184,7 @@ function Collaboration() {
       client: clientRef.current,
       objects,
       members: membersRef.current,
+      hostAddress,
     });
   };
 
@@ -194,6 +200,8 @@ function Collaboration() {
     const nameOfTheAdder = membersApi.getName({
       id: fromAddress,
       members: membersRef.current,
+      isHost,
+      hostAddress,
     });
     canvasRef.current.addObjects(objects, nameOfTheAdder);
   };
@@ -281,6 +289,7 @@ function Collaboration() {
     <>
       <style>{style({ loading })}</style>
       {loading ? <Loading /> : null}
+      <div>{JSON.stringify(members)}</div>
       <TopMenu
         onShareIconClick={onShareIconClick}
         onMembersIconClick={onMembersIconClick}

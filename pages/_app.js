@@ -7,17 +7,16 @@ import { PENCIL } from "../constant/mode";
 
 function MyApp({ Component, pageProps }) {
   const [client, setClient] = useState(null);
-  const [isMainClient, setIsMainClient] = useState(false);
   const [members, setMembers] = useState([]);
   const [selectedMode, setSelectedMode] = useState(PENCIL);
   const [brushSize, setBrushSize] = useState(5);
   const [selectedColor, setSelectedColor] = useState("black");
+  const [hostAddress, setHostAddress] = useState("");
+  const [isHost, setIsHost] = useState(false);
 
   const value = {
     client,
     setClient,
-    isMainClient,
-    setIsMainClient,
     members,
     setMembers,
     selectedMode,
@@ -26,6 +25,10 @@ function MyApp({ Component, pageProps }) {
     setBrushSize,
     selectedColor,
     setSelectedColor,
+    hostAddress,
+    setHostAddress,
+    isHost,
+    setIsHost,
   };
 
   return (

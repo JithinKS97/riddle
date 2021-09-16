@@ -86,16 +86,12 @@ const makeThisMainClient = ({
   });
 };
 
-const getName = ({ id, members }) => {
-  const words = id.split(".");
-  const firstWord = words[0];
-  const isMainClient = words.length === 1;
-
-  if (isMainClient) {
-    const member = members.find((member) => member.identifier === "");
+const getName = ({ id, members, isHost, hostAddress }) => {
+  if (isHost) {
+    const member = members.find((member) => member.identifier === hostAddress);
     return member.name;
   } else {
-    const member = members.find((member) => member.identifier === firstWord);
+    const member = members.find((member) => member.identifier === id);
     return member.name;
   }
 };
