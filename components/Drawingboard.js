@@ -1,10 +1,16 @@
 import { fabric } from "fabric";
-import { forwardRef, useEffect, useImperativeHandle, useContext } from "react";
+import {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useContext,
+  useState,
+} from "react";
 import { v4 as uuidv4 } from "uuid";
 import { PENCIL, ERASER, PAN, SELECT, NONE } from "../constant/mode";
 import { AppContext } from ".././context/App";
 
-let canvas, mousePressed;
+let canvas, mousePressed, timeout;
 
 fabric.Object.prototype.originX = fabric.Object.prototype.originY = "center";
 
@@ -25,6 +31,8 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
   const context = useContext(AppContext);
   const { selectedMode, brushSize, selectedColor } = context;
   const { onAddObjects, onObjectsRemove } = props;
+  const [currentZoom, setCurrentZoom] = useState(1);
+  const [showZoom, setShowZoom] = useState(false);
 
   useEffect(() => {
     canvas = createCanvas(window);
@@ -135,6 +143,7 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
     });
 
     canvas.on("mouse:wheel", function (option) {
+      setShowZoom(true);
       var delta = option.e.deltaY;
       var zoom = canvas.getZoom();
       zoom *= 0.999 ** delta;
@@ -143,6 +152,11 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
       canvas.zoomToPoint({ x: option.e.offsetX, y: option.e.offsetY }, zoom);
       option.e.preventDefault();
       option.e.stopPropagation();
+      setCurrentZoom(zoom);
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        setShowZoom(false);
+      }, 1000);
     });
 
     canvas.on("object:modified", () => {
@@ -180,6 +194,11 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
 
   const resetZoomAndPan = () => {
     canvas.setZoom(1);
+    setCurrentZoom(1);
+    setShowZoom(true);
+    setTimeout(() => {
+      setShowZoom(false);
+    }, 1000);
     canvas.absolutePan({ x: 0, y: 0 });
   };
 
@@ -365,18 +384,40 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
 
   return (
     <>
-      <style>{style}</style>
+      <style>{style({ showZoom })}</style>
       <div onKeyDown={handleKeyDown} className="canvas-box">
+        <div className="zoom-info">
+          <div className="inner-text">{(currentZoom * 100).toFixed(2)}%</div>
+        </div>
         <canvas id="c"></canvas>
       </div>
     </>
   );
 });
 
-const style = ({}) => `
+const style = ({ showZoom }) => `
     .canvas-box {
         display:inline-block;
     }
+    .zoom-info {
+      opacity:${showZoom ? 1 : 0};
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform: translate(-50%, -50%);
+      color:black;
+      padding:3px;
+      border-radius:5px;
+      background-color: rgba(0,0,0, 0.2);
+      font-size:14px;
+      transition: opacity 0.2s ease-in-out;
+      font-weight:bold;
+      z-index:1;
+    }
+    .inner-text {
+      z-index:2;
+    }
+ 
 `;
 
 export default DrawingboardContainer;

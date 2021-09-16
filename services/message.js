@@ -120,6 +120,10 @@ const makeTheMemberMainClient = ({
  */
 
 const addObjectsToOthersCanvas = ({ client, objects, members }) => {
+  if (!client) {
+    return;
+  }
+
   const content = {
     objects,
   };

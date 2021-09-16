@@ -46,8 +46,6 @@ const TopMenu = ({ onMembersIconClick, onShareIconClick, resetZoomAndPan }) => {
     setSelectedColor,
   } = context;
 
-  const [currentMode, setCurrentMode] = useState();
-
   const handlePencilClick = () => {
     changeToPencilMode(PENCIL);
   };
@@ -74,7 +72,6 @@ const TopMenu = ({ onMembersIconClick, onShareIconClick, resetZoomAndPan }) => {
   };
 
   const changeToNoneMode = () => {
-    setCurrentMode(selectedMode);
     setSelectedMode(NONE);
   };
 
@@ -113,14 +110,7 @@ const TopMenu = ({ onMembersIconClick, onShareIconClick, resetZoomAndPan }) => {
                 boxShadow="xs"
               />
             </Slider>
-            <Menu
-              onOpen={changeToNoneMode}
-              onClose={() => {
-                setTimeout(() => {
-                  setSelectedMode(currentMode);
-                }, 10);
-              }}
-            >
+            <Menu onOpen={changeToNoneMode} onClose={changeToPencilMode}>
               <MenuButton
                 _active={{
                   bg: "white",
