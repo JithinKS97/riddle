@@ -77,8 +77,13 @@ const makeSubClientMainClient = ({ client, members }) => {
 
   const filterOutMainClient = (member) => member.identifier !== publicKey;
 
-  const memberToMakeMainClient =
-    members.filter(filterOutMainClient)[0].identifier;
+  const memberToMakeMainClientObject = members.filter(filterOutMainClient)[0];
+
+  if (!memberToMakeMainClientObject) {
+    return;
+  }
+
+  const memberToMakeMainClient = memberToMakeMainClientObject.identifier;
 
   const identifiersOfMembersToBeUpdated = members
     .filter(filterOutMainClient)
