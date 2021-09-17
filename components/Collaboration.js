@@ -69,6 +69,9 @@ function Collaboration() {
 
   const registerLeave = () => {
     window.onbeforeunload = () => {
+      if (!clientRef.current) {
+        return;
+      }
       if (!isHostRef.current) {
         messageApi.sendLeaveMessageForSubClient({
           client: clientRef.current,
