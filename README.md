@@ -1,7 +1,7 @@
 # Riddle
-Try using here
+App is hosted in IPFS, try here
 
-http://nknriddle.xyz/
+ipns://nknriddle.xyz/
 
 <img src="https://i.ibb.co/hXJmL5c/Screenshot-2021-09-12-at-10-13-45-AM.png" alt="astrik-logo" />
 
