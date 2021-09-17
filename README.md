@@ -1,5 +1,5 @@
 # Riddle
-<img style="display: block; margin: 0 auto" width="650px" height="360px" src="https://i.ibb.co/0CYwLwN/Screenshot-2021-09-17-at-8-03-32-AM.png" alt="riddle-logo" />
+<p align="center"><img width="650px" height="360px" src="https://i.ibb.co/0CYwLwN/Screenshot-2021-09-17-at-8-03-32-AM.png" alt="riddle-logo" /></p>
 Riddle is a peer to peer white board collaboration App. Its speciality is that it has no central servers. You can create a room and share the collaboration id with anyone who wants to join and use the shared whiteboard.
 
 # Technologies used
