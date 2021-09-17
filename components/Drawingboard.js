@@ -326,7 +326,7 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
     fabric.util.animate({
       startValue,
       endValue,
-      duration: 150,
+      duration: 200,
       onChange: function (value) {
         object[parameter] = value;
         canvas.renderAll();
