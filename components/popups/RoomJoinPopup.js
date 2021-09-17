@@ -21,7 +21,7 @@ const RoomJoinPopup = (props) => {
   const [roomId, setRoomId] = useState("");
 
   const handleRoomIdEnter = (e) => {
-    setRoomId(e.target.value);
+    setRoomId(e.target.value.trim());
   };
 
   const handleGoToRoom = () => {
