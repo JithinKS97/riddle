@@ -1,12 +1,12 @@
 # Riddle
-App is hosted in IPFS, try here
-
-ipns://nknriddle.xyz/
-
 <img src="https://i.ibb.co/hXJmL5c/Screenshot-2021-09-12-at-10-13-45-AM.png" alt="astrik-logo" />
+Riddle is a peer to peer white board collaboration App. Its speciality is that it has no central servers. You can create a room and share the collaboration id with anyone who wants to join and use the shared whiteboard.
 
-Peer to peer collaborative white board created using
+# Technologies used
+1. [NKN](https://nkn.org/)
+2. [Fabric](http://fabricjs.com/)
+3. React
 
-1. Nkn
-2. React
-3. Fabric
+# Use the app
+App is hosted in IPFS. You might need Brave browser to use it.
+ipns://nknriddle.xyz/
