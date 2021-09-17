@@ -59,6 +59,7 @@ function Collaboration() {
       isHost: isHostRef.current,
       hostAddress,
       removeObjects: canvasRef.current.removeObjects,
+      notifyHostChange,
     });
   };
 
@@ -204,8 +205,6 @@ function Collaboration() {
     const nameOfTheAdder = membersApi.getName({
       id: fromAddress,
       members: membersRef.current,
-      isHost: isHostRef.current,
-      hostAddress,
     });
     canvasRef.current.addObjects(objects, nameOfTheAdder);
   };
@@ -263,24 +262,28 @@ function Collaboration() {
    */
 
   const notifyJoin = ({ name }) => {
-    toast({
-      title: `${name} just joined`,
-      duration: 2000,
-      isClosable: true,
-      status: "success",
-    });
+    showToast(`${name} just joined`, "success");
   };
 
   const notifyLeave = (memberToLeave) => {
-    const member = membersRef.current.find(
-      (member) => member.identifier === memberToLeave
-    );
-    const name = member.name;
+    console.log(memberToLeave);
+    const name = membersApi.getName({
+      id: memberToLeave,
+      members: membersRef.current,
+    });
+    showToast(`${name} just left`, "warning");
+  };
+
+  const notifyHostChange = () => {
+    showToast(`You are the host now`, "success");
+  };
+
+  const showToast = (title, status) => {
     toast({
-      title: `${name} just left`,
+      title,
       duration: 2000,
       isClosable: true,
-      status: "warning",
+      status,
     });
   };
 

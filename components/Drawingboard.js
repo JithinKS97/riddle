@@ -14,6 +14,18 @@ let canvas, mousePressed, timeout;
 
 fabric.Object.prototype.originX = fabric.Object.prototype.originY = "center";
 
+const parametersToLook = [
+  "top",
+  "left",
+  "angle",
+  "scaleX",
+  "scaleY",
+  "skewX",
+  "skewY",
+  "stroke",
+  "strokeWidth",
+];
+
 const createCanvas = (window) => {
   const topBarClass = "css-198em1k";
   const canvasConfig = {
@@ -303,18 +315,6 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
     const diff = ((angle2 - angle1 + 180) % 360) - 180;
     return diff < -180 ? diff + 360 : diff;
   };
-
-  const parametersToLook = [
-    "top",
-    "left",
-    "angle",
-    "scaleX",
-    "scaleY",
-    "skewX",
-    "skewY",
-    "stroke",
-    "strokeWidth",
-  ];
 
   const animateObject = (
     object,

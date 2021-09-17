@@ -255,6 +255,7 @@ function handleMessageForSub(props) {
     removeObjects,
     src,
     hostAddress,
+    notifyHostChange,
   } = props;
 
   const type = payload.type;
@@ -275,6 +276,9 @@ function handleMessageForSub(props) {
       break;
     case MAKE_SUBCLIENT_MAINCLIENT:
       notifyLeave(hostAddress);
+      setTimeout(() => {
+        notifyHostChange();
+      }, 2000);
       makeThisMainClient();
       break;
     case MAKE_THE_MEMBER_MAINCLIENT:
