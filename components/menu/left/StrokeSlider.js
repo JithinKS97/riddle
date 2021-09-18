@@ -5,7 +5,9 @@ import {
   SliderThumb,
 } from "@chakra-ui/react";
 
-const StrokeSlider = () => {
+const StrokeSlider = (props) => {
+  const { onChange } = props;
+
   return (
     <Slider
       width="100px"
@@ -13,6 +15,7 @@ const StrokeSlider = () => {
       defaultValue={50}
       min={10}
       max={150}
+      onChangeEnd={onChange}
     >
       <SliderTrack>
         <SliderFilledTrack />

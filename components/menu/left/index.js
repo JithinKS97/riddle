@@ -12,17 +12,21 @@ import { AiOutlineSelect } from "react-icons/ai";
 import { GrPowerReset } from "react-icons/gr";
 import { AppContext } from "../../../context/App";
 import { useContext, useState } from "react";
+import { Pencil } from "../../../constant/mode";
 
 const LeftSection = () => {
   const context = useContext(AppContext);
-  const { selectedMode, setSelectedMode, selectedStroke, setSelectedStroke } =
-    context;
+  const {
+    selectedMode,
+    setSelectedMode,
+    selectedStroke,
+    setSelectedStroke,
+    setBrushSize,
+  } = context;
   const [selectedDrawMode, setSelectedDrawMode] = useState("Pencil");
   const [selectedCursorMode, setSelectedCursorMode] = useState("Select");
 
   const handleClick = (e) => {
-    const drawModes = drawOptions.map((drawOption) => drawOption.label);
-    const cursorModes = cursorOptions.map((cursorOption) => cursorOption.label);
     if (drawModes.includes(e.label)) {
       setSelectedDrawMode(e.label);
     }
@@ -36,6 +40,11 @@ const LeftSection = () => {
     setSelectedStroke(e.hex);
   };
 
+  const handleSliderChange = (e) => {
+    setSelectedMode(Pencil);
+    setBrushSize(e / 10);
+  };
+
   return (
     <HStack p="3">
       <OptionsMenu
@@ -44,7 +53,7 @@ const LeftSection = () => {
         options={drawOptions}
         highlighted={selectedMode === selectedDrawMode}
       />
-      <StrokeSlider />
+      <StrokeSlider onChange={handleSliderChange} />
       <ColorMenu>
         <FillIcon />
       </ColorMenu>
@@ -106,5 +115,8 @@ const cursorOptions = [
     icon: FiMove,
   },
 ];
+
+const drawModes = drawOptions.map((drawOption) => drawOption.label);
+const cursorModes = cursorOptions.map((cursorOption) => cursorOption.label);
 
 export default LeftSection;
