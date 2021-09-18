@@ -3,14 +3,14 @@ import React from "react";
 import LeftSection from "./left";
 import RightSection from "./right";
 
-const TopMenu = () => {
+const TopMenu = (props) => {
   return (
     <>
       <style>{style}</style>
       <Menu>
         <Flex width="100vw" justifyContent="space-between" boxShadow="md">
-          <LeftSection />
-          <RightSection />
+          <LeftSection {...props} />
+          <RightSection {...props} />
         </Flex>
       </Menu>
     </>

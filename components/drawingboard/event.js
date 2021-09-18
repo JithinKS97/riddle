@@ -80,8 +80,9 @@ export const registerCanvasEvents = ({
   };
 };
 
-export const registerKeyEvents = ({ deleteSelectedObjects }) => {
+export const registerKeyEvents = ({ deleteSelectedObjects, document }) => {
   const handleKeyDown = (e) => {
+    console.log("Hello");
     if (e.key === "Backspace" || e.key === "Delete") {
       deleteSelectedObjects();
     }

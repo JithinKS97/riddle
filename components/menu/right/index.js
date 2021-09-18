@@ -4,14 +4,16 @@ import { BiExport, BiImport } from "react-icons/bi";
 import { FaRegFile, FaShareAlt } from "react-icons/fa";
 import { BsFillPeopleFill } from "react-icons/bs";
 
-const LeftSection = () => {
+const LeftSection = (props) => {
+  const { onShareIconClick, onMembersIconClick } = props;
+
   return (
     <HStack p="3">
       <OptionsMenu defaultIcon={<FaRegFile />} options={fileOptions} />
-      <Button>
+      <Button onClick={onShareIconClick}>
         <FaShareAlt />
       </Button>
-      <Button>
+      <Button onClick={onMembersIconClick}>
         <BsFillPeopleFill />
       </Button>
     </HStack>

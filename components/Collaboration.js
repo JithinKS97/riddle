@@ -45,8 +45,6 @@ function Collaboration() {
   }, [client]);
 
   const handleMessage = (message) => {
-    console.log(handleMessage);
-
     return messageApi.handleReception({
       message,
       client,
@@ -305,6 +303,18 @@ function Collaboration() {
     }
   };
 
+  const resetCanvasZoom = () => {
+    if (canvasRef.current) {
+      canvasRef.current.resetZoom();
+    }
+  };
+
+  const resetCanvasPan = () => {
+    if (canvasRef.current) {
+      canvasRef.current.resetPan();
+    }
+  };
+
   const changeRouteShallow = (hostAddress) => {
     console.log("Shallow route");
     router.push(`/drawingboard/${hostAddress}`, undefined, { shallow: true });
@@ -318,6 +328,8 @@ function Collaboration() {
         onShareIconClick={onShareIconClick}
         onMembersIconClick={onMembersIconClick}
         resetZoomAndPan={resetCanvasZoomAndPan}
+        resetZoom={resetCanvasZoom}
+        resetPan={resetCanvasPan}
       />
       <div className="canvas-outer">
         <MembersPopup

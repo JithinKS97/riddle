@@ -14,7 +14,8 @@ import { AppContext } from "../../../context/App";
 import { useContext, useState } from "react";
 import { Pencil } from "../../../constant/mode";
 
-const LeftSection = () => {
+const LeftSection = (props) => {
+  const { resetPan, resetZoom, resetZoomAndPan } = props;
   const context = useContext(AppContext);
   const {
     selectedMode,
@@ -45,6 +46,14 @@ const LeftSection = () => {
     setBrushSize(e / 10);
   };
 
+  const handleResetClick = (e) => {
+    if (e.label === "Reset zoom") {
+      resetZoomAndPan();
+    } else if (e.label === "Reset pan") {
+      resetPan();
+    }
+  };
+
   return (
     <HStack p="3">
       <OptionsMenu
@@ -66,7 +75,11 @@ const LeftSection = () => {
         options={cursorOptions}
         highlighted={selectedMode === selectedCursorMode}
       />
-      <OptionsMenu defaultIcon={<GrPowerReset />} options={viewOptions} />
+      <OptionsMenu
+        onClick={handleResetClick}
+        defaultIcon={<GrPowerReset />}
+        options={resetOptions}
+      />
     </HStack>
   );
 };
@@ -90,18 +103,14 @@ const drawOptions = [
   },
 ];
 
-const viewOptions = [
-  {
-    label: "Reset zoom",
-    icon: ResetZoom,
-  },
+const resetOptions = [
   {
     label: "Reset pan",
     icon: ResetPan,
   },
   {
-    label: "Reset zoom & pan",
-    icon: BiHome,
+    label: "Reset zoom",
+    icon: ResetZoom,
   },
 ];
 

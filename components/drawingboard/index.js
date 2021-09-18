@@ -21,6 +21,8 @@ import {
   removeObjectsInCanvas,
   createCanvas,
   resetZoomAndPanInCanvas,
+  resetZoomInCanvas,
+  resetPanInCanvas,
 } from "./canvas";
 
 import { registerCanvasEvents, registerKeyEvents } from "./event";
@@ -83,8 +85,8 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
   }, [canvas, selectedMode]);
 
   useEffect(() => {
-    return registerKeyEvents({ deleteSelectedObjects });
-  }, []);
+    return registerKeyEvents({ deleteSelectedObjects, document });
+  }, [selectedMode, canvas]);
 
   // On mode change
   useEffect(onModeChange(canvas, selectedMode), [selectedMode, canvas]);
@@ -98,6 +100,8 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
       addObjects,
       removeObjects,
       resetZoomAndPan,
+      resetZoom,
+      resetPan,
     };
   });
 
@@ -109,6 +113,7 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
 
   const deleteSelectedObjects = () => {
     const ids = deleteSelectedObjectsInCanvas(canvas);
+    console.log(ids);
     deleteObjectsFromOthers(ids);
   };
 
@@ -129,6 +134,14 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
 
   const resetZoomAndPan = () => {
     resetZoomAndPanInCanvas({ canvas, setCurrentZoom, setShowZoom });
+  };
+
+  const resetZoom = () => {
+    resetZoomInCanvas({ canvas, setCurrentZoom, setShowZoom });
+  };
+
+  const resetPan = () => {
+    resetPanInCanvas({ canvas });
   };
 
   return (

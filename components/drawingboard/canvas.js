@@ -170,13 +170,30 @@ export const removeObjectsInCanvas = ({ canvas, ids }) => {
   });
 };
 
-export const resetZoomAndPan = ({ canvas, setCurrentZoom, setShowZoom }) => {
+export const resetZoomAndPanInCanvas = ({
+  canvas,
+  setCurrentZoom,
+  setShowZoom,
+}) => {
   canvas.setZoom(1);
   setCurrentZoom(1);
   setShowZoom(true);
   setTimeout(() => {
     setShowZoom(false);
   }, 1000);
+  canvas.absolutePan({ x: 0, y: 0 });
+};
+
+export const resetZoomInCanvas = ({ canvas, setCurrentZoom, setShowZoom }) => {
+  canvas.setZoom(1);
+  setCurrentZoom(1);
+  setShowZoom(true);
+  setTimeout(() => {
+    setShowZoom(false);
+  }, 1000);
+};
+
+export const resetPanInCanvas = ({ canvas }) => {
   canvas.absolutePan({ x: 0, y: 0 });
 };
 
