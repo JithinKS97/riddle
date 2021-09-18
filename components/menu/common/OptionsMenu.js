@@ -25,7 +25,11 @@ const OptionsMenu = (props) => {
 
   return (
     <Menu>
-      <MenuButton variant={highlighted ? "primary" : undefined} as={Button}>
+      <MenuButton
+        _focus={{ boxShadow: "none" }}
+        variant={highlighted ? "primary" : undefined}
+        as={Button}
+      >
         {getIconToShowInMenu()}
       </MenuButton>
       <MenuList p={0} minW="0">

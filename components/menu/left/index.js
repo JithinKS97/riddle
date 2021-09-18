@@ -19,51 +19,6 @@ const LeftSection = () => {
   const [selectedDrawMode, setSelectedDrawMode] = useState("Pencil");
   const [selectedCursorMode, setSelectedCursorMode] = useState("Select");
 
-  const drawOptions = [
-    {
-      label: "Pencil",
-      icon: FaPencilAlt,
-    },
-    {
-      label: "Line",
-      icon: HiOutlineMinus,
-    },
-    {
-      label: "Rectangle",
-      icon: BiRectangle,
-    },
-    {
-      label: "Ellipse",
-      icon: BiCircle,
-    },
-  ];
-
-  const viewOptions = [
-    {
-      label: "Reset zoom",
-      icon: ResetZoom,
-    },
-    {
-      label: "Reset pan",
-      icon: ResetPan,
-    },
-    {
-      label: "Reset zoom & pan",
-      icon: BiHome,
-    },
-  ];
-
-  const cursorOptions = [
-    {
-      label: "Select",
-      icon: AiOutlineSelect,
-    },
-    {
-      label: "Pan",
-      icon: FiMove,
-    },
-  ];
-
   const handleClick = (e) => {
     const drawModes = drawOptions.map((drawOption) => drawOption.label);
     const cursorModes = cursorOptions.map((cursorOption) => cursorOption.label);
@@ -101,5 +56,50 @@ const LeftSection = () => {
     </HStack>
   );
 };
+
+const drawOptions = [
+  {
+    label: "Pencil",
+    icon: FaPencilAlt,
+  },
+  {
+    label: "Line",
+    icon: HiOutlineMinus,
+  },
+  {
+    label: "Rectangle",
+    icon: BiRectangle,
+  },
+  {
+    label: "Ellipse",
+    icon: BiCircle,
+  },
+];
+
+const viewOptions = [
+  {
+    label: "Reset zoom",
+    icon: ResetZoom,
+  },
+  {
+    label: "Reset pan",
+    icon: ResetPan,
+  },
+  {
+    label: "Reset zoom & pan",
+    icon: BiHome,
+  },
+];
+
+const cursorOptions = [
+  {
+    label: "Select",
+    icon: AiOutlineSelect,
+  },
+  {
+    label: "Pan",
+    icon: FiMove,
+  },
+];
 
 export default LeftSection;

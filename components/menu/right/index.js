@@ -5,17 +5,6 @@ import { FaRegFile, FaShareAlt } from "react-icons/fa";
 import { BsFillPeopleFill } from "react-icons/bs";
 
 const LeftSection = () => {
-  const fileOptions = [
-    {
-      label: "Export",
-      icon: BiExport,
-    },
-    {
-      label: "Import",
-      icon: BiImport,
-    },
-  ];
-
   return (
     <HStack p="3">
       <OptionsMenu defaultIcon={<FaRegFile />} options={fileOptions} />
@@ -28,5 +17,16 @@ const LeftSection = () => {
     </HStack>
   );
 };
+
+const fileOptions = [
+  {
+    label: "Export",
+    icon: BiExport,
+  },
+  {
+    label: "Import",
+    icon: BiImport,
+  },
+];
 
 export default LeftSection;

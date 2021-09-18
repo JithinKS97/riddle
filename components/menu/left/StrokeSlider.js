@@ -22,6 +22,7 @@ const StrokeSlider = () => {
         borderWidth="2px"
         borderColor="black"
         boxShadow="xs"
+        _focus={{ boxShadow: "none" }}
       />
     </Slider>
   );
