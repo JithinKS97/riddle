@@ -1,9 +1,15 @@
+import { Pan, Eraser } from "../../constant/mode";
+import { v4 as uuidv4 } from "uuid";
+
 let mousePressed, timeout;
 
 export const registerCanvasEvents = ({
   canvas,
   sendObjectsToOthers,
   selectedMode,
+  setCurrentZoom,
+  setShowZoom,
+  sendSelectedObjectsToOthers,
 }) => {
   canvas.on("path:created", (res) => {
     res.path.set({
@@ -14,7 +20,7 @@ export const registerCanvasEvents = ({
   });
 
   canvas.on("mouse:down", function (options) {
-    if (options.target && selectedMode === ERASER) {
+    if (options.target && selectedMode === Eraser) {
       canvas.remove(options.target);
       canvas.renderAll();
     }
@@ -26,21 +32,21 @@ export const registerCanvasEvents = ({
   });
 
   canvas.on("mouse:over", function (options) {
-    if (options.target && selectedMode === ERASER) {
+    if (options.target && selectedMode === Eraser) {
       options.target.set("opacity", 0.5);
       canvas.renderAll();
     }
   });
 
   canvas.on("mouse:out", function (options) {
-    if (options.target && selectedMode === ERASER) {
+    if (options.target && selectedMode === Eraser) {
       options.target.set("opacity", 1);
       canvas.renderAll();
     }
   });
 
   canvas.on("mouse:move", function (event) {
-    if (mousePressed && selectedMode === PAN) {
+    if (mousePressed && selectedMode === Pan) {
       const mEvent = event.e;
       const delta = new fabric.Point(mEvent.movementX, mEvent.movementY);
       canvas.relativePan(delta);

@@ -94,7 +94,14 @@ export const addObjectsInCanvas = ({
       );
       if (!objectAlreadyExist) {
         canvas.add(enlivenedObjectToAdd);
-        animateObject(enlivenedObjectToAdd, 0, 1, undefined, "opacity");
+        animateObject({
+          object: enlivenedObjectToAdd,
+          startValue: 0,
+          endValue: 1,
+          onComplete: undefined,
+          parameter: "opacity",
+          canvas,
+        });
       } else {
         // This is required as if somebody else tries to move the object
         // It has to be with respect to the canvas
@@ -102,46 +109,46 @@ export const addObjectsInCanvas = ({
         let objectToModify = canvas
           .getObjects()
           .find((object) => object.id === enlivenedObjectToAdd.id);
-        replaceObject({ objectToModify, enlivenedObjectToAdd, canvas });
-      }
-    });
-  });
-
-  const replaceObject = ({
-    objectToBeReplaced,
-    objectToReplaceWith,
-    canvas,
-  }) => {
-    parametersToLook.forEach((parameter) => {
-      if (objectToBeReplaced[parameter] !== objectToReplaceWith[parameter]) {
-        if (parameter === "stroke" || parameter === "strokeWidth") {
-          canvas.remove(objectToBeReplaced);
-          canvas.add(objectToReplaceWith);
-          canvas.renderAll();
-          return;
-        }
-
-        if (parameter === "angle") {
-          // Todo - Animate rotate also
-          const angleDifference = getAngleDifference(
-            objectToBeReplaced[parameter],
-            objectToReplaceWith[parameter]
-          );
-          objectToReplaceWith[parameter] =
-            objectToBeReplaced[parameter] + angleDifference;
-        }
-
-        animateObject({
-          object: objectToBeReplaced,
-          startValue: objectToBeReplaced[parameter],
-          endValue: objectToReplaceWith[parameter],
-          onComplete: undefined,
-          paraparameter,
+        replaceObject({
+          objectToBeReplaced: objectToModify,
+          objectToReplaceWith: enlivenedObjectToAdd,
           canvas,
         });
       }
     });
-  };
+  });
+};
+
+const replaceObject = ({ objectToBeReplaced, objectToReplaceWith, canvas }) => {
+  parametersToLook.forEach((parameter) => {
+    if (objectToBeReplaced[parameter] !== objectToReplaceWith[parameter]) {
+      if (parameter === "stroke" || parameter === "strokeWidth") {
+        canvas.remove(objectToBeReplaced);
+        canvas.add(objectToReplaceWith);
+        canvas.renderAll();
+        return;
+      }
+
+      if (parameter === "angle") {
+        // Todo - Animate rotate also
+        const angleDifference = getAngleDifference(
+          objectToBeReplaced[parameter],
+          objectToReplaceWith[parameter]
+        );
+        objectToReplaceWith[parameter] =
+          objectToBeReplaced[parameter] + angleDifference;
+      }
+
+      animateObject({
+        object: objectToBeReplaced,
+        startValue: objectToBeReplaced[parameter],
+        endValue: objectToReplaceWith[parameter],
+        onComplete: undefined,
+        parameter,
+        canvas,
+      });
+    }
+  });
 };
 
 export const removeObjectsInCanvas = ({ canvas, ids }) => {

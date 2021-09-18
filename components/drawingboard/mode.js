@@ -1,31 +1,8 @@
-import { PENCIL, PAN, SELECT, NONE } from "../../constant/mode";
+import { Pencil, Pan, Select, None } from "../../constant/mode";
 
 export const onModeChange = (canvas, selectedMode) => () => {
   if (!canvas) {
     return;
-  }
-
-  switch (selectedMode) {
-    case PENCIL:
-      canvas.isDrawingMode = true;
-      break;
-    case SELECT:
-      enableSelectForObjects();
-      canvas.defaultCursor = "auto";
-      canvas.hoverCursor = "move";
-      canvas.isDrawingMode = false;
-      break;
-    case PAN:
-      disableSelectForObjects();
-      canvas.isDrawingMode = false;
-      canvas.defaultCursor = "grab";
-      canvas.hoverCursor = "grab";
-      break;
-    case NONE:
-      disableSelectForObjects();
-      canvas.isDrawingMode = false;
-      canvas.defaultCursor = "auto";
-      canvas.hoverCursor = "auto";
   }
 
   const disableSelectForObjects = () => {
@@ -41,4 +18,27 @@ export const onModeChange = (canvas, selectedMode) => () => {
       object.set({ selectable: true });
     });
   };
+
+  switch (selectedMode) {
+    case Pencil:
+      canvas.isDrawingMode = true;
+      break;
+    case Select:
+      enableSelectForObjects();
+      canvas.defaultCursor = "auto";
+      canvas.hoverCursor = "move";
+      canvas.isDrawingMode = false;
+      break;
+    case Pan:
+      disableSelectForObjects();
+      canvas.isDrawingMode = false;
+      canvas.defaultCursor = "grab";
+      canvas.hoverCursor = "grab";
+      break;
+    case None:
+      disableSelectForObjects();
+      canvas.isDrawingMode = false;
+      canvas.defaultCursor = "auto";
+      canvas.hoverCursor = "auto";
+  }
 };

@@ -10,8 +10,13 @@ import { FiMove } from "react-icons/fi";
 import { ResetPan, ResetZoom, FillIcon, StrokeIcon } from "../custom icons";
 import { AiOutlineSelect } from "react-icons/ai";
 import { GrPowerReset } from "react-icons/gr";
+import { AppContext } from "../../../context/App";
+import { useContext } from "react";
 
 const LeftSection = () => {
+  const context = useContext(AppContext);
+  const { selectedMode, setSelectedMode } = context;
+
   const drawOptions = [
     {
       label: "Pencil",
@@ -57,9 +62,17 @@ const LeftSection = () => {
     },
   ];
 
+  const handleClick = (e) => {
+    setSelectedMode(e.label);
+  };
+
   return (
     <HStack p="3">
-      <OptionsMenu selectedOption="Pencil" options={drawOptions} />
+      <OptionsMenu
+        onClick={handleClick}
+        selectedOption="Pencil"
+        options={drawOptions}
+      />
       <StrokeSlider />
       <ColorMenu>
         <FillIcon />
@@ -67,7 +80,11 @@ const LeftSection = () => {
       <ColorMenu>
         <StrokeIcon />
       </ColorMenu>
-      <OptionsMenu selectedOption="Select" options={modeOptions} />
+      <OptionsMenu
+        onClick={handleClick}
+        selectedOption="Select"
+        options={modeOptions}
+      />
       <OptionsMenu defaultIcon={<GrPowerReset />} options={viewOptions} />
     </HStack>
   );

@@ -76,6 +76,9 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
       canvas,
       sendObjectsToOthers,
       selectedMode,
+      setCurrentZoom,
+      setShowZoom,
+      sendSelectedObjectsToOthers,
     });
   }, [canvas, selectedMode]);
 

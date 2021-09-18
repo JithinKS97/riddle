@@ -45,6 +45,8 @@ function Collaboration() {
   }, [client]);
 
   const handleMessage = (message) => {
+    console.log(handleMessage);
+
     return messageApi.handleReception({
       message,
       client,
@@ -175,7 +177,9 @@ function Collaboration() {
    */
 
   const getCanvasAsJSON = () => {
-    return JSON.stringify(canvasRef.current.getCanvasAsJSON());
+    const fabricObjectsJSON = canvasRef.current.getCanvasAsJSON();
+    console.log(fabricObjectsJSON);
+    return JSON.stringify(fabricObjectsJSON);
   };
 
   const setCanvas = (fabricJSON) => {
