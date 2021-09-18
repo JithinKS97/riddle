@@ -10,6 +10,8 @@ export const onModeChange = (canvas, selectedMode) => () => {
     canvas.getObjects().forEach((object) => {
       object.set({ selectable: false });
     });
+    canvas.discardActiveObject();
+    canvas.renderAll();
   };
 
   const enableSelectForObjects = () => {

@@ -38,11 +38,9 @@ export const changePropertyOfSelectedObjectsInCanvas = ({
 };
 
 const setProperty = (property, value) => (object) => {
-  if (ids.includes(object.id)) {
-    object.set({
-      [property]: value,
-    });
-  }
+  object.set({
+    [property]: value,
+  });
 };
 
 export const getSelectedObjectsInCanvas = (canvas) => {

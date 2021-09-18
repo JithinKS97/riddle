@@ -15,7 +15,8 @@ import { useContext, useState } from "react";
 
 const LeftSection = () => {
   const context = useContext(AppContext);
-  const { selectedMode, setSelectedMode } = context;
+  const { selectedMode, setSelectedMode, selectedStroke, setSelectedStroke } =
+    context;
   const [selectedDrawMode, setSelectedDrawMode] = useState("Pencil");
   const [selectedCursorMode, setSelectedCursorMode] = useState("Select");
 
@@ -31,6 +32,10 @@ const LeftSection = () => {
     setSelectedMode(e.label);
   };
 
+  const onStrokeChange = (e) => {
+    setSelectedStroke(e.hex);
+  };
+
   return (
     <HStack p="3">
       <OptionsMenu
@@ -43,8 +48,8 @@ const LeftSection = () => {
       <ColorMenu>
         <FillIcon />
       </ColorMenu>
-      <ColorMenu>
-        <StrokeIcon />
+      <ColorMenu onChange={onStrokeChange}>
+        <StrokeIcon color={selectedStroke} />
       </ColorMenu>
       <OptionsMenu
         onClick={handleClick}

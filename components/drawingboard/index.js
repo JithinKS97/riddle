@@ -27,7 +27,7 @@ import { registerCanvasEvents, registerKeyEvents } from "./event";
 
 const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
   const context = useContext(AppContext);
-  const { selectedMode, brushSize, selectedColor } = context;
+  const { selectedMode, brushSize, selectedStroke } = context;
   const {
     onAddObjects: sendObjectsToOthers,
     onObjectsRemove: deleteObjectsFromOthers,
@@ -50,10 +50,10 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
   // On change of object properties by the user
 
   useEffect(() => {
-    canvas.freeDrawingBrush.color = selectedColor;
-    changePropertyOfSelectedObjects("stroke", selectedColor);
+    canvas.freeDrawingBrush.color = selectedStroke;
+    changePropertyOfSelectedObjects("stroke", selectedStroke);
     canvas.renderAll();
-  }, [selectedColor]);
+  }, [selectedStroke]);
 
   useEffect(() => {
     canvas.freeDrawingBrush.width = brushSize;

@@ -35,6 +35,12 @@ export const FillIcon = () => (
   />
 );
 
-export const StrokeIcon = () => (
-  <FiSquare boxShadow="xs" width="15px" height="15px" bg={"black"} />
+export const StrokeIcon = ({ color }) => (
+  <FiSquare
+    fontWeight="bold"
+    boxShadow="xs"
+    width="15px"
+    height="15px"
+    color={color}
+  />
 );

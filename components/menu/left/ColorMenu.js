@@ -1,4 +1,4 @@
-import { Button, Menu, MenuButton, MenuList, Box } from "@chakra-ui/react";
+import { Button, Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
 import { TwitterPicker } from "react-color";
 
 const colors = [
@@ -15,6 +15,8 @@ const colors = [
 ];
 
 const ColorMenu = (props) => {
+  const { onChange } = props;
+
   return (
     <Menu>
       <MenuButton marginLeft="4" as={Button}>
@@ -26,7 +28,12 @@ const ColorMenu = (props) => {
         boxShadow="none"
         marginTop="3"
       >
-        <TwitterPicker colors={colors} />
+        <MenuItem
+          _active={{ bg: "transparent" }}
+          _focus={{ bg: "transparent" }}
+        >
+          <TwitterPicker onChange={onChange} colors={colors} />
+        </MenuItem>
       </MenuList>
     </Menu>
   );
