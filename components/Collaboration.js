@@ -1,4 +1,4 @@
-import Drawingboard from "./Drawingboard";
+import Drawingboard from "./drawingboard/index";
 import { useEffect, useContext, useState } from "react";
 import { AppContext } from ".././context/App";
 import { useRouter } from "next/router";
@@ -32,7 +32,7 @@ function Collaboration() {
   const { hostAddress } = router.query;
 
   /////////////////////////////////////////////////
-  ///// Refistering events related to nkn client///
+  ///// Registering events related to nkn client///
   ////////////////////////////////////////////////
 
   useEffect(() => {
