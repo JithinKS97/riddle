@@ -31,9 +31,7 @@ const createCanvas = (window) => {
   const canvasConfig = {
     isDrawingMode: true,
     width: window.innerWidth,
-    height:
-      window.innerHeight -
-      document.getElementsByClassName(topBarClass)[0].offsetHeight,
+    height: window.innerHeight - 0,
     backgroundColor: "rgba(0,0,0,0)",
   };
   return new fabric.Canvas("c", canvasConfig);

@@ -58,7 +58,7 @@ const LeftSection = () => {
   ];
 
   return (
-    <HStack>
+    <HStack p="3">
       <OptionsMenu selectedOption="Pencil" options={drawOptions} />
       <StrokeSlider />
       <ColorMenu>
