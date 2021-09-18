@@ -11,11 +11,13 @@ import { ResetPan, ResetZoom, FillIcon, StrokeIcon } from "../custom icons";
 import { AiOutlineSelect } from "react-icons/ai";
 import { GrPowerReset } from "react-icons/gr";
 import { AppContext } from "../../../context/App";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 
 const LeftSection = () => {
   const context = useContext(AppContext);
   const { selectedMode, setSelectedMode } = context;
+  const [selectedDrawMode, setSelectedDrawMode] = useState("Pencil");
+  const [selectedCursorMode, setSelectedCursorMode] = useState("Select");
 
   const drawOptions = [
     {
@@ -51,7 +53,7 @@ const LeftSection = () => {
     },
   ];
 
-  const modeOptions = [
+  const cursorOptions = [
     {
       label: "Select",
       icon: AiOutlineSelect,
@@ -63,6 +65,14 @@ const LeftSection = () => {
   ];
 
   const handleClick = (e) => {
+    const drawModes = drawOptions.map((drawOption) => drawOption.label);
+    const cursorModes = cursorOptions.map((cursorOption) => cursorOption.label);
+    if (drawModes.includes(e.label)) {
+      setSelectedDrawMode(e.label);
+    }
+    if (cursorModes.includes(e.label)) {
+      setSelectedCursorMode(e.label);
+    }
     setSelectedMode(e.label);
   };
 
@@ -70,8 +80,9 @@ const LeftSection = () => {
     <HStack p="3">
       <OptionsMenu
         onClick={handleClick}
-        selectedOption="Pencil"
+        selectedOption={selectedDrawMode}
         options={drawOptions}
+        highlighted={selectedMode === selectedDrawMode}
       />
       <StrokeSlider />
       <ColorMenu>
@@ -82,8 +93,9 @@ const LeftSection = () => {
       </ColorMenu>
       <OptionsMenu
         onClick={handleClick}
-        selectedOption="Select"
-        options={modeOptions}
+        selectedOption={selectedCursorMode}
+        options={cursorOptions}
+        highlighted={selectedMode === selectedCursorMode}
       />
       <OptionsMenu defaultIcon={<GrPowerReset />} options={viewOptions} />
     </HStack>

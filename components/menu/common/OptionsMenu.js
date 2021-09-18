@@ -8,7 +8,7 @@ import {
 } from "@chakra-ui/react";
 
 const OptionsMenu = (props) => {
-  const { options, selectedOption, defaultIcon, onClick } = props;
+  const { options, selectedOption, defaultIcon, onClick, highlighted } = props;
 
   const getIconToShowInMenu = () => {
     if (defaultIcon) {
@@ -25,7 +25,9 @@ const OptionsMenu = (props) => {
 
   return (
     <Menu>
-      <MenuButton as={Button}>{getIconToShowInMenu()}</MenuButton>
+      <MenuButton variant={highlighted ? "primary" : undefined} as={Button}>
+        {getIconToShowInMenu()}
+      </MenuButton>
       <MenuList p={0} minW="0">
         <MenuListItems onClick={onClick} options={options} />
       </MenuList>
