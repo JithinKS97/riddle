@@ -1,4 +1,4 @@
-import Drawingboard from "./Drawingboard";
+import Drawingboard from "./drawingboard/index";
 import { useEffect, useContext, useState } from "react";
 import { AppContext } from ".././context/App";
 import { useRouter } from "next/router";
@@ -32,7 +32,7 @@ function Collaboration() {
   const { hostAddress } = router.query;
 
   /////////////////////////////////////////////////
-  ///// Refistering events related to nkn client///
+  ///// Registering events related to nkn client///
   ////////////////////////////////////////////////
 
   useEffect(() => {
@@ -175,7 +175,9 @@ function Collaboration() {
    */
 
   const getCanvasAsJSON = () => {
-    return JSON.stringify(canvasRef.current.getCanvasAsJSON());
+    const fabricObjectsJSON = canvasRef.current.getCanvasAsJSON();
+    console.log(fabricObjectsJSON);
+    return JSON.stringify(fabricObjectsJSON);
   };
 
   const setCanvas = (fabricJSON) => {
@@ -301,6 +303,18 @@ function Collaboration() {
     }
   };
 
+  const resetCanvasZoom = () => {
+    if (canvasRef.current) {
+      canvasRef.current.resetZoom();
+    }
+  };
+
+  const resetCanvasPan = () => {
+    if (canvasRef.current) {
+      canvasRef.current.resetPan();
+    }
+  };
+
   const changeRouteShallow = (hostAddress) => {
     console.log("Shallow route");
     router.push(`/drawingboard/${hostAddress}`, undefined, { shallow: true });
@@ -314,6 +328,8 @@ function Collaboration() {
         onShareIconClick={onShareIconClick}
         onMembersIconClick={onMembersIconClick}
         resetZoomAndPan={resetCanvasZoomAndPan}
+        resetZoom={resetCanvasZoom}
+        resetPan={resetCanvasPan}
       />
       <div className="canvas-outer">
         <MembersPopup

@@ -3,7 +3,17 @@ import { extendTheme } from "@chakra-ui/react";
 const theme = extendTheme({
   components: {
     Button: {
-      baseStyle: {},
+      baseStyle: {
+        _hover: {
+          boxShadow: "none",
+        },
+        _active: {
+          boxShadow: "none",
+        },
+        _focus: {
+          boxShadow: "none",
+        },
+      },
       variants: {
         primary: {
           bg: "#1A365D",
@@ -12,19 +22,9 @@ const theme = extendTheme({
             backgroundColor: "#4299E1",
           },
         },
-        menuButton: {
-          bg: "white",
-          color: "black",
-          borderRadius: "full",
-          _hover: {
-            backgroundColor: "#c8c8c8",
-            color: "white",
-          },
-          border: "1px solid grey",
-          _focus: {
-            boxShadow: "none",
-          },
-        },
+      },
+      _focus: {
+        boxShadow: "none",
       },
     },
   },

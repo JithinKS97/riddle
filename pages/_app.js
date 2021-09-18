@@ -3,14 +3,15 @@ import { useState } from "react";
 import { ChakraProvider } from "@chakra-ui/react";
 import { AppProvider } from "../context/App";
 import theme from "../theme/theme";
-import { PENCIL } from "../constant/mode";
+import { Pencil } from "../constant/mode";
 
 function MyApp({ Component, pageProps }) {
   const [client, setClient] = useState(null);
   const [members, setMembers] = useState([]);
-  const [selectedMode, setSelectedMode] = useState(PENCIL);
+  const [selectedMode, setSelectedMode] = useState(Pencil);
   const [brushSize, setBrushSize] = useState(5);
-  const [selectedColor, setSelectedColor] = useState("black");
+  const [selectedFill, setSelectedFill] = useState("black");
+  const [selectedStroke, setSelectedStroke] = useState("black");
   const [hostAddress, setHostAddress] = useState("");
   const [isHost, setIsHost] = useState(false);
 
@@ -23,12 +24,14 @@ function MyApp({ Component, pageProps }) {
     setSelectedMode,
     brushSize,
     setBrushSize,
-    selectedColor,
-    setSelectedColor,
     hostAddress,
     setHostAddress,
     isHost,
     setIsHost,
+    selectedFill,
+    setSelectedFill,
+    selectedStroke,
+    setSelectedStroke,
   };
 
   return (
