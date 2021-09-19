@@ -26,8 +26,8 @@ export const ResetPan = () => {
   );
 };
 
-export const FillIcon = () => (
-  <AiTwotoneCheckSquare width="15px" height="15px" bg={"black"} />
+export const FillIcon = ({ color }) => (
+  <AiTwotoneCheckSquare width="15px" height="15px" color={color} />
 );
 
 export const StrokeIcon = ({ color }) => (

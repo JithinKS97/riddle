@@ -10,6 +10,7 @@ const parametersToLook = [
   "skewY",
   "stroke",
   "strokeWidth",
+  "fill",
 ];
 
 export const createCanvas = (window) => {
@@ -119,7 +120,7 @@ export const addObjectsInCanvas = ({
 const replaceObject = ({ objectToBeReplaced, objectToReplaceWith, canvas }) => {
   parametersToLook.forEach((parameter) => {
     if (objectToBeReplaced[parameter] !== objectToReplaceWith[parameter]) {
-      if (parameter === "stroke" || parameter === "strokeWidth") {
+      if (["stroke", "strokeWidth", "fill"].includes(parameter)) {
         canvas.remove(objectToBeReplaced);
         canvas.add(objectToReplaceWith);
         canvas.renderAll();
@@ -151,6 +152,7 @@ export const removeObjectsInCanvas = ({ canvas, ids }) => {
   if (!ids) {
     return;
   }
+  canvas.discardActiveObject();
   canvas.getObjects().forEach((object) => {
     if (ids.includes(object.id)) {
       animateObject({
@@ -158,6 +160,9 @@ export const removeObjectsInCanvas = ({ canvas, ids }) => {
         startValue: 1,
         endValue: 0,
         onComplete: () => {
+          object.set({
+            active: false,
+          });
           canvas.remove(object);
         },
         parameter: "opacity",

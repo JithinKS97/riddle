@@ -11,8 +11,6 @@ import { onModeChange } from "./mode";
 
 let canvas;
 
-fabric.Object.prototype.originX = fabric.Object.prototype.originY = "center";
-
 import {
   changePropertyOfSelectedObjectsInCanvas,
   deleteSelectedObjectsInCanvas,
@@ -29,7 +27,13 @@ import { registerCanvasEvents, registerKeyEvents } from "./event";
 
 const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
   const context = useContext(AppContext);
-  const { selectedMode, brushSize, selectedStroke } = context;
+  const {
+    selectedMode,
+    brushSize,
+    selectedStroke,
+    setSelectedMode,
+    selectedFill,
+  } = context;
   const {
     onAddObjects: sendObjectsToOthers,
     onObjectsRemove: deleteObjectsFromOthers,
@@ -58,6 +62,11 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
   }, [selectedStroke]);
 
   useEffect(() => {
+    changePropertyOfSelectedObjects("fill", selectedFill);
+    canvas.renderAll();
+  }, [selectedFill]);
+
+  useEffect(() => {
     canvas.freeDrawingBrush.width = brushSize;
     changePropertyOfSelectedObjects("strokeWidth", brushSize);
     canvas.renderAll();
@@ -81,12 +90,16 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
       setCurrentZoom,
       setShowZoom,
       sendSelectedObjectsToOthers,
+      setSelectedMode,
+      selectedFill,
+      selectedStroke,
+      brushSize,
     });
-  }, [canvas, selectedMode]);
+  }, [canvas, selectedMode, selectedFill, selectedStroke, brushSize]);
 
   useEffect(() => {
     return registerKeyEvents({ deleteSelectedObjects, document });
-  }, [selectedMode, canvas]);
+  }, [selectedMode, canvas, document]);
 
   // On mode change
   useEffect(onModeChange(canvas, selectedMode), [selectedMode, canvas]);
@@ -113,7 +126,6 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
 
   const deleteSelectedObjects = () => {
     const ids = deleteSelectedObjectsInCanvas(canvas);
-    console.log(ids);
     deleteObjectsFromOthers(ids);
   };
 

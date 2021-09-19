@@ -2,17 +2,17 @@ import { HStack } from "@chakra-ui/react";
 import OptionsMenu from "../common/OptionsMenu";
 import StrokeSlider from "./StrokeSlider";
 import ColorMenu from "./ColorMenu";
-import { HiOutlineMinus } from "react-icons/hi";
-import { BiRectangle } from "react-icons/bi";
-import { BiCircle, BiHome } from "react-icons/bi";
-import { FaPencilAlt } from "react-icons/fa";
-import { FiMove } from "react-icons/fi";
-import { ResetPan, ResetZoom, FillIcon, StrokeIcon } from "../custom icons";
-import { AiOutlineSelect } from "react-icons/ai";
+import { FillIcon, StrokeIcon } from "../custom icons";
 import { GrPowerReset } from "react-icons/gr";
 import { AppContext } from "../../../context/App";
 import { useContext, useState } from "react";
-import { Pencil } from "../../../constant/mode";
+import {
+  drawOptions,
+  resetOptions,
+  cursorOptions,
+  drawModes,
+  cursorModes,
+} from "../../../constant/menu";
 
 const LeftSection = (props) => {
   const { resetPan, resetZoom, resetZoomAndPan } = props;
@@ -23,6 +23,8 @@ const LeftSection = (props) => {
     selectedStroke,
     setSelectedStroke,
     setBrushSize,
+    setSelectedFill,
+    selectedFill,
   } = context;
   const [selectedDrawMode, setSelectedDrawMode] = useState("Pencil");
   const [selectedCursorMode, setSelectedCursorMode] = useState("Select");
@@ -41,8 +43,12 @@ const LeftSection = (props) => {
     setSelectedStroke(e.hex);
   };
 
+  const onFillChange = (e) => {
+    console.log(e);
+    setSelectedFill(e.hex);
+  };
+
   const handleSliderChange = (e) => {
-    setSelectedMode(Pencil);
     setBrushSize(e / 10);
   };
 
@@ -54,6 +60,8 @@ const LeftSection = (props) => {
     }
   };
 
+  console.log(selectedFill);
+
   return (
     <HStack p="3">
       <OptionsMenu
@@ -63,8 +71,8 @@ const LeftSection = (props) => {
         highlighted={selectedMode === selectedDrawMode}
       />
       <StrokeSlider onChange={handleSliderChange} />
-      <ColorMenu>
-        <FillIcon />
+      <ColorMenu onChange={onFillChange}>
+        <FillIcon color={selectedFill} />
       </ColorMenu>
       <ColorMenu onChange={onStrokeChange}>
         <StrokeIcon color={selectedStroke} />
@@ -83,49 +91,5 @@ const LeftSection = (props) => {
     </HStack>
   );
 };
-
-const drawOptions = [
-  {
-    label: "Pencil",
-    icon: FaPencilAlt,
-  },
-  {
-    label: "Line",
-    icon: HiOutlineMinus,
-  },
-  {
-    label: "Rectangle",
-    icon: BiRectangle,
-  },
-  {
-    label: "Ellipse",
-    icon: BiCircle,
-  },
-];
-
-const resetOptions = [
-  {
-    label: "Reset pan",
-    icon: ResetPan,
-  },
-  {
-    label: "Reset zoom",
-    icon: ResetZoom,
-  },
-];
-
-const cursorOptions = [
-  {
-    label: "Select",
-    icon: AiOutlineSelect,
-  },
-  {
-    label: "Pan",
-    icon: FiMove,
-  },
-];
-
-const drawModes = drawOptions.map((drawOption) => drawOption.label);
-const cursorModes = cursorOptions.map((cursorOption) => cursorOption.label);
 
 export default LeftSection;
