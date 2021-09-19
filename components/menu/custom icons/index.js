@@ -1,4 +1,3 @@
-import { AiTwotoneCheckSquare } from "react-icons/ai";
 import { FiSquare, FiMove } from "react-icons/fi";
 import { Box, HStack } from "@chakra-ui/react";
 import { GrPowerReset } from "react-icons/gr";
@@ -26,10 +25,16 @@ export const ResetPan = () => {
   );
 };
 
-export const FillIcon = ({ color }) => (
-  <AiTwotoneCheckSquare width="15px" height="15px" color={color} />
-);
+export const FillIcon = ({ color }) => <div style={fillStyle(color)}></div>;
 
 export const StrokeIcon = ({ color }) => (
   <FiSquare fontWeight="bold" width="15px" height="15px" color={color} />
 );
+
+const fillStyle = (color) => ({
+  width: "15px",
+  height: "15px",
+  backgroundColor: color,
+  border: "2px solid black",
+  borderRadius: "20%",
+});

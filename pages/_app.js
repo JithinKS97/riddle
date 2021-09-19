@@ -10,7 +10,7 @@ function MyApp({ Component, pageProps }) {
   const [members, setMembers] = useState([]);
   const [selectedMode, setSelectedMode] = useState(Pencil);
   const [brushSize, setBrushSize] = useState(5);
-  const [selectedFill, setSelectedFill] = useState("black");
+  const [selectedFill, setSelectedFill] = useState("#00D084");
   const [selectedStroke, setSelectedStroke] = useState("black");
   const [isHost, setIsHost] = useState(false);
 

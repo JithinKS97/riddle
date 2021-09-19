@@ -1,4 +1,3 @@
-import { fabric } from "fabric";
 import {
   forwardRef,
   useEffect,
