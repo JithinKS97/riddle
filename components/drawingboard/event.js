@@ -73,7 +73,7 @@ export const registerCanvasEvents = ({
         const delta = new fabric.Point(mEvent.movementX, mEvent.movementY);
         canvas.relativePan(delta);
       } else if (isShapeDrawingMode) {
-        continueDrawingShape({ canvas, option });
+        continueDrawingShape({ canvas, option, shape: selectedMode });
       }
     }
   });
@@ -105,16 +105,17 @@ export const registerCanvasEvents = ({
   };
 };
 
-export const registerKeyEvents = ({ deleteSelectedObjects, document }) => {
+export const registerKeyEvents = ({ deleteSelectedObjects, window }) => {
   const handleKeyDown = (e) => {
+    console.log("Keydown");
     if (e.key === "Backspace" || e.key === "Delete") {
       deleteSelectedObjects();
     }
   };
 
-  document.onkeydown = handleKeyDown;
+  window.onkeydown = handleKeyDown;
 
   return () => {
-    document.onkeydown = null;
+    window.onkeydown = null;
   };
 };

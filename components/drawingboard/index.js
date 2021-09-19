@@ -98,8 +98,8 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
   }, [canvas, selectedMode, selectedFill, selectedStroke, brushSize]);
 
   useEffect(() => {
-    return registerKeyEvents({ deleteSelectedObjects, document });
-  }, [selectedMode, canvas, document]);
+    return registerKeyEvents({ deleteSelectedObjects, window });
+  }, [selectedMode, canvas]);
 
   // On mode change
   useEffect(onModeChange(canvas, selectedMode), [selectedMode, canvas]);
