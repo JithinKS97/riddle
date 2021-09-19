@@ -6,7 +6,6 @@ import { FillIcon, StrokeIcon } from "../custom icons";
 import { GrPowerReset } from "react-icons/gr";
 import { AppContext } from "../../../context/App";
 import { useContext, useState } from "react";
-import { Pencil } from "../../../constant/mode";
 import {
   drawOptions,
   resetOptions,
@@ -24,6 +23,8 @@ const LeftSection = (props) => {
     selectedStroke,
     setSelectedStroke,
     setBrushSize,
+    setSelectedFill,
+    selectedFill,
   } = context;
   const [selectedDrawMode, setSelectedDrawMode] = useState("Pencil");
   const [selectedCursorMode, setSelectedCursorMode] = useState("Select");
@@ -42,8 +43,12 @@ const LeftSection = (props) => {
     setSelectedStroke(e.hex);
   };
 
+  const onFillChange = (e) => {
+    console.log(e);
+    setSelectedFill(e.hex);
+  };
+
   const handleSliderChange = (e) => {
-    setSelectedMode(Pencil);
     setBrushSize(e / 10);
   };
 
@@ -55,6 +60,8 @@ const LeftSection = (props) => {
     }
   };
 
+  console.log(selectedFill);
+
   return (
     <HStack p="3">
       <OptionsMenu
@@ -64,8 +71,8 @@ const LeftSection = (props) => {
         highlighted={selectedMode === selectedDrawMode}
       />
       <StrokeSlider onChange={handleSliderChange} />
-      <ColorMenu>
-        <FillIcon />
+      <ColorMenu onChange={onFillChange}>
+        <FillIcon color={selectedFill} />
       </ColorMenu>
       <ColorMenu onChange={onStrokeChange}>
         <StrokeIcon color={selectedStroke} />

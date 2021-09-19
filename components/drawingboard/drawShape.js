@@ -3,14 +3,28 @@ import { v4 as uuidv4 } from "uuid";
 
 let newShape, origX, origY;
 
-export const startDrawingShape = ({ canvas, option, selectedMode }) => {
+export const startDrawingShape = ({
+  canvas,
+  option,
+  shape,
+  fill,
+  stroke,
+  brushSize,
+}) => {
   const pointer = canvas.getPointer(option.e);
   origX = pointer.x;
   origY = pointer.y;
 
-  switch (selectedMode) {
+  switch (shape) {
     case "Rectangle":
-      newShape = createNewRectangle({ left: origX, top: origY, pointer });
+      newShape = createNewRectangle({
+        left: origX,
+        top: origY,
+        pointer,
+        fill,
+        stroke,
+        strokeWidth: brushSize,
+      });
   }
   newShape.set({
     id: uuidv4(),
@@ -47,8 +61,15 @@ export const endDrawingShape = ({ canvas }) => {
   return shapeObject;
 };
 
-const createNewRectangle = ({ left, top, pointer }) => {
-  return new fabric.Rect({
+const createNewRectangle = ({
+  left,
+  top,
+  pointer,
+  fill,
+  stroke,
+  strokeWidth,
+}) => {
+  const newRectangle = new fabric.Rect({
     left,
     top,
     originX: "left",
@@ -56,7 +77,10 @@ const createNewRectangle = ({ left, top, pointer }) => {
     width: pointer.x - left,
     height: pointer.y - top,
     angle: 0,
-    fill: "rgba(255,0,0,0.5)",
+    fill,
+    stroke,
     transparentCorners: false,
+    strokeWidth,
   });
+  return newRectangle;
 };

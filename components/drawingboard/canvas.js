@@ -10,6 +10,7 @@ const parametersToLook = [
   "skewY",
   "stroke",
   "strokeWidth",
+  "fill",
 ];
 
 export const createCanvas = (window) => {
@@ -119,7 +120,7 @@ export const addObjectsInCanvas = ({
 const replaceObject = ({ objectToBeReplaced, objectToReplaceWith, canvas }) => {
   parametersToLook.forEach((parameter) => {
     if (objectToBeReplaced[parameter] !== objectToReplaceWith[parameter]) {
-      if (parameter === "stroke" || parameter === "strokeWidth") {
+      if (["stroke", "strokeWidth", "fill"].includes(parameter)) {
         canvas.remove(objectToBeReplaced);
         canvas.add(objectToReplaceWith);
         canvas.renderAll();

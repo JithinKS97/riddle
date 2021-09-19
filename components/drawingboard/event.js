@@ -16,6 +16,9 @@ export const registerCanvasEvents = ({
   setCurrentZoom,
   setShowZoom,
   sendSelectedObjectsToOthers,
+  selectedFill,
+  selectedStroke,
+  brushSize,
 }) => {
   const isShapeDrawingMode =
     drawModes.includes(selectedMode) && selectedMode !== Pencil;
@@ -32,7 +35,14 @@ export const registerCanvasEvents = ({
     mousePressed = true;
     if (isShapeDrawingMode) {
       canvas.isDrawingMode = false;
-      startDrawingShape({ option, canvas, selectedMode });
+      startDrawingShape({
+        option,
+        canvas,
+        shape: selectedMode,
+        fill: selectedFill,
+        stroke: selectedStroke,
+        brushSize,
+      });
     }
   });
 

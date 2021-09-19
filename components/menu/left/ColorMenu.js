@@ -23,6 +23,7 @@ const ColorMenu = (props) => {
         {props.children}
       </MenuButton>
       <MenuList
+        backgroundColor="transparent"
         className="colorpicker"
         border="none"
         boxShadow="none"
