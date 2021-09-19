@@ -96,7 +96,6 @@ export const addObjectsInCanvas = ({
           object: enlivenedObjectToAdd,
           startValue: 0,
           endValue: 1,
-          onComplete: undefined,
           parameter: "opacity",
           canvas,
         });
@@ -141,7 +140,6 @@ const replaceObject = ({ objectToBeReplaced, objectToReplaceWith, canvas }) => {
         object: objectToBeReplaced,
         startValue: objectToBeReplaced[parameter],
         endValue: objectToReplaceWith[parameter],
-        onComplete: undefined,
         parameter,
         canvas,
       });

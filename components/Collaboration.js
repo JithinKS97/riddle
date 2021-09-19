@@ -241,7 +241,7 @@ function Collaboration() {
       setMembers,
       memberToMakeMainClient,
       hostAddress,
-      changeRouteShallow,
+      changeShareUrl,
       fillShareLink,
     });
   };
@@ -257,7 +257,7 @@ function Collaboration() {
       handleSharePopupClose,
       hostAddress,
       setIsHost,
-      changeRouteShallow,
+      changeShareUrl,
       fillShareLink,
     });
   };
@@ -315,8 +315,7 @@ function Collaboration() {
     }
   };
 
-  const changeRouteShallow = (hostAddress) => {
-    console.log("Shallow route");
+  const changeShareUrl = (hostAddress) => {
     router.push(`/drawingboard/${hostAddress}`, undefined, { shallow: true });
   };
 

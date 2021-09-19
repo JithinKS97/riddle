@@ -15,14 +15,14 @@ const makeTheMemberMainClient = ({
   setMembers,
   memberToMakeMainClient,
   hostAddress,
-  changeRouteShallow,
+  changeShareUrl,
   fillShareLink,
 }) => {
   const filterOutMainClient = (member) => member.identifier !== hostAddress;
 
   const updatedMembers = members.filter(filterOutMainClient);
 
-  changeRouteShallow(memberToMakeMainClient);
+  changeShareUrl(memberToMakeMainClient);
   fillShareLink(memberToMakeMainClient);
 
   setMembers(updatedMembers);
@@ -43,7 +43,7 @@ const makeThisMainClient = ({
   hostAddress,
   fillShareLink,
   client,
-  changeRouteShallow,
+  changeShareUrl,
 }) => {
   const publicKey = client.getPublicKey();
 
@@ -55,7 +55,7 @@ const makeThisMainClient = ({
   setMembers(updatedMembers);
   setIsHost(true);
 
-  changeRouteShallow(publicKey);
+  changeShareUrl(publicKey);
   fillShareLink(publicKey);
 };
 

@@ -12,7 +12,6 @@ function MyApp({ Component, pageProps }) {
   const [brushSize, setBrushSize] = useState(5);
   const [selectedFill, setSelectedFill] = useState("black");
   const [selectedStroke, setSelectedStroke] = useState("black");
-  const [hostAddress, setHostAddress] = useState("");
   const [isHost, setIsHost] = useState(false);
 
   const value = {
@@ -24,8 +23,6 @@ function MyApp({ Component, pageProps }) {
     setSelectedMode,
     brushSize,
     setBrushSize,
-    hostAddress,
-    setHostAddress,
     isHost,
     setIsHost,
     selectedFill,

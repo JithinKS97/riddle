@@ -27,20 +27,9 @@ export const ResetPan = () => {
 };
 
 export const FillIcon = () => (
-  <AiTwotoneCheckSquare
-    boxShadow="xs"
-    width="15px"
-    height="15px"
-    bg={"black"}
-  />
+  <AiTwotoneCheckSquare width="15px" height="15px" bg={"black"} />
 );
 
 export const StrokeIcon = ({ color }) => (
-  <FiSquare
-    fontWeight="bold"
-    boxShadow="xs"
-    width="15px"
-    height="15px"
-    color={color}
-  />
+  <FiSquare fontWeight="bold" width="15px" height="15px" color={color} />
 );
