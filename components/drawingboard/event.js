@@ -1,5 +1,11 @@
-import { Pan, Eraser } from "../../constant/mode";
+import { Pan, Pencil, Select } from "../../constant/mode";
 import { v4 as uuidv4 } from "uuid";
+import { drawModes } from "../../constant/menu";
+import {
+  startDrawingShape,
+  continueDrawingShape,
+  endDrawingShape,
+} from "./drawShape";
 
 let mousePressed, timeout;
 
@@ -11,6 +17,9 @@ export const registerCanvasEvents = ({
   setShowZoom,
   sendSelectedObjectsToOthers,
 }) => {
+  const isShapeDrawingMode =
+    drawModes.includes(selectedMode) && selectedMode !== Pencil;
+
   canvas.on("path:created", (res) => {
     res.path.set({
       id: uuidv4(),
@@ -19,37 +28,44 @@ export const registerCanvasEvents = ({
     sendObjectsToOthers([newObject]);
   });
 
-  canvas.on("mouse:down", function (options) {
-    if (options.target && selectedMode === Eraser) {
-      canvas.remove(options.target);
-      canvas.renderAll();
-    }
+  canvas.on("mouse:down", function (option) {
     mousePressed = true;
+    if (isShapeDrawingMode) {
+      canvas.isDrawingMode = false;
+      startDrawingShape({ option, canvas, selectedMode });
+    }
   });
 
   canvas.on("mouse:up", function () {
     mousePressed = false;
-  });
-
-  canvas.on("mouse:over", function (options) {
-    if (options.target && selectedMode === Eraser) {
-      options.target.set("opacity", 0.5);
-      canvas.renderAll();
+    if (isShapeDrawingMode) {
+      canvas.discardActiveObject();
+      const shapeObject = endDrawingShape();
+      if (shapeObject) {
+        sendObjectsToOthers([shapeObject]);
+      }
     }
   });
 
-  canvas.on("mouse:out", function (options) {
-    if (options.target && selectedMode === Eraser) {
-      options.target.set("opacity", 1);
-      canvas.renderAll();
+  canvas.on("mouse:over", function (option) {
+    if (selectedMode === Select) {
+      if (option.target) {
+        option.target.set({
+          hoverCursor: "move",
+        });
+      }
     }
   });
 
-  canvas.on("mouse:move", function (event) {
-    if (mousePressed && selectedMode === Pan) {
-      const mEvent = event.e;
-      const delta = new fabric.Point(mEvent.movementX, mEvent.movementY);
-      canvas.relativePan(delta);
+  canvas.on("mouse:move", function (option) {
+    if (mousePressed) {
+      if (selectedMode === Pan) {
+        const mEvent = option.e;
+        const delta = new fabric.Point(mEvent.movementX, mEvent.movementY);
+        canvas.relativePan(delta);
+      } else if (isShapeDrawingMode) {
+        continueDrawingShape({ canvas, option });
+      }
     }
   });
 
@@ -82,7 +98,6 @@ export const registerCanvasEvents = ({
 
 export const registerKeyEvents = ({ deleteSelectedObjects, document }) => {
   const handleKeyDown = (e) => {
-    console.log("Hello");
     if (e.key === "Backspace" || e.key === "Delete") {
       deleteSelectedObjects();
     }

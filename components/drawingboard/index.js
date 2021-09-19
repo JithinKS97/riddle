@@ -113,7 +113,6 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
 
   const deleteSelectedObjects = () => {
     const ids = deleteSelectedObjectsInCanvas(canvas);
-    console.log(ids);
     deleteObjectsFromOthers(ids);
   };
 
