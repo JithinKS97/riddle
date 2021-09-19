@@ -39,8 +39,7 @@ export const registerCanvasEvents = ({
   canvas.on("mouse:up", function () {
     mousePressed = false;
     if (isShapeDrawingMode) {
-      canvas.discardActiveObject();
-      const shapeObject = endDrawingShape();
+      const shapeObject = endDrawingShape({ canvas });
       if (shapeObject) {
         sendObjectsToOthers([shapeObject]);
       }

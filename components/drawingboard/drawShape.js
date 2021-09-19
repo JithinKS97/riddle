@@ -12,13 +12,13 @@ export const startDrawingShape = ({ canvas, option, selectedMode }) => {
     case "Rectangle":
       newShape = createNewRectangle({ left: origX, top: origY, pointer });
   }
-
   newShape.set({
+    id: uuidv4(),
     selectable: false,
     active: false,
-    hoverCursor: "normal",
+    hoverCursor: "crosshair",
   });
-
+  canvas.renderAll();
   canvas.add(newShape);
 };
 
@@ -41,10 +41,8 @@ export const continueDrawingShape = ({ canvas, option }) => {
   canvas.renderAll();
 };
 
-export const endDrawingShape = () => {
-  newShape.set({
-    id: uuidv4(),
-  });
+export const endDrawingShape = ({ canvas }) => {
+  canvas.discardActiveObject();
   const shapeObject = newShape.toObject(["id"]);
   return shapeObject;
 };

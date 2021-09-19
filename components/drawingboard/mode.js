@@ -6,8 +6,10 @@ export const onModeChange = (canvas, selectedMode) => () => {
     return;
   }
 
-  const disableSelectForObjects = () => {
-    canvas.selection = false;
+  const disableSelect = () => {
+    canvas.set({
+      selection: false,
+    });
     canvas.getObjects().forEach((object) => {
       object.set({ selectable: false });
     });
@@ -15,8 +17,10 @@ export const onModeChange = (canvas, selectedMode) => () => {
     canvas.renderAll();
   };
 
-  const enableSelectForObjects = () => {
-    canvas.selection = true;
+  const enableSelect = () => {
+    canvas.set({
+      selection: true,
+    });
     canvas.getObjects().forEach((object) => {
       object.set({ selectable: true });
     });
@@ -26,21 +30,22 @@ export const onModeChange = (canvas, selectedMode) => () => {
     drawModes.includes(selectedMode) && selectedMode !== Pencil;
 
   if (isShapeDrawingMode) {
+    disableSelect();
     canvas.defaultCursor = "crosshair";
     canvas.isDrawingMode = false;
     return;
   } else if (selectedMode === Pencil) {
     canvas.isDrawingMode = true;
-    disableSelectForObjects();
+    disableSelect();
     return;
   } else if (selectedMode === Select) {
-    enableSelectForObjects();
+    enableSelect();
     canvas.defaultCursor = "auto";
     canvas.hoverCursor = "move";
     canvas.isDrawingMode = false;
     return;
   } else if (selectedMode === Pan) {
-    disableSelectForObjects();
+    disableSelect();
     canvas.isDrawingMode = false;
     canvas.defaultCursor = "grab";
     canvas.hoverCursor = "grab";
@@ -49,6 +54,5 @@ export const onModeChange = (canvas, selectedMode) => () => {
     canvas.isDrawingMode = false;
     canvas.defaultCursor = "auto";
     canvas.hoverCursor = "auto";
-    return;
   }
 };

@@ -29,7 +29,7 @@ import { registerCanvasEvents, registerKeyEvents } from "./event";
 
 const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
   const context = useContext(AppContext);
-  const { selectedMode, brushSize, selectedStroke } = context;
+  const { selectedMode, brushSize, selectedStroke, setSelectedMode } = context;
   const {
     onAddObjects: sendObjectsToOthers,
     onObjectsRemove: deleteObjectsFromOthers,
@@ -81,6 +81,7 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
       setCurrentZoom,
       setShowZoom,
       sendSelectedObjectsToOthers,
+      setSelectedMode,
     });
   }, [canvas, selectedMode]);
 
