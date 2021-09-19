@@ -107,7 +107,6 @@ export const registerCanvasEvents = ({
 
 export const registerKeyEvents = ({ deleteSelectedObjects, window }) => {
   const handleKeyDown = (e) => {
-    console.log("Keydown");
     if (e.key === "Backspace" || e.key === "Delete") {
       deleteSelectedObjects();
     }

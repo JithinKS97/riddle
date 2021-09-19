@@ -53,8 +53,6 @@ const sendLeaveMessageForSubClient = ({ client, members }) => {
     identifier: publicKey,
   };
 
-  console.log(content);
-
   const filterOutThisClient = (memberIdentifier) =>
     memberIdentifier !== publicKey;
 
@@ -274,7 +272,6 @@ function handleMessageForSub(props) {
       break;
     case REMOVE_MEMBER:
       // The member has to be removed from the members list
-      console.log(payload);
       const memberToRemove = payload.content.identifier;
       notifyLeave(memberToRemove);
       removeSubClientMember(memberToRemove);

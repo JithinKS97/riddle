@@ -33,6 +33,7 @@ export const startDrawingShape = ({
         stroke,
         strokeWidth: brushSize,
       });
+      break;
     case Ellipse:
       newShape = createNewEllipse({
         left: origX,
@@ -73,6 +74,7 @@ export const continueDrawingShape = ({ canvas, option, shape }) => {
         x2: pointer.x,
         y2: pointer.y,
       });
+
       break;
     case Ellipse:
       if (origX > pointer.x) {
@@ -85,7 +87,6 @@ export const continueDrawingShape = ({ canvas, option, shape }) => {
       newShape.set({ ry: Math.abs(origY - pointer.y) / 2 });
       break;
   }
-
   newShape.setCoords();
   canvas.renderAll();
 };

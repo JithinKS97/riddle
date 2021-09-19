@@ -44,7 +44,6 @@ const LeftSection = (props) => {
   };
 
   const onFillChange = (e) => {
-    console.log(e);
     setSelectedFill(e.hex);
   };
 
@@ -59,8 +58,6 @@ const LeftSection = (props) => {
       resetPan();
     }
   };
-
-  console.log(selectedFill);
 
   return (
     <HStack p="3">

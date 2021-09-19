@@ -176,7 +176,6 @@ function Collaboration() {
 
   const getCanvasAsJSON = () => {
     const fabricObjectsJSON = canvasRef.current.getCanvasAsJSON();
-    console.log(fabricObjectsJSON);
     return JSON.stringify(fabricObjectsJSON);
   };
 
@@ -271,7 +270,6 @@ function Collaboration() {
   };
 
   const notifyLeave = (memberToLeave) => {
-    console.log(memberToLeave);
     const name = membersApi.getName({
       id: memberToLeave,
       members: membersRef.current,
