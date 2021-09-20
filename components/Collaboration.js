@@ -12,11 +12,7 @@ import SharePopup from "./popups/SharePopup";
 import { useToast } from "@chakra-ui/react";
 import MembersPopup from "./popups/MembersPopup";
 import TopMenu from "./menu/TopMenu";
-import { Button, Box } from "@chakra-ui/react";
-import {
-  addObjectsInCanvas,
-  saveFile,
-} from "../components/drawingboard/canvas";
+import { saveFile } from "../components/drawingboard/canvas";
 
 function Collaboration() {
   const context = useContext(AppContext);
@@ -192,12 +188,13 @@ function Collaboration() {
     });
   };
 
-  const onAddObjects = (objects) => {
+  const onAddObjects = (objects, clear) => {
     messageApi.addObjectsToOthersCanvas({
       client: clientRef.current,
       objects,
       members: membersRef.current,
       hostAddress,
+      clear,
     });
   };
 
@@ -209,12 +206,16 @@ function Collaboration() {
     });
   };
 
-  const addObjectsToCanvas = (objects, fromAddress) => {
+  const addObjectsToCanvas = (objects, fromAddress, clear) => {
     const nameOfTheAdder = membersApi.getName({
       id: fromAddress,
       members: membersRef.current,
     });
-    canvasRef.current.addObjects(objects, nameOfTheAdder);
+    if (!clear) {
+      canvasRef.current.addObjects(objects, nameOfTheAdder);
+    } else {
+      canvasRef.current.clearAndAddObjects(objects, nameOfTheAdder);
+    }
   };
 
   /**
@@ -326,8 +327,8 @@ function Collaboration() {
   };
 
   const addObjectsInCanvasAndUpdateOthers = (objects) => {
-    canvasRef.current.addObjects(objects, "");
-    onAddObjects(objects);
+    canvasRef.current.clearAndAddObjects(objects, "");
+    onAddObjects(objects, true);
   };
 
   return (

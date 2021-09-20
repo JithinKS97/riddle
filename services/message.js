@@ -122,6 +122,7 @@ const addObjectsToOthersCanvas = ({
   members,
   hostAddress,
   isHost,
+  clear,
 }) => {
   if (!client) {
     return;
@@ -129,6 +130,7 @@ const addObjectsToOthersCanvas = ({
 
   const content = {
     objects,
+    clear,
   };
 
   const message = generateMessage(ADD_OBJECTS, content);
@@ -237,7 +239,8 @@ function handleMessageForHost(props) {
       break;
     case ADD_OBJECTS:
       const objects = payload.content.objects;
-      addObjectsToCanvas(objects, src);
+      const clear = payload.content.clear;
+      addObjectsToCanvas(objects, src, clear);
       break;
     case REMOVE_OBJECTS:
       const ids = payload.content.ids;
@@ -290,7 +293,8 @@ function handleMessageForSub(props) {
       break;
     case ADD_OBJECTS:
       const objects = payload.content.objects;
-      addObjectsToCanvas(objects, src);
+      const clear = payload.content.clear;
+      addObjectsToCanvas(objects, src, clear);
       break;
     case REMOVE_OBJECTS:
       const ids = payload.content.ids;
