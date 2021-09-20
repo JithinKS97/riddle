@@ -68,24 +68,26 @@ function Collaboration() {
   }, [client]);
 
   const registerLeave = () => {
-    window.onbeforeunload = () => {
-      if (!clientRef.current) {
-        return;
-      }
-      if (!isHostRef.current) {
-        messageApi.sendLeaveMessageForSubClient({
-          client: clientRef.current,
-          members: membersRef.current,
-        });
-      } else {
-        messageApi.makeSubClientMainClient({
-          client: clientRef.current,
-          members: membersRef.current,
-        });
-      }
-      return null;
-    };
+    window.onbeforeunload = leaveRoom;
     return () => (window.onbeforeunload = null);
+  };
+
+  const leaveRoom = () => {
+    if (!clientRef.current) {
+      return;
+    }
+    if (!isHostRef.current) {
+      messageApi.sendLeaveMessageForSubClient({
+        client: clientRef.current,
+        members: membersRef.current,
+      });
+    } else {
+      messageApi.makeSubClientMainClient({
+        client: clientRef.current,
+        members: membersRef.current,
+      });
+    }
+    return null;
   };
 
   //////////////////////////////////////////////
@@ -331,6 +333,13 @@ function Collaboration() {
     onAddObjects(objects, true);
   };
 
+  const exit = () => {
+    if (confirm("Are you sure you want to leave the room?")) {
+      leaveRoom();
+      goBack();
+    }
+  };
+
   return (
     <>
       <style>{style({ loading })}</style>
@@ -343,6 +352,7 @@ function Collaboration() {
         resetPan={resetCanvasPan}
         saveJson={saveJson}
         addObjectsInCanvasAndUpdateOthers={addObjectsInCanvasAndUpdateOthers}
+        exit={exit}
       />
       <div className="canvas-outer">
         <MembersPopup

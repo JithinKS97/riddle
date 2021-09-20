@@ -4,6 +4,7 @@ import { FaRegFile, FaShareAlt } from "react-icons/fa";
 import { BsFillPeopleFill } from "react-icons/bs";
 import { fileOptions } from "../../../constant/menu";
 import { useRef } from "react";
+import { BiExit } from "react-icons/bi";
 
 const RightSection = (props) => {
   const {
@@ -11,6 +12,7 @@ const RightSection = (props) => {
     onMembersIconClick,
     saveJson,
     addObjectsInCanvasAndUpdateOthers,
+    exit,
   } = props;
   const fileUploadRef = useRef();
 
@@ -65,6 +67,9 @@ const RightSection = (props) => {
       </Button>
       <Button onClick={onMembersIconClick}>
         <BsFillPeopleFill />
+      </Button>
+      <Button onClick={exit}>
+        <BiExit />
       </Button>
     </HStack>
   );
