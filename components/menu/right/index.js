@@ -85,7 +85,7 @@ const RightSection = (props) => {
   };
 
   const onLoadContentIdChange = (e) => {
-    setLoadContentId(e.target.value);
+    setLoadContentId(e.target.value.trim());
   };
 
   const loadContentFromIPFS = async () => {

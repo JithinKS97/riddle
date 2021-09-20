@@ -29,7 +29,7 @@ function IPFSSave(props) {
 
   return (
     <>
-      <Modal onClose={onClose} size="xl" isOpen={show} isCentered isOpen={show}>
+      <Modal onClose={onClose} size="xl" isOpen={show} isCentered>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Saving to IPFS</ModalHeader>

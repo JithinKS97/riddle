@@ -29,7 +29,7 @@ function IPFSLoad(props) {
       <Modal onClose={onClose} size="xl" isOpen={show} isCentered>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Load from IPFS</ModalHeader>
+          <ModalHeader>Loading from IPFS</ModalHeader>
           <ModalCloseButton onClick={onClose} />
           {!isLoading ? (
             <>
@@ -44,7 +44,12 @@ function IPFSLoad(props) {
           )}
           <ModalFooter>
             {!isLoading ? (
-              <Button onClick={handleLoadClick} variant="primary" float="right">
+              <Button
+                size="sm"
+                onClick={handleLoadClick}
+                variant="primary"
+                float="right"
+              >
                 Load
               </Button>
             ) : null}
