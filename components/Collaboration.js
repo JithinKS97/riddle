@@ -12,7 +12,7 @@ import SharePopup from "./popups/SharePopup";
 import { useToast } from "@chakra-ui/react";
 import MembersPopup from "./popups/MembersPopup";
 import TopMenu from "./menu/TopMenu";
-import { Button, Box } from "@chakra-ui/react";
+import { saveFile } from "../components/drawingboard/canvas";
 
 function Collaboration() {
   const context = useContext(AppContext);
@@ -188,12 +188,13 @@ function Collaboration() {
     });
   };
 
-  const onAddObjects = (objects) => {
+  const onAddObjects = (objects, clear) => {
     messageApi.addObjectsToOthersCanvas({
       client: clientRef.current,
       objects,
       members: membersRef.current,
       hostAddress,
+      clear,
     });
   };
 
@@ -205,12 +206,16 @@ function Collaboration() {
     });
   };
 
-  const addObjectsToCanvas = (objects, fromAddress) => {
+  const addObjectsToCanvas = (objects, fromAddress, clear) => {
     const nameOfTheAdder = membersApi.getName({
       id: fromAddress,
       members: membersRef.current,
     });
-    canvasRef.current.addObjects(objects, nameOfTheAdder);
+    if (!clear) {
+      canvasRef.current.addObjects(objects, nameOfTheAdder);
+    } else {
+      canvasRef.current.clearAndAddObjects(objects, nameOfTheAdder);
+    }
   };
 
   /**
@@ -317,6 +322,15 @@ function Collaboration() {
     router.push(`/drawingboard/${hostAddress}`, undefined, { shallow: true });
   };
 
+  const saveJson = () => {
+    saveFile({ json: getCanvasAsJSON() });
+  };
+
+  const addObjectsInCanvasAndUpdateOthers = (objects) => {
+    canvasRef.current.clearAndAddObjects(objects, "");
+    onAddObjects(objects, true);
+  };
+
   return (
     <>
       <style>{style({ loading })}</style>
@@ -327,6 +341,8 @@ function Collaboration() {
         resetZoomAndPan={resetCanvasZoomAndPan}
         resetZoom={resetCanvasZoom}
         resetPan={resetCanvasPan}
+        saveJson={saveJson}
+        addObjectsInCanvasAndUpdateOthers={addObjectsInCanvasAndUpdateOthers}
       />
       <div className="canvas-outer">
         <MembersPopup

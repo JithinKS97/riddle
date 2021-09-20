@@ -3,13 +3,63 @@ import OptionsMenu from "../common/OptionsMenu";
 import { FaRegFile, FaShareAlt } from "react-icons/fa";
 import { BsFillPeopleFill } from "react-icons/bs";
 import { fileOptions } from "../../../constant/menu";
+import { useRef } from "react";
 
-const LeftSection = (props) => {
-  const { onShareIconClick, onMembersIconClick } = props;
+const RightSection = (props) => {
+  const {
+    onShareIconClick,
+    onMembersIconClick,
+    saveJson,
+    addObjectsInCanvasAndUpdateOthers,
+  } = props;
+  const fileUploadRef = useRef();
+
+  const handleClick = (e) => {
+    if (e.label === "Save") {
+      saveJson();
+    } else if (e.label === "Load") {
+      uploadFile();
+    }
+  };
+
+  const uploadFile = () => {
+    fileUploadRef.current.click();
+  };
+
+  const handleFileUploadFinish = (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    function onRead() {
+      saveToFabric(reader.result);
+    }
+    reader.onload = onRead;
+    reader.readAsBinaryString(file);
+    fileUploadRef.current.value = null;
+  };
+
+  const saveToFabric = (result) => {
+    try {
+      const fabricData = JSON.parse(result);
+      const fabricJSON = JSON.parse(fabricData.json);
+      addObjectsInCanvasAndUpdateOthers(fabricJSON.objects);
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   return (
     <HStack p="3">
-      <OptionsMenu defaultIcon={<FaRegFile />} options={fileOptions} />
+      <input
+        style={{ position: "absolute", visibility: "hidden" }}
+        type="file"
+        ref={fileUploadRef}
+        onChange={handleFileUploadFinish}
+      />
+      <OptionsMenu
+        onClick={handleClick}
+        defaultIcon={<FaRegFile />}
+        options={fileOptions}
+      />
       <Button onClick={onShareIconClick}>
         <FaShareAlt />
       </Button>
@@ -20,4 +70,4 @@ const LeftSection = (props) => {
   );
 };
 
-export default LeftSection;
+export default RightSection;

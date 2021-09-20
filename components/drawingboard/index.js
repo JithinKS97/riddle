@@ -114,6 +114,7 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
       resetZoomAndPan,
       resetZoom,
       resetPan,
+      clearAndAddObjects,
     };
   });
 
@@ -129,6 +130,11 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
   };
 
   const addObjects = (objectsToAdd, nameOfTheAdder) => {
+    addObjectsInCanvas({ canvas, objectsToAdd, nameOfTheAdder });
+  };
+
+  const clearAndAddObjects = (objectsToAdd, nameOfTheAdder) => {
+    canvas.clear();
     addObjectsInCanvas({ canvas, objectsToAdd, nameOfTheAdder });
   };
 
