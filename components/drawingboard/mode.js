@@ -11,7 +11,7 @@ export const onModeChange = (canvas, selectedMode) => () => {
 
   if (selectedMode === Select) {
     enableSelect(canvas);
-  } else {
+  } else if (selectedMode !== None) {
     disableSelect(canvas);
   }
 

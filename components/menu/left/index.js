@@ -13,9 +13,10 @@ import {
   drawModes,
   cursorModes,
 } from "../../../constant/menu";
+import { None } from "../../../constant/mode";
 
 const LeftSection = (props) => {
-  const { resetPan, resetZoom, resetZoomAndPan } = props;
+  const { resetPan, resetZoomAndPan } = props;
   const context = useContext(AppContext);
   const {
     selectedMode,
@@ -28,6 +29,7 @@ const LeftSection = (props) => {
   } = context;
   const [selectedDrawMode, setSelectedDrawMode] = useState("Pencil");
   const [selectedCursorMode, setSelectedCursorMode] = useState("Select");
+  const [previousMode, setPreviousMode] = useState("");
 
   const handleClick = (e) => {
     if (drawModes.includes(e.label)) {
@@ -47,6 +49,12 @@ const LeftSection = (props) => {
     setSelectedFill(e.hex);
   };
 
+  const restoreState = () => {
+    // Restoring the state after the selection of color
+    setSelectedMode(previousMode);
+    setPreviousMode("");
+  };
+
   const handleSliderChange = (e) => {
     setBrushSize(e / 10);
   };
@@ -59,6 +67,20 @@ const LeftSection = (props) => {
     }
   };
 
+  const onColorMenuClick = () => {
+    // This is to prevent accidental drawing after the selection of color
+    if (drawModes.includes(selectedMode)) {
+      setSelectedMode(None);
+      setPreviousMode(selectedMode);
+    }
+  };
+
+  const onColorChangeComplete = () => {
+    if (selectedMode === None) {
+      restoreState();
+    }
+  };
+
   return (
     <HStack p="3">
       <OptionsMenu
@@ -68,10 +90,18 @@ const LeftSection = (props) => {
         highlighted={selectedMode === selectedDrawMode}
       />
       <StrokeSlider onChange={handleSliderChange} />
-      <ColorMenu onChange={onFillChange}>
+      <ColorMenu
+        onClose={onColorChangeComplete}
+        onMenuClick={onColorMenuClick}
+        onChange={onFillChange}
+      >
         <FillIcon color={selectedFill} />
       </ColorMenu>
-      <ColorMenu onChange={onStrokeChange}>
+      <ColorMenu
+        onClose={onColorChangeComplete}
+        onMenuClick={onColorMenuClick}
+        onChange={onStrokeChange}
+      >
         <StrokeIcon color={selectedStroke} />
       </ColorMenu>
       <OptionsMenu

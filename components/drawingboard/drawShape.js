@@ -65,6 +65,9 @@ export const startDrawingShape = ({
 };
 
 export const continueDrawingShape = ({ canvas, option, shape }) => {
+  if (!newShape) {
+    return;
+  }
   const pointer = canvas.getPointer(option.e);
   switch (shape) {
     case Rectangle:
@@ -103,6 +106,9 @@ export const continueDrawingShape = ({ canvas, option, shape }) => {
 };
 
 export const endDrawingShape = ({ canvas }) => {
+  if (!newShape) {
+    return;
+  }
   canvas.discardActiveObject();
   const shapeObject = newShape.toObject(["id"]);
   return shapeObject;

@@ -15,11 +15,11 @@ const colors = [
 ];
 
 const ColorMenu = (props) => {
-  const { onChange } = props;
+  const { onChange, onMenuClick, onClose } = props;
 
   return (
-    <Menu>
-      <MenuButton marginLeft="4" as={Button}>
+    <Menu onClose={onClose}>
+      <MenuButton onClick={onMenuClick} marginLeft="4" as={Button}>
         {props.children}
       </MenuButton>
       <MenuList
@@ -29,12 +29,7 @@ const ColorMenu = (props) => {
         boxShadow="none"
         marginTop="3"
       >
-        <MenuItem
-          _active={{ bg: "transparent" }}
-          _focus={{ bg: "transparent" }}
-        >
-          <TwitterPicker onChange={onChange} colors={colors} />
-        </MenuItem>
+        <TwitterPicker onChange={onChange} colors={colors} />
       </MenuList>
     </Menu>
   );
