@@ -21,6 +21,9 @@ function IPFSSave(props) {
   const { hasCopied, onCopy } = useClipboard(cid);
 
   const handleCopyClick = () => {
+    setTimeout(() => {
+      onClose();
+    }, 800);
     onCopy();
   };
 

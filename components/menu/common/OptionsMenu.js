@@ -54,7 +54,6 @@ const MenuListItems = (props) => {
         display="flex"
         justifyContent="space-between"
         onClick={handleClick(option)}
-        key={option.label}
       >
         <Box>{option.label}</Box>
         <Box marginLeft="5">

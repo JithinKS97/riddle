@@ -6,9 +6,10 @@ import { BsFillPeopleFill } from "react-icons/bs";
 import { fileOptions } from "../../../constant/menu";
 import { useRef } from "react";
 import { BiExit } from "react-icons/bi";
-import { addToIPFS } from "../../../services/ipfs";
+import { addToIPFS, loadFromIPFS } from "../../../services/ipfs";
 import IPFSSave from "../../popups/IPFSSave";
 import { useState } from "react";
+import IPFSLoad from "../../popups/IPFSLoad";
 
 const RightSection = (props) => {
   const {
@@ -22,14 +23,18 @@ const RightSection = (props) => {
   const fileUploadRef = useRef();
   const [showIPFSSave, setShowIPFSSave] = useState(false);
   const [saveContentId, setSaveContentId] = useState("");
+  const [showIPFSLoad, setShowIPFSLoad] = useState(false);
+  const [loadContentId, setLoadContentId] = useState("");
 
   const handleClick = async (e) => {
-    if (e.label === "Save") {
+    if (e.label === "Save to local") {
       saveJson();
-    } else if (e.label === "Load") {
+    } else if (e.label === "Load from local") {
       uploadFile();
     } else if (e.label === "Save to IPFS") {
       await saveToIPFS();
+    } else if (e.label === "Load from IPFS") {
+      await handleIPFSLoadClick();
     }
   };
 
@@ -50,6 +55,7 @@ const RightSection = (props) => {
 
   const saveToFabric = (result) => {
     try {
+      console.log("Helo");
       const fabricData = JSON.parse(result);
       const fabricJSON = JSON.parse(fabricData.json);
       addObjectsInCanvasAndUpdateOthers(fabricJSON.objects);
@@ -65,14 +71,48 @@ const RightSection = (props) => {
     setSaveContentId(cid);
   };
 
-  const handleClose = () => {
+  const handleIPFSSaveClose = () => {
     setShowIPFSSave(false);
     setSaveContentId("");
   };
 
+  const handleIPFSLoadClick = () => {
+    setShowIPFSLoad(true);
+  };
+
+  const handleIPFSLoadClose = () => {
+    setShowIPFSLoad(false);
+  };
+
+  const onLoadContentIdChange = (e) => {
+    setLoadContentId(e.target.value);
+  };
+
+  const loadContentFromIPFS = async () => {
+    try {
+      const data = await loadFromIPFS(loadContentId);
+      const fabricObjects = JSON.parse(data).objects;
+      addObjectsInCanvasAndUpdateOthers(fabricObjects);
+    } catch (err) {
+      alert("Could not load from IPFS");
+    }
+    handleIPFSLoadClose();
+  };
+
   return (
     <>
-      <IPFSSave onClose={handleClose} cid={saveContentId} show={showIPFSSave} />
+      <IPFSSave
+        onClose={handleIPFSSaveClose}
+        cid={saveContentId}
+        show={showIPFSSave}
+      />
+      <IPFSLoad
+        loadContent={loadContentFromIPFS}
+        onClose={handleIPFSLoadClose}
+        show={showIPFSLoad}
+        onContentIdChange={onLoadContentIdChange}
+        onLoadClick={loadContentFromIPFS}
+      />
       <HStack p="3">
         <input
           style={{ position: "absolute", visibility: "hidden" }}
