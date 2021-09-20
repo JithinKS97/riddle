@@ -352,6 +352,7 @@ function Collaboration() {
         resetPan={resetCanvasPan}
         saveJson={saveJson}
         addObjectsInCanvasAndUpdateOthers={addObjectsInCanvasAndUpdateOthers}
+        getCanvasAsJSON={getCanvasAsJSON}
         exit={exit}
       />
       <div className="canvas-outer">

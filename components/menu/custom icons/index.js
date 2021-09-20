@@ -2,6 +2,8 @@ import { FiSquare, FiMove } from "react-icons/fi";
 import { Box, HStack } from "@chakra-ui/react";
 import { GrPowerReset } from "react-icons/gr";
 import { TiZoomOutline } from "react-icons/ti";
+import { SiIpfs } from "react-icons/si";
+import { FiSave, FiDownload } from "react-icons/fi";
 
 export const ResetZoom = () => {
   return (
@@ -38,3 +40,25 @@ const fillStyle = (color) => ({
   border: "2px solid black",
   borderRadius: "20%",
 });
+
+export const SaveIPFS = () => {
+  return (
+    <Box>
+      <HStack>
+        <FiSave size="15px" />
+        <SiIpfs />
+      </HStack>
+    </Box>
+  );
+};
+
+export const LoadIPFS = () => {
+  return (
+    <Box>
+      <HStack>
+        <FiDownload size="15px" />
+        <SiIpfs />
+      </HStack>
+    </Box>
+  );
+};
