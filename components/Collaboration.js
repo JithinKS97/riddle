@@ -13,6 +13,10 @@ import { useToast } from "@chakra-ui/react";
 import MembersPopup from "./popups/MembersPopup";
 import TopMenu from "./menu/TopMenu";
 import { Button, Box } from "@chakra-ui/react";
+import {
+  addObjectsInCanvas,
+  saveFile,
+} from "../components/drawingboard/canvas";
 
 function Collaboration() {
   const context = useContext(AppContext);
@@ -317,6 +321,15 @@ function Collaboration() {
     router.push(`/drawingboard/${hostAddress}`, undefined, { shallow: true });
   };
 
+  const saveJson = () => {
+    saveFile({ json: getCanvasAsJSON() });
+  };
+
+  const addObjectsInCanvasAndUpdateOthers = (objects) => {
+    canvasRef.current.addObjects(objects, "");
+    onAddObjects(objects);
+  };
+
   return (
     <>
       <style>{style({ loading })}</style>
@@ -327,6 +340,8 @@ function Collaboration() {
         resetZoomAndPan={resetCanvasZoomAndPan}
         resetZoom={resetCanvasZoom}
         resetPan={resetCanvasPan}
+        saveJson={saveJson}
+        addObjectsInCanvasAndUpdateOthers={addObjectsInCanvasAndUpdateOthers}
       />
       <div className="canvas-outer">
         <MembersPopup

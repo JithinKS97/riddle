@@ -1,4 +1,5 @@
 import { fabric } from "fabric";
+var FileSaver = require("file-saver");
 
 const parametersToLook = [
   "top",
@@ -198,6 +199,14 @@ export const resetZoomInCanvas = ({ canvas, setCurrentZoom, setShowZoom }) => {
 
 export const resetPanInCanvas = ({ canvas }) => {
   canvas.absolutePan({ x: 0, y: 0 });
+};
+
+export const saveFile = (jsonData) => {
+  jsonData = JSON.stringify(jsonData);
+  const blob = new Blob([jsonData], {
+    type: "application/json",
+  });
+  FileSaver.saveAs(blob, "riddle.json");
 };
 
 const animateObject = ({

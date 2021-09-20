@@ -49,17 +49,19 @@ const MenuListItems = (props) => {
   };
 
   return options.map((option) => (
-    <MenuItem
-      display="flex"
-      justifyContent="space-between"
-      onClick={handleClick(option)}
-      key={option.label}
-    >
-      <Box>{option.label}</Box>
-      <Box marginLeft="5">
-        <option.icon />
-      </Box>
-    </MenuItem>
+    <>
+      <MenuItem
+        display="flex"
+        justifyContent="space-between"
+        onClick={handleClick(option)}
+        key={option.label}
+      >
+        <Box>{option.label}</Box>
+        <Box marginLeft="5">
+          <option.icon />
+        </Box>
+      </MenuItem>
+    </>
   ));
 };
 

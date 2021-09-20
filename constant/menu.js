@@ -5,7 +5,7 @@ import { FaPencilAlt } from "react-icons/fa";
 import { FiMove, FiTriangle } from "react-icons/fi";
 import { ResetPan, ResetZoom } from "../components/menu/custom icons";
 import { AiOutlineSelect } from "react-icons/ai";
-import { BiExport, BiImport } from "react-icons/bi";
+import { FiSave, FiDownload } from "react-icons/fi";
 
 export const drawOptions = [
   {
@@ -54,12 +54,12 @@ export const cursorOptions = [
 
 export const fileOptions = [
   {
-    label: "Export",
-    icon: BiExport,
+    label: "Save",
+    icon: FiSave,
   },
   {
-    label: "Import",
-    icon: BiImport,
+    label: "Load",
+    icon: FiDownload,
   },
 ];
 
