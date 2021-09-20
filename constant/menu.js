@@ -2,7 +2,7 @@ import { HiOutlineMinus } from "react-icons/hi";
 import { BiRectangle } from "react-icons/bi";
 import { BiCircle } from "react-icons/bi";
 import { FaPencilAlt } from "react-icons/fa";
-import { FiMove } from "react-icons/fi";
+import { FiMove, FiTriangle } from "react-icons/fi";
 import { ResetPan, ResetZoom } from "../components/menu/custom icons";
 import { AiOutlineSelect } from "react-icons/ai";
 import { BiExport, BiImport } from "react-icons/bi";
@@ -23,6 +23,10 @@ export const drawOptions = [
   {
     label: "Ellipse",
     icon: BiCircle,
+  },
+  {
+    label: "Triangle",
+    icon: FiTriangle,
   },
 ];
 

@@ -1,6 +1,6 @@
 import { fabric } from "fabric";
 import { v4 as uuidv4 } from "uuid";
-import { Rectangle, Line, Ellipse } from "../../constant/mode";
+import { Rectangle, Line, Ellipse, Triangle } from "../../constant/mode";
 
 let newShape, origX, origY;
 
@@ -19,6 +19,16 @@ export const startDrawingShape = ({
   switch (shape) {
     case Rectangle:
       newShape = createNewRectangle({
+        left: origX,
+        top: origY,
+        pointer,
+        fill,
+        stroke,
+        strokeWidth: brushSize,
+      });
+      break;
+    case Triangle:
+      newShape = createNewTriangle({
         left: origX,
         top: origY,
         pointer,
@@ -58,6 +68,7 @@ export const continueDrawingShape = ({ canvas, option, shape }) => {
   const pointer = canvas.getPointer(option.e);
   switch (shape) {
     case Rectangle:
+    case Triangle:
       if (origX > pointer.x) {
         newShape.set({ left: Math.abs(pointer.x) });
       }
@@ -119,6 +130,30 @@ const createNewRectangle = ({
     strokeWidth,
   });
   return newRectangle;
+};
+
+const createNewTriangle = ({
+  left,
+  top,
+  pointer,
+  fill,
+  stroke,
+  strokeWidth,
+}) => {
+  const newTriangle = new fabric.Triangle({
+    left,
+    top,
+    originX: "left",
+    originY: "top",
+    width: pointer.x - left,
+    height: pointer.y - top,
+    angle: 0,
+    fill,
+    stroke,
+    transparentCorners: false,
+    strokeWidth,
+  });
+  return newTriangle;
 };
 
 const createNewLine = ({ coords, stroke, strokeWidth }) => {
