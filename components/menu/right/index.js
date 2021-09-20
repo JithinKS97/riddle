@@ -1,6 +1,7 @@
 import { HStack, Button } from "@chakra-ui/react";
 import OptionsMenu from "../common/OptionsMenu";
-import { FaRegFile, FaShareAlt } from "react-icons/fa";
+import { FaShareAlt } from "react-icons/fa";
+import { GoFileMedia } from "react-icons/go";
 import { BsFillPeopleFill } from "react-icons/bs";
 import { fileOptions } from "../../../constant/menu";
 import { useRef } from "react";
@@ -59,7 +60,7 @@ const RightSection = (props) => {
       />
       <OptionsMenu
         onClick={handleClick}
-        defaultIcon={<FaRegFile />}
+        defaultIcon={<GoFileMedia />}
         options={fileOptions}
       />
       <Button onClick={onShareIconClick}>

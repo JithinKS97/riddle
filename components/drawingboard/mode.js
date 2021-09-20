@@ -20,22 +20,28 @@ export const onModeChange = (canvas, selectedMode) => () => {
   } else {
     canvas.isDrawingMode = false;
   }
+  const setCursor = (cursor) => {
+    canvas.getObjects().forEach((object) => {
+      object.set({
+        hoverCursor: cursor,
+      });
+    });
+    canvas.defaultCursor = cursor;
+    canvas.hoverCursor = cursor;
+  };
 
   if (isShapeDrawingMode) {
-    canvas.defaultCursor = "crosshair";
-    canvas.hoverCursor = "crosshair";
+    setCursor("crosshair");
     return;
   } else if (selectedMode === Select) {
     canvas.defaultCursor = "auto";
     canvas.hoverCursor = "move";
     return;
   } else if (selectedMode === Pan) {
-    canvas.defaultCursor = "grab";
-    canvas.hoverCursor = "grab";
+    setCursor("grab");
     return;
   } else if (selectedMode === None) {
-    canvas.defaultCursor = "auto";
-    canvas.hoverCursor = "auto";
+    setCursor("auto");
   }
 };
 

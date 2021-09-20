@@ -14,6 +14,7 @@ import {
   cursorModes,
 } from "../../../constant/menu";
 import { None } from "../../../constant/mode";
+import { useEffect } from "react";
 
 const LeftSection = (props) => {
   const { resetPan, resetZoomAndPan } = props;
@@ -31,14 +32,23 @@ const LeftSection = (props) => {
   const [selectedCursorMode, setSelectedCursorMode] = useState("Select");
   const [previousMode, setPreviousMode] = useState("");
 
+  // On load, we have to set the local selected mode
+  useEffect(() => {
+    setLocalMode(selectedMode);
+  }, []);
+
   const handleClick = (e) => {
-    if (drawModes.includes(e.label)) {
-      setSelectedDrawMode(e.label);
-    }
-    if (cursorModes.includes(e.label)) {
-      setSelectedCursorMode(e.label);
-    }
+    setLocalMode(e.label);
     setSelectedMode(e.label);
+  };
+
+  const setLocalMode = (mode) => {
+    if (drawModes.includes(mode)) {
+      setSelectedDrawMode(mode);
+    }
+    if (cursorModes.includes(mode)) {
+      setSelectedCursorMode(mode);
+    }
   };
 
   const onStrokeChange = (e) => {
