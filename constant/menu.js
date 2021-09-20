@@ -3,7 +3,12 @@ import { BiRectangle } from "react-icons/bi";
 import { BiCircle } from "react-icons/bi";
 import { FaPencilAlt } from "react-icons/fa";
 import { FiMove, FiTriangle } from "react-icons/fi";
-import { ResetPan, ResetZoom } from "../components/menu/custom icons";
+import {
+  ResetPan,
+  ResetZoom,
+  SaveIPFS,
+  LoadIPFS,
+} from "../components/menu/custom icons";
 import { AiOutlineSelect } from "react-icons/ai";
 import { FiSave, FiDownload } from "react-icons/fi";
 
@@ -54,12 +59,20 @@ export const cursorOptions = [
 
 export const fileOptions = [
   {
-    label: "Save",
+    label: "Save to local",
     icon: FiSave,
   },
   {
-    label: "Load",
+    label: "Load from local",
     icon: FiDownload,
+  },
+  {
+    label: "Save to IPFS",
+    icon: SaveIPFS,
+  },
+  {
+    label: "Load from IPFS",
+    icon: LoadIPFS,
   },
 ];
 
