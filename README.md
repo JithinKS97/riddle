@@ -13,7 +13,7 @@ The whiteboard contents can be saved to local computer by any member in the room
 1. [NKN](https://nkn.org/)
 2. [Fabric](http://fabricjs.com/)
 3. [React](https://reactjs.org/)
-4. [IPFS](ipfs.io/)
+4. [IPFS](https://ipfs.io/)
 
 # Using the app
 App is hosted in IPFS. We recommend using Brave browser to use the App. There are chances that you might encounter some problems from other browsers.
