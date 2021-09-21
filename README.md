@@ -1,5 +1,5 @@
 # Riddle
-ipns://nknriddle.xyz/
+http://nknriddle.xyz/
 <p align="center"><img width="650px" height="360px" src="https://i.ibb.co/0CYwLwN/Screenshot-2021-09-17-at-8-03-32-AM.png" alt="riddle-logo" /></p>
 Riddle is an open source peer to peer white board collaboration App. Users communicate directly over NKN (https://nkn.org/), a new kind of network without any central servers!
 <br/>
@@ -15,7 +15,7 @@ The whiteboard contents can be saved to local computer by any member in the room
 3. [React](https://reactjs.org/)
 4. [IPFS](ipfs.io/)
 
-# Use the app
+# Using the app
 App is hosted in IPFS. We recommend using Brave browser to use the App. There are chances that you might encounter some problems from other browsers.
 
 
