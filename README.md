@@ -20,11 +20,11 @@ App is hosted in IPFS. We recommend using Brave browser to use the App. There ar
 
 
 # Communication protocol
-1. When a client accesses an App, a public address and private key is allocated to him.
-2. The person who creates a room (Main client) shares his public address with people who wants to join.
-3. When a new person joins, they ping the main client to get the latest state of the canvas and the public addresses of the present members in the room.
-4. The whiteboard updates made by each client is broadcasted to everyone so that everyone updates their board with the new changes.
-5. When the main client leaves, another client is made the main client (So that the share Id changes) and if somebody wants to join, he has to use the public address of the new main client.
+1. When a client accesses the app, a public address is allocated to him.
+2. The person who creates a room (Main user) shares his public address with people who wants to join.
+3. When a new person joins, they ping the main client to get the latest state of the canvas and the public addresses of all the members present in the room.
+4. The whiteboard updates made by each user is broadcasted to everyone so that everyone updates their board with the new changes.
+5. When the main user leaves, another user is made the main user and if somebody wants to join, he has to use the public address of the new main user.
 
 # The whiteboard
 The whiteboard is made using [Fabric.js](http://fabricjs.com/), a very powerful and convenient layer of abstraction build over the canvas API.
