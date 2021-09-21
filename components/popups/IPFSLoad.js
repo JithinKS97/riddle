@@ -11,7 +11,7 @@ import {
   Spinner,
   Center,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function IPFSLoad(props) {
   const { show, onClose, onContentIdChange, loadContent } = props;
@@ -28,6 +28,17 @@ function IPFSLoad(props) {
     setIsLoading(false);
     onClose();
   };
+
+  useEffect(() => {
+    window.onkeydown = (e) => {
+      if (e.key === "Enter") {
+        handleLoadClick();
+      }
+    };
+    return () => {
+      window.onkeydown = null;
+    };
+  }, []);
 
   return (
     <>
