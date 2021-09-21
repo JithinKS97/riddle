@@ -1,5 +1,5 @@
 1. One person (Main client) creates a room and shares his public key with others
-2. For others (Sub client) to join, the public is used to connect to the main client
+2. For others (Sub client) to join, the public address is used to connect to the main client
 3. They send a join request to the main client
 4. As a reply, the get the latest canvas data and the address of all the current members
 5. When change is made in the canvas, it is broadcasted to all
