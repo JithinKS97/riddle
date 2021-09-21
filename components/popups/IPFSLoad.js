@@ -24,13 +24,18 @@ function IPFSLoad(props) {
     setIsLoading(false);
   };
 
+  const handleCloseClick = () => {
+    setIsLoading(false);
+    onClose();
+  };
+
   return (
     <>
-      <Modal onClose={onClose} size="xl" isOpen={show} isCentered>
+      <Modal onClose={handleCloseClick} size="xl" isOpen={show} isCentered>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Loading from IPFS</ModalHeader>
-          <ModalCloseButton onClick={onClose} />
+          <ModalCloseButton onClick={handleCloseClick} />
           {!isLoading ? (
             <>
               <ModalBody alignItems="center">
