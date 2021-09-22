@@ -95,7 +95,7 @@ export const addObjectsInCanvas = ({
   );
 
   if (isObjectBeingModified) {
-    highlightModification({ objectsToAdd, canvas });
+    highlightModification({ objectsToAdd, canvas, nameOfTheAdder });
   }
 
   fabric.util.enlivenObjects(objectsToAdd, (enlivenedObjectsToAdd) => {
@@ -146,28 +146,38 @@ const findIfObjectIsBeingModified = (
   return false;
 };
 
-const highlightAddition = ({ objectToAdd, canvas }) => {
+const highlightAddition = ({ objectToAdd, canvas, nameOfTheAdder }) => {
   objectToAdd.clone((clone) => {
     const boundingRect = clone.getBoundingRect();
-    let fromRect = getFabricRect(boundingRect);
+    let fromRect = getFabricRectFromBoundingRect(boundingRect);
     const parameters = ["left", "top", "width", "height"];
+    let label = createLabelAtCorner({
+      nameOfTheAdder,
+      fromRect,
+    });
     fadeInTransformFadeOut({
       fromObj: fromRect,
       toObj: fromRect,
       canvas,
       parameters,
     });
+    fadeInTransformFadeOut({
+      fromObj: label,
+      toObj: label,
+      canvas,
+      opacity: 0.7,
+    });
   });
 };
 
-const highlightModification = ({ objectsToAdd, canvas }) => {
+const highlightModification = ({ objectsToAdd, canvas, nameOfTheAdder }) => {
   const idsOfObjectsBeingUpdated = objectsToAdd.map((object) => object.id);
   const objectsBeingUpdated = canvas
     .getObjects()
     .filter((obj) => idsOfObjectsBeingUpdated.includes(obj.id));
   fabric.util.enlivenObjects(objectsToAdd, (objectsToReplaceWith) => {
     // Get bounding rect of each
-    // Animate tit
+    // Animate it
     const objectsToReplaceWithClone = [];
     objectsToReplaceWith.forEach((obj) =>
       obj.clone((clone) => {
@@ -190,7 +200,12 @@ const highlightModification = ({ objectsToAdd, canvas }) => {
     let boundingRect = objectsBeingUpdatedGroup.getBoundingRect();
     const toRect = objectsToReplaceWithGroup.getBoundingRect();
 
-    let fromRect = getFabricRect(boundingRect);
+    let fromRect = getFabricRectFromBoundingRect(boundingRect);
+
+    let label = createLabelAtCorner({
+      nameOfTheAdder,
+      fromRect,
+    });
 
     const parameters = ["left", "top", "width", "height"];
 
@@ -200,17 +215,38 @@ const highlightModification = ({ objectsToAdd, canvas }) => {
       canvas,
       parameters,
     });
+
+    fadeInTransformFadeOut({
+      fromObj: label,
+      toObj: {
+        top: toRect.top - label.height - 5,
+        left: toRect.left + toRect.width,
+      },
+      canvas,
+      parameters: ["top", "left"],
+      opacity: 0.7,
+    });
   });
 };
 
-const getFabricRect = (fromRect) => {
-  const fromRectBody = new fabric.Rect({
-    left: fromRect.left,
-    top: fromRect.top,
+const createLabelAtCorner = ({ nameOfTheAdder, fromRect }) => {
+  const text = new fabric.Text(nameOfTheAdder, {
+    top: fromRect.top - 5,
+    left: fromRect.left + fromRect.width,
+    fontSize: 20,
+  });
+  text.top = text.top - text.height;
+  return text;
+};
+
+const getFabricRectFromBoundingRect = (boundingRect) => {
+  const rect = new fabric.Rect({
+    left: boundingRect.left,
+    top: boundingRect.top,
     originX: "left",
     originY: "top",
-    width: fromRect.width,
-    height: fromRect.height,
+    width: boundingRect.width,
+    height: boundingRect.height,
     angle: 0,
     fill: "transparent",
     stroke: "black",
@@ -218,16 +254,22 @@ const getFabricRect = (fromRect) => {
     selectable: false,
     opacity: 0.3,
   });
-  return fromRectBody;
+  return rect;
 };
 
-const fadeInTransformFadeOut = ({ fromObj, toObj, canvas, parameters }) => {
+const fadeInTransformFadeOut = ({
+  fromObj,
+  toObj,
+  canvas,
+  parameters = [],
+  opacity = 0.3,
+}) => {
   canvas.add(fromObj);
 
   animateObject({
     object: fromObj,
     startValue: 0,
-    endValue: 0.3,
+    endValue: opacity,
     canvas,
     parameter: "opacity",
     duration: 50,
@@ -236,7 +278,7 @@ const fadeInTransformFadeOut = ({ fromObj, toObj, canvas, parameters }) => {
   setTimeout(() => {
     animateObject({
       object: fromObj,
-      startValue: 0.3,
+      startValue: opacity,
       endValue: 0,
       canvas,
       parameter: "opacity",
