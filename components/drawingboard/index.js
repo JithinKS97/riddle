@@ -129,13 +129,13 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
     deleteObjectsFromOthers(ids);
   };
 
-  const addObjects = (objectsToAdd, nameOfTheAdder) => {
-    addObjectsInCanvas({ canvas, objectsToAdd, nameOfTheAdder });
+  const addObjects = (objectsToAdd, adder) => {
+    addObjectsInCanvas({ canvas, objectsToAdd, adder });
   };
 
-  const clearAndAddObjects = (objectsToAdd, nameOfTheAdder) => {
+  const clearAndAddObjects = (objectsToAdd) => {
     canvas.clear();
-    addObjectsInCanvas({ canvas, objectsToAdd, nameOfTheAdder });
+    addObjectsInCanvas({ canvas, objectsToAdd });
   };
 
   const removeObjects = (ids) => {

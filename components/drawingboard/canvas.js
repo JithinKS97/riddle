@@ -78,22 +78,33 @@ export const deleteSelectedObjectsInCanvas = (canvas) => {
   return ids;
 };
 
-export const addObjectsInCanvas = ({
-  canvas,
-  objectsToAdd,
-  nameOfTheAdder,
-}) => {
+export const addObjectsInCanvas = ({ canvas, objectsToAdd, adder }) => {
   const idsOfObjectsCurrentlyPresent = canvas
     .getObjects()
     .map((object) => object.id);
 
+  const idsOfObjectsToBeAdded = objectsToAdd.map((object) => object.id);
+
+  const isObjectBeingModified = findIfObjectIsBeingModified(
+    idsOfObjectsCurrentlyPresent,
+    idsOfObjectsToBeAdded
+  );
+
+  if (isObjectBeingModified) {
+    highlightModification({ objectsToAdd, canvas, adder });
+  }
+
   fabric.util.enlivenObjects(objectsToAdd, (enlivenedObjectsToAdd) => {
     enlivenedObjectsToAdd.forEach((enlivenedObjectToAdd) => {
-      const objectAlreadyExist = idsOfObjectsCurrentlyPresent.includes(
-        enlivenedObjectToAdd.id
-      );
-      if (!objectAlreadyExist) {
+      if (!isObjectBeingModified) {
         canvas.add(enlivenedObjectToAdd);
+
+        highlightAddition({
+          objectToAdd: enlivenedObjectToAdd,
+          adder,
+          canvas,
+        });
+
         animateObject({
           object: enlivenedObjectToAdd,
           startValue: 0,
@@ -105,6 +116,7 @@ export const addObjectsInCanvas = ({
         // This is required as if somebody else tries to move the object
         // It has to be with respect to the canvas
         canvas.discardActiveObject();
+
         let objectToModify = canvas
           .getObjects()
           .find((object) => object.id === enlivenedObjectToAdd.id);
@@ -114,6 +126,174 @@ export const addObjectsInCanvas = ({
           canvas,
         });
       }
+    });
+  });
+};
+
+const findIfObjectIsBeingModified = (
+  idsOfObjectsCurrentlyPresent,
+  idsOfObjectsToBeAdded
+) => {
+  for (const idOfObjectToBeAdded of idsOfObjectsToBeAdded) {
+    if (idsOfObjectsCurrentlyPresent.includes(idOfObjectToBeAdded)) {
+      return true;
+    }
+  }
+  return false;
+};
+
+const highlightAddition = ({ objectToAdd, canvas, adder }) => {
+  objectToAdd.clone((clone) => {
+    const boundingRect = clone.getBoundingRect();
+    let fromRect = getFabricRectFromBoundingRect(boundingRect, adder.color);
+    const parameters = ["left", "top", "width", "height"];
+    let label = createLabelAtCorner({
+      adder,
+      fromRect,
+    });
+    fadeInTransformFadeOut({
+      fromObj: fromRect,
+      toObj: fromRect,
+      canvas,
+      parameters,
+    });
+    fadeInTransformFadeOut({
+      fromObj: label,
+      toObj: label,
+      canvas,
+      opacity: 0.7,
+    });
+  });
+};
+
+const highlightModification = ({ objectsToAdd, canvas, adder }) => {
+  const idsOfObjectsBeingUpdated = objectsToAdd.map((object) => object.id);
+  const objectsBeingUpdated = canvas
+    .getObjects()
+    .filter((obj) => idsOfObjectsBeingUpdated.includes(obj.id));
+  fabric.util.enlivenObjects(objectsToAdd, (objectsToReplaceWith) => {
+    // Get bounding rect of each
+    // Animate it
+    const objectsToReplaceWithClone = [];
+    objectsToReplaceWith.forEach((obj) =>
+      obj.clone((clone) => {
+        objectsToReplaceWithClone.push(clone);
+      })
+    );
+
+    const objectsBeingUpdatedClone = [];
+    objectsBeingUpdated.forEach((obj) =>
+      obj.clone((clone) => {
+        objectsBeingUpdatedClone.push(clone);
+      })
+    );
+
+    const objectsBeingUpdatedGroup = new fabric.Group(objectsBeingUpdatedClone);
+    const objectsToReplaceWithGroup = new fabric.Group(
+      objectsToReplaceWithClone
+    );
+
+    let boundingRect = objectsBeingUpdatedGroup.getBoundingRect();
+    const toRect = objectsToReplaceWithGroup.getBoundingRect();
+
+    let fromRect = getFabricRectFromBoundingRect(boundingRect, adder.color);
+
+    let label = createLabelAtCorner({
+      adder,
+      fromRect,
+    });
+
+    const parameters = ["left", "top", "width", "height"];
+
+    fadeInTransformFadeOut({
+      fromObj: fromRect,
+      toObj: toRect,
+      canvas,
+      parameters,
+    });
+
+    fadeInTransformFadeOut({
+      fromObj: label,
+      toObj: {
+        top: toRect.top - label.height - 5,
+        left: toRect.left + toRect.width,
+      },
+      canvas,
+      parameters: ["top", "left"],
+      opacity: 0.7,
+    });
+  });
+};
+
+const createLabelAtCorner = ({ adder, fromRect }) => {
+  const text = new fabric.Text(adder.name, {
+    top: fromRect.top - 5,
+    left: fromRect.left + fromRect.width,
+    fontSize: 20,
+    stroke: adder.color,
+    fill: adder.color,
+  });
+  text.top = text.top - text.height;
+  return text;
+};
+
+const getFabricRectFromBoundingRect = (boundingRect, stroke) => {
+  const rect = new fabric.Rect({
+    left: boundingRect.left,
+    top: boundingRect.top,
+    originX: "left",
+    originY: "top",
+    width: boundingRect.width,
+    height: boundingRect.height,
+    angle: 0,
+    fill: "transparent",
+    stroke,
+    strokeWidth: 4,
+    selectable: false,
+    opacity: 0.3,
+  });
+  return rect;
+};
+
+const fadeInTransformFadeOut = ({
+  fromObj,
+  toObj,
+  canvas,
+  parameters = [],
+  opacity = 0.3,
+}) => {
+  canvas.add(fromObj);
+
+  animateObject({
+    object: fromObj,
+    startValue: 0,
+    endValue: opacity,
+    canvas,
+    parameter: "opacity",
+    duration: 50,
+  });
+
+  setTimeout(() => {
+    animateObject({
+      object: fromObj,
+      startValue: opacity,
+      endValue: 0,
+      canvas,
+      parameter: "opacity",
+      duration: 100,
+      onComplete: () => {
+        canvas.remove(fromObj);
+      },
+    });
+  }, 800);
+
+  parameters.forEach((parameter) => {
+    animateObject({
+      object: fromObj,
+      startValue: fromObj[parameter],
+      endValue: toObj[parameter],
+      canvas,
+      parameter,
     });
   });
 };
@@ -216,11 +396,12 @@ const animateObject = ({
   onComplete,
   parameter,
   canvas,
+  duration,
 }) => {
   fabric.util.animate({
     startValue,
     endValue,
-    duration: 200,
+    duration: 200 || duration,
     onChange: function (value) {
       object[parameter] = value;
       canvas.renderAll();

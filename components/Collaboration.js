@@ -155,7 +155,7 @@ function Collaboration() {
       const updatedClientWithName = clientRef.current;
       updatedClientWithName.name = name;
       setClient(updatedClientWithName);
-      setMembers([{ name, identifier: hostAddress }]);
+      addMember({ name, identifier: hostAddress });
     }
     handleNamePopupClose();
   };
@@ -209,14 +209,14 @@ function Collaboration() {
   };
 
   const addObjectsToCanvas = (objects, fromAddress, clear) => {
-    const nameOfTheAdder = membersApi.getName({
+    const adder = membersApi.getMemberById({
       id: fromAddress,
       members: membersRef.current,
     });
     if (!clear) {
-      canvasRef.current.addObjects(objects, nameOfTheAdder);
+      canvasRef.current.addObjects(objects, adder);
     } else {
-      canvasRef.current.clearAndAddObjects(objects, nameOfTheAdder);
+      canvasRef.current.clearAndAddObjects(objects);
     }
   };
 

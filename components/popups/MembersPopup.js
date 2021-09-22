@@ -9,6 +9,8 @@ import {
   Text,
   Center,
   VStack,
+  HStack,
+  Box,
 } from "@chakra-ui/react";
 
 function MembersPopup(props) {
@@ -26,11 +28,12 @@ function MembersPopup(props) {
           <ModalBody alignItems="center">
             <Center>
               <VStack>
-                {members.map(({ name, identifier }) => {
+                {members.map(({ name, identifier, color }) => {
                   return (
-                    <Text key={identifier} fontWeight="bold">
-                      {name}
-                    </Text>
+                    <HStack key={identifier}>
+                      <Text fontWeight="bold">{name}</Text>
+                      <Box bg={color} width="10px" height="10px"></Box>
+                    </HStack>
                   );
                 })}
               </VStack>
