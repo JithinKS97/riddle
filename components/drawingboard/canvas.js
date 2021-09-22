@@ -86,7 +86,6 @@ export const addObjectsInCanvas = ({
   const idsOfObjectsCurrentlyPresent = canvas
     .getObjects()
     .map((object) => object.id);
-  highlightObjects({ objectsToAdd, nameOfTheAdder, canvas });
   fabric.util.enlivenObjects(objectsToAdd, (enlivenedObjectsToAdd) => {
     enlivenedObjectsToAdd.forEach((enlivenedObjectToAdd) => {
       const objectAlreadyExist = idsOfObjectsCurrentlyPresent.includes(
@@ -94,6 +93,13 @@ export const addObjectsInCanvas = ({
       );
       if (!objectAlreadyExist) {
         canvas.add(enlivenedObjectToAdd);
+
+        highlightAddition({
+          objectToAdd: enlivenedObjectToAdd,
+          nameOfTheAdder,
+          canvas,
+        });
+
         animateObject({
           object: enlivenedObjectToAdd,
           startValue: 0,
@@ -104,7 +110,11 @@ export const addObjectsInCanvas = ({
       } else {
         // This is required as if somebody else tries to move the object
         // It has to be with respect to the canvas
+
+        highlightModification({ objectsToAdd, nameOfTheAdder, canvas });
+
         canvas.discardActiveObject();
+
         let objectToModify = canvas
           .getObjects()
           .find((object) => object.id === enlivenedObjectToAdd.id);
@@ -118,7 +128,18 @@ export const addObjectsInCanvas = ({
   });
 };
 
-const highlightObjects = ({ objectsToAdd, canvas }) => {
+const highlightAddition = ({ objectToAdd, canvas }) => {
+  objectToAdd.clone((clone) => {
+    const boundingRect = clone.getBoundingRect();
+    morphRect({
+      fromRect: boundingRect,
+      toRect: boundingRect,
+      canvas,
+    });
+  });
+};
+
+const highlightModification = ({ objectsToAdd, canvas }) => {
   const idsOfObjectsBeingUpdated = objectsToAdd.map((object) => object.id);
   const objectsBeingUpdated = canvas
     .getObjects()
@@ -164,6 +185,7 @@ const morphRect = ({ fromRect, toRect, canvas }) => {
     fill: "transparent",
     stroke: "black",
     strokeWidth: 2,
+    selectable: false,
   });
 
   canvas.add(fromRectBody);
