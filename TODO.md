@@ -1,5 +1,4 @@
 ## Todo
 
-1. Display name of the person who made the interaction
-2. Undo
-3. Night mode
+1. Undo
+2. Night mode

@@ -55,7 +55,6 @@ const RightSection = (props) => {
 
   const saveToFabric = (result) => {
     try {
-      console.log("Helo");
       const fabricData = JSON.parse(result);
       const fabricJSON = JSON.parse(fabricData.json);
       addObjectsInCanvasAndUpdateOthers(fabricJSON.objects);

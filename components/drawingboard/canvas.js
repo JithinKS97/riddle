@@ -90,7 +90,7 @@ export const addObjectsInCanvas = ({ canvas, objectsToAdd, adder }) => {
     idsOfObjectsToBeAdded
   );
 
-  if (isObjectBeingModified) {
+  if (isObjectBeingModified && adder) {
     canvas.discardActiveObject();
     highlightModification({ objects: objectsToAdd, canvas, user: adder });
   }
@@ -100,11 +100,13 @@ export const addObjectsInCanvas = ({ canvas, objectsToAdd, adder }) => {
       if (!isObjectBeingModified) {
         canvas.add(enlivenedObjectToAdd);
 
-        highlightObject({
-          object: enlivenedObjectToAdd,
-          user: adder,
-          canvas,
-        });
+        if (adder) {
+          highlightObject({
+            object: enlivenedObjectToAdd,
+            user: adder,
+            canvas,
+          });
+        }
 
         animateObject({
           object: enlivenedObjectToAdd,
@@ -247,7 +249,7 @@ const getFabricRectFromBoundingRect = (boundingRect, stroke) => {
     stroke,
     strokeWidth: 4,
     selectable: false,
-    opacity: 0.3,
+    opacity: 0.4,
   });
   return rect;
 };
@@ -257,7 +259,7 @@ const fadeInTransformFadeOut = ({
   toObj,
   canvas,
   parameters = [],
-  opacity = 0.3,
+  opacity = 0.4,
 }) => {
   canvas.add(fromObj);
 
