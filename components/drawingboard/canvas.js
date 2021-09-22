@@ -86,7 +86,7 @@ export const addObjectsInCanvas = ({
   const idsOfObjectsCurrentlyPresent = canvas
     .getObjects()
     .map((object) => object.id);
-
+  highlightObjects({ objectsToAdd, nameOfTheAdder, canvas });
   fabric.util.enlivenObjects(objectsToAdd, (enlivenedObjectsToAdd) => {
     enlivenedObjectsToAdd.forEach((enlivenedObjectToAdd) => {
       const objectAlreadyExist = idsOfObjectsCurrentlyPresent.includes(
@@ -114,6 +114,90 @@ export const addObjectsInCanvas = ({
           canvas,
         });
       }
+    });
+  });
+};
+
+const highlightObjects = ({ objectsToAdd, canvas }) => {
+  const idsOfObjectsBeingUpdated = objectsToAdd.map((object) => object.id);
+  const objectsBeingUpdated = canvas
+    .getObjects()
+    .filter((obj) => idsOfObjectsBeingUpdated.includes(obj.id));
+  fabric.util.enlivenObjects(objectsToAdd, (objectsToReplaceWith) => {
+    // Get bounding rect of each
+    // Animate tit
+    const objectsToReplaceWithClone = [];
+    objectsToReplaceWith.forEach((obj) =>
+      obj.clone((clone) => {
+        objectsToReplaceWithClone.push(clone);
+      })
+    );
+
+    const objectsBeingUpdatedClone = [];
+    objectsBeingUpdated.forEach((obj) =>
+      obj.clone((clone) => {
+        objectsBeingUpdatedClone.push(clone);
+      })
+    );
+
+    const objectsBeingUpdatedGroup = new fabric.Group(objectsBeingUpdatedClone);
+    const objectsToReplaceWithGroup = new fabric.Group(
+      objectsToReplaceWithClone
+    );
+
+    const fromRect = objectsBeingUpdatedGroup.getBoundingRect();
+    const toRect = objectsToReplaceWithGroup.getBoundingRect();
+
+    morphRect({ fromRect, toRect, canvas });
+  });
+};
+
+const morphRect = ({ fromRect, toRect, canvas }) => {
+  const fromRectBody = new fabric.Rect({
+    left: fromRect.left,
+    top: fromRect.top,
+    originX: "left",
+    originY: "top",
+    width: fromRect.width,
+    height: fromRect.height,
+    angle: 0,
+    fill: "transparent",
+    stroke: "black",
+    strokeWidth: 2,
+  });
+
+  canvas.add(fromRectBody);
+
+  animateObject({
+    object: fromRectBody,
+    startValue: 0,
+    endValue: 0.3,
+    canvas,
+    parameter: "opacity",
+    duration: 50,
+  });
+
+  setTimeout(() => {
+    animateObject({
+      object: fromRectBody,
+      startValue: 0.3,
+      endValue: 0,
+      canvas,
+      parameter: "opacity",
+      duration: 100,
+      onComplete: () => {
+        canvas.remove(fromRectBody);
+      },
+    });
+  }, 800);
+
+  ["left", "top", "width", "height"].forEach((parameter) => {
+    animateObject({
+      object: fromRectBody,
+      startValue: fromRect[parameter],
+      endValue: toRect[parameter],
+      canvas,
+      parameter,
     });
   });
 };
@@ -216,11 +300,12 @@ const animateObject = ({
   onComplete,
   parameter,
   canvas,
+  duration,
 }) => {
   fabric.util.animate({
     startValue,
     endValue,
-    duration: 200,
+    duration: 200 || duration,
     onChange: function (value) {
       object[parameter] = value;
       canvas.renderAll();
