@@ -149,10 +149,13 @@ const findIfObjectIsBeingModified = (
 const highlightAddition = ({ objectToAdd, canvas }) => {
   objectToAdd.clone((clone) => {
     const boundingRect = clone.getBoundingRect();
-    morphRect({
-      fromRect: boundingRect,
-      toRect: boundingRect,
+    let fromRect = getFabricRect(boundingRect);
+    const parameters = ["left", "top", "width", "height"];
+    fadeInTransformFadeOut({
+      fromObj: fromRect,
+      toObj: fromRect,
       canvas,
+      parameters,
     });
   });
 };
@@ -184,14 +187,23 @@ const highlightModification = ({ objectsToAdd, canvas }) => {
       objectsToReplaceWithClone
     );
 
-    const fromRect = objectsBeingUpdatedGroup.getBoundingRect();
+    let boundingRect = objectsBeingUpdatedGroup.getBoundingRect();
     const toRect = objectsToReplaceWithGroup.getBoundingRect();
 
-    morphRect({ fromRect, toRect, canvas });
+    let fromRect = getFabricRect(boundingRect);
+
+    const parameters = ["left", "top", "width", "height"];
+
+    fadeInTransformFadeOut({
+      fromObj: fromRect,
+      toObj: toRect,
+      canvas,
+      parameters,
+    });
   });
 };
 
-const morphRect = ({ fromRect, toRect, canvas }) => {
+const getFabricRect = (fromRect) => {
   const fromRectBody = new fabric.Rect({
     left: fromRect.left,
     top: fromRect.top,
@@ -206,11 +218,14 @@ const morphRect = ({ fromRect, toRect, canvas }) => {
     selectable: false,
     opacity: 0.3,
   });
+  return fromRectBody;
+};
 
-  canvas.add(fromRectBody);
+const fadeInTransformFadeOut = ({ fromObj, toObj, canvas, parameters }) => {
+  canvas.add(fromObj);
 
   animateObject({
-    object: fromRectBody,
+    object: fromObj,
     startValue: 0,
     endValue: 0.3,
     canvas,
@@ -220,23 +235,23 @@ const morphRect = ({ fromRect, toRect, canvas }) => {
 
   setTimeout(() => {
     animateObject({
-      object: fromRectBody,
+      object: fromObj,
       startValue: 0.3,
       endValue: 0,
       canvas,
       parameter: "opacity",
       duration: 100,
       onComplete: () => {
-        canvas.remove(fromRectBody);
+        canvas.remove(fromObj);
       },
     });
   }, 800);
 
-  ["left", "top", "width", "height"].forEach((parameter) => {
+  parameters.forEach((parameter) => {
     animateObject({
-      object: fromRectBody,
-      startValue: fromRect[parameter],
-      endValue: toRect[parameter],
+      object: fromObj,
+      startValue: fromObj[parameter],
+      endValue: toObj[parameter],
       canvas,
       parameter,
     });
