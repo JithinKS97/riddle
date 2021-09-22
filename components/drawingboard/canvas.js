@@ -91,7 +91,8 @@ export const addObjectsInCanvas = ({ canvas, objectsToAdd, adder }) => {
   );
 
   if (isObjectBeingModified) {
-    highlightModification({ objectsToAdd, canvas, adder });
+    canvas.discardActiveObject();
+    highlightModification({ objects: objectsToAdd, canvas, user: adder });
   }
 
   fabric.util.enlivenObjects(objectsToAdd, (enlivenedObjectsToAdd) => {
@@ -99,9 +100,9 @@ export const addObjectsInCanvas = ({ canvas, objectsToAdd, adder }) => {
       if (!isObjectBeingModified) {
         canvas.add(enlivenedObjectToAdd);
 
-        highlightAddition({
-          objectToAdd: enlivenedObjectToAdd,
-          adder,
+        highlightObject({
+          object: enlivenedObjectToAdd,
+          user: adder,
           canvas,
         });
 
@@ -113,10 +114,6 @@ export const addObjectsInCanvas = ({ canvas, objectsToAdd, adder }) => {
           canvas,
         });
       } else {
-        // This is required as if somebody else tries to move the object
-        // It has to be with respect to the canvas
-        canvas.discardActiveObject();
-
         let objectToModify = canvas
           .getObjects()
           .find((object) => object.id === enlivenedObjectToAdd.id);
@@ -142,13 +139,13 @@ const findIfObjectIsBeingModified = (
   return false;
 };
 
-const highlightAddition = ({ objectToAdd, canvas, adder }) => {
-  objectToAdd.clone((clone) => {
+const highlightObject = ({ object, canvas, user }) => {
+  object.clone((clone) => {
     const boundingRect = clone.getBoundingRect();
-    let fromRect = getFabricRectFromBoundingRect(boundingRect, adder.color);
+    let fromRect = getFabricRectFromBoundingRect(boundingRect, user.color);
     const parameters = ["left", "top", "width", "height"];
     let label = createLabelAtCorner({
-      adder,
+      user,
       fromRect,
     });
     fadeInTransformFadeOut({
@@ -166,12 +163,12 @@ const highlightAddition = ({ objectToAdd, canvas, adder }) => {
   });
 };
 
-const highlightModification = ({ objectsToAdd, canvas, adder }) => {
-  const idsOfObjectsBeingUpdated = objectsToAdd.map((object) => object.id);
+const highlightModification = ({ objects, canvas, user }) => {
+  const idsOfObjectsBeingUpdated = objects.map((object) => object.id);
   const objectsBeingUpdated = canvas
     .getObjects()
     .filter((obj) => idsOfObjectsBeingUpdated.includes(obj.id));
-  fabric.util.enlivenObjects(objectsToAdd, (objectsToReplaceWith) => {
+  fabric.util.enlivenObjects(objects, (objectsToReplaceWith) => {
     // Get bounding rect of each
     // Animate it
     const objectsToReplaceWithClone = [];
@@ -196,10 +193,10 @@ const highlightModification = ({ objectsToAdd, canvas, adder }) => {
     let boundingRect = objectsBeingUpdatedGroup.getBoundingRect();
     const toRect = objectsToReplaceWithGroup.getBoundingRect();
 
-    let fromRect = getFabricRectFromBoundingRect(boundingRect, adder.color);
+    let fromRect = getFabricRectFromBoundingRect(boundingRect, user.color);
 
     let label = createLabelAtCorner({
-      adder,
+      user,
       fromRect,
     });
 
@@ -225,13 +222,13 @@ const highlightModification = ({ objectsToAdd, canvas, adder }) => {
   });
 };
 
-const createLabelAtCorner = ({ adder, fromRect }) => {
-  const text = new fabric.Text(adder.name, {
+const createLabelAtCorner = ({ user, fromRect }) => {
+  const text = new fabric.Text(user.name, {
     top: fromRect.top - 5,
     left: fromRect.left + fromRect.width,
     fontSize: 20,
-    stroke: adder.color,
-    fill: adder.color,
+    stroke: user.color,
+    fill: user.color,
   });
   text.top = text.top - text.height;
   return text;
@@ -329,28 +326,43 @@ const replaceObject = ({ objectToBeReplaced, objectToReplaceWith, canvas }) => {
   });
 };
 
-export const removeObjectsInCanvas = ({ canvas, ids }) => {
+export const removeObjectsInCanvas = ({ canvas, ids, deleter }) => {
   if (!ids) {
     return;
   }
   canvas.discardActiveObject();
-  canvas.getObjects().forEach((object) => {
-    if (ids.includes(object.id)) {
-      animateObject({
-        object,
-        startValue: 1,
-        endValue: 0,
-        onComplete: () => {
-          object.set({
-            active: false,
-          });
-          canvas.remove(object);
-        },
-        parameter: "opacity",
-        canvas,
-      });
-      canvas.renderAll();
-    }
+
+  let objectsToRemove = canvas
+    .getObjects()
+    .filter((object) => ids.includes(object.id));
+
+  console.log(ids);
+
+  if (ids.length === 1) {
+    highlightObject({ object: objectsToRemove[0], canvas, user: deleter });
+  } else {
+    highlightModification({
+      objects: objectsToRemove,
+      canvas,
+      user: deleter,
+    });
+  }
+
+  objectsToRemove.forEach((object) => {
+    animateObject({
+      object,
+      startValue: 1,
+      endValue: 0,
+      onComplete: () => {
+        object.set({
+          active: false,
+        });
+        canvas.remove(object);
+      },
+      parameter: "opacity",
+      canvas,
+    });
+    canvas.renderAll();
   });
 };
 

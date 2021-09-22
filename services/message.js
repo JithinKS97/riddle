@@ -244,7 +244,7 @@ function handleMessageForHost(props) {
       break;
     case REMOVE_OBJECTS:
       const ids = payload.content.ids;
-      removeObjects(ids);
+      removeObjects(ids, src);
   }
 }
 
@@ -298,7 +298,7 @@ function handleMessageForSub(props) {
       break;
     case REMOVE_OBJECTS:
       const ids = payload.content.ids;
-      removeObjects(ids);
+      removeObjects(ids, src);
   }
 }
 

@@ -138,8 +138,8 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
     addObjectsInCanvas({ canvas, objectsToAdd });
   };
 
-  const removeObjects = (ids) => {
-    removeObjectsInCanvas({ canvas, ids });
+  const removeObjects = (ids, deleter) => {
+    removeObjectsInCanvas({ canvas, ids, deleter });
   };
   const loadFromJSON = (fabricJSON) => {
     canvas.loadFromJSON(fabricJSON);

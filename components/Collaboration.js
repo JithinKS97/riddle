@@ -58,9 +58,17 @@ function Collaboration() {
       notifyLeave,
       isHost: isHostRef.current,
       hostAddress,
-      removeObjects: canvasRef.current.removeObjects,
+      removeObjects,
       notifyHostChange,
     });
+  };
+
+  const removeObjects = (ids, fromAddress) => {
+    const deleter = membersApi.getMemberById({
+      id: fromAddress,
+      members: membersRef.current,
+    });
+    canvasRef.current.removeObjects(ids, deleter);
   };
 
   useEffect(() => {
