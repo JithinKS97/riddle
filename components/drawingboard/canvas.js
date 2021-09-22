@@ -78,11 +78,7 @@ export const deleteSelectedObjectsInCanvas = (canvas) => {
   return ids;
 };
 
-export const addObjectsInCanvas = ({
-  canvas,
-  objectsToAdd,
-  nameOfTheAdder,
-}) => {
+export const addObjectsInCanvas = ({ canvas, objectsToAdd, adder }) => {
   const idsOfObjectsCurrentlyPresent = canvas
     .getObjects()
     .map((object) => object.id);
@@ -95,7 +91,7 @@ export const addObjectsInCanvas = ({
   );
 
   if (isObjectBeingModified) {
-    highlightModification({ objectsToAdd, canvas, nameOfTheAdder });
+    highlightModification({ objectsToAdd, canvas, adder });
   }
 
   fabric.util.enlivenObjects(objectsToAdd, (enlivenedObjectsToAdd) => {
@@ -105,7 +101,7 @@ export const addObjectsInCanvas = ({
 
         highlightAddition({
           objectToAdd: enlivenedObjectToAdd,
-          nameOfTheAdder,
+          adder,
           canvas,
         });
 
@@ -146,13 +142,13 @@ const findIfObjectIsBeingModified = (
   return false;
 };
 
-const highlightAddition = ({ objectToAdd, canvas, nameOfTheAdder }) => {
+const highlightAddition = ({ objectToAdd, canvas, adder }) => {
   objectToAdd.clone((clone) => {
     const boundingRect = clone.getBoundingRect();
-    let fromRect = getFabricRectFromBoundingRect(boundingRect);
+    let fromRect = getFabricRectFromBoundingRect(boundingRect, adder.color);
     const parameters = ["left", "top", "width", "height"];
     let label = createLabelAtCorner({
-      nameOfTheAdder,
+      adder,
       fromRect,
     });
     fadeInTransformFadeOut({
@@ -170,7 +166,7 @@ const highlightAddition = ({ objectToAdd, canvas, nameOfTheAdder }) => {
   });
 };
 
-const highlightModification = ({ objectsToAdd, canvas, nameOfTheAdder }) => {
+const highlightModification = ({ objectsToAdd, canvas, adder }) => {
   const idsOfObjectsBeingUpdated = objectsToAdd.map((object) => object.id);
   const objectsBeingUpdated = canvas
     .getObjects()
@@ -200,10 +196,10 @@ const highlightModification = ({ objectsToAdd, canvas, nameOfTheAdder }) => {
     let boundingRect = objectsBeingUpdatedGroup.getBoundingRect();
     const toRect = objectsToReplaceWithGroup.getBoundingRect();
 
-    let fromRect = getFabricRectFromBoundingRect(boundingRect);
+    let fromRect = getFabricRectFromBoundingRect(boundingRect, adder.color);
 
     let label = createLabelAtCorner({
-      nameOfTheAdder,
+      adder,
       fromRect,
     });
 
@@ -229,17 +225,19 @@ const highlightModification = ({ objectsToAdd, canvas, nameOfTheAdder }) => {
   });
 };
 
-const createLabelAtCorner = ({ nameOfTheAdder, fromRect }) => {
-  const text = new fabric.Text(nameOfTheAdder, {
+const createLabelAtCorner = ({ adder, fromRect }) => {
+  const text = new fabric.Text(adder.name, {
     top: fromRect.top - 5,
     left: fromRect.left + fromRect.width,
     fontSize: 20,
+    stroke: adder.color,
+    fill: adder.color,
   });
   text.top = text.top - text.height;
   return text;
 };
 
-const getFabricRectFromBoundingRect = (boundingRect) => {
+const getFabricRectFromBoundingRect = (boundingRect, stroke) => {
   const rect = new fabric.Rect({
     left: boundingRect.left,
     top: boundingRect.top,
@@ -249,8 +247,8 @@ const getFabricRectFromBoundingRect = (boundingRect) => {
     height: boundingRect.height,
     angle: 0,
     fill: "transparent",
-    stroke: "black",
-    strokeWidth: 2,
+    stroke,
+    strokeWidth: 4,
     selectable: false,
     opacity: 0.3,
   });

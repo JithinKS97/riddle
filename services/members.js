@@ -1,10 +1,19 @@
+import { stringToBrightColour } from "./util";
+
 const addMember = ({ members, setMembers, identifier, name }) => {
   const memberAlreadyNotPresent = !members
     .map((member) => member.identifier)
     .includes(identifier);
 
   if (memberAlreadyNotPresent && identifier) {
-    const updatedList = [...members, { identifier, name }];
+    const updatedList = [
+      ...members,
+      {
+        identifier,
+        name,
+        color: stringToBrightColour(name),
+      },
+    ];
     setMembers(updatedList);
     return updatedList;
   }
@@ -64,10 +73,16 @@ const getName = ({ id, members }) => {
   return member.name;
 };
 
+const getMemberById = ({ id, members }) => {
+  const member = members.find((member) => member.identifier === id);
+  return member;
+};
+
 export default {
   addMember,
   makeThisMainClient,
   removeSubClientMember,
   makeTheMemberMainClient,
   getName,
+  getMemberById,
 };
