@@ -1,4 +1,4 @@
-import Collaboration from "../../components/Collaboration";
+import Collaboration from "../../src/components/Collaboration";
 
 function CollaborationContainer() {
   return <Collaboration />;

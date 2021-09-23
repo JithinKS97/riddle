@@ -1,9 +1,9 @@
 import * as React from "react";
 import { useState } from "react";
 import { ChakraProvider } from "@chakra-ui/react";
-import { AppProvider } from "../context/App";
-import theme from "../theme/theme";
-import { Pencil } from "../constant/mode";
+import { AppProvider } from "../src/context/App";
+import theme from "../src/theme/theme";
+import { Pencil } from "../src/constant/mode";
 
 function MyApp({ Component, pageProps }) {
   const [client, setClient] = useState(null);
