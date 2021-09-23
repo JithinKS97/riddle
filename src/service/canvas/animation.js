@@ -94,7 +94,7 @@ const getFabricRectFromBoundingRect = (boundingRect, stroke) => {
     stroke,
     strokeWidth: 4,
     selectable: false,
-    opacity: 0.4,
+    opacity: 0.3,
   });
   return rect;
 };
@@ -104,7 +104,7 @@ const fadeInTransformFadeOut = ({
   toObj,
   canvas,
   parameters = [],
-  opacity = 0.4,
+  opacity = 0.3,
 }) => {
   canvas.add(fromObj);
 
