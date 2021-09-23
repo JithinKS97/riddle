@@ -20,7 +20,7 @@ import {
   resetZoomAndPanInCanvas,
   resetZoomInCanvas,
   resetPanInCanvas,
-} from "./canvas";
+} from "../../services/canvas/fabric";
 
 import { registerCanvasEvents, registerKeyEvents } from "./event";
 

@@ -12,7 +12,7 @@ import SharePopup from "./popups/SharePopup";
 import { useToast } from "@chakra-ui/react";
 import MembersPopup from "./popups/MembersPopup";
 import TopMenu from "./menu/TopMenu";
-import { saveFile } from "../components/drawingboard/canvas";
+import { saveFile } from "../services/canvas/fabric";
 
 function Collaboration() {
   const context = useContext(AppContext);

@@ -5,7 +5,7 @@ import {
   startDrawingShape,
   continueDrawingShape,
   endDrawingShape,
-} from "./drawShape";
+} from "../../services/canvas/shape";
 
 let mousePressed, timeout;
 
