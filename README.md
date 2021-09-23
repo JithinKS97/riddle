@@ -15,9 +15,6 @@ The whiteboard content can be saved to local computer by anyone in the room. The
 3. [React](https://reactjs.org/)
 4. [IPFS](https://ipfs.io/)
 
-# To use the App
-We recommend using Brave browser to use the App as it is hosted in IPFS and Brave offers the best experience. For other browsers, there are some issues that need to be resolved.
-
 # Communication protocol
 1. When a client accesses the app, a public address is allocated to him.
 2. The person who creates a room (Main user) shares his public address with people who want to join.
