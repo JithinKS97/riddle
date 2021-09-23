@@ -4,10 +4,10 @@ http://nknriddle.xyz/
 Riddle is an open source white board collaboration App. It is built on NKN, a p2p network connectivity protocol, which implies that users do not rely on a centralized authority to engage with one-another.
 <br/>
 <br/>
-From the app, you can create a new room and invite others to it by using the share Id provided to you and start collaborating using the shared white board.
+You can create a new room and invite others by using the Share Id and start collaborating in the shared white board.
 <br/>
 <br/>
-The whiteboard contents can be saved to local computer by any member in the room. There is also an option to store the content to IPFS and retrieve from it.
+The whiteboard content can be saved to local computer by anyone in the room. There is also an option to store and retrieve it from IPFS.
 
 # Technologies used
 1. [NKN](https://nkn.org/)
@@ -16,13 +16,13 @@ The whiteboard contents can be saved to local computer by any member in the room
 4. [IPFS](https://ipfs.io/)
 
 # Using the app
-App is hosted in IPFS. We recommend using Brave browser to use the App. There are chances that you might encounter some problems from other browsers.
+App is hosted in IPFS. We recommend using Brave browser to use it. There are chances that you might encounter problems from other browsers.
 
 
 # Communication protocol
 1. When a client accesses the app, a public address is allocated to him.
 2. The person who creates a room (Main user) shares his public address with people who wants to join.
-3. When a new person joins, they ping the main client to get the latest state of the canvas and the public addresses of all the members present in the room.
+3. When a new person joins, they ping the main user to get the latest state of the canvas and the public addresses of all the other members in the room.
 4. The whiteboard updates made by each user is broadcasted to everyone so that everyone updates their board with the new changes.
 5. When the main user leaves, another user is made the main user and if somebody wants to join, he has to use the public address of the new main user.
 
