@@ -16,7 +16,7 @@ The whiteboard content can be saved to local computer by anyone in the room. The
 4. [IPFS](https://ipfs.io/)
 
 # Using the app
-App is hosted in IPFS. We recommend using Brave browser to use it. There are chances that you might encounter problems from other browsers.
+App is hosted in IPFS. We recommend Brave browser to use it. There are chances that you might encounter some problems from other browsers which we are working on.
 
 
 # Communication protocol
