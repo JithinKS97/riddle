@@ -1,5 +1,5 @@
 import { Center, Button, Text, VStack, HStack, Box } from "@chakra-ui/react";
-import nknApi from "../services/nkn";
+import nknApi from "../service/nkn";
 import { AppContext } from "../context/App";
 import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";

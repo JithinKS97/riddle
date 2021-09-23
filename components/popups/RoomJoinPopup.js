@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { isValidId } from "../../services/nkn";
+import { isValidId } from "../../service/nkn";
 
 const RoomJoinPopup = (props) => {
   const { show, onClose } = props;

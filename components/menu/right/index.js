@@ -6,7 +6,7 @@ import { BsFillPeopleFill } from "react-icons/bs";
 import { fileOptions } from "../../../constant/menu";
 import { useRef } from "react";
 import { BiExit } from "react-icons/bi";
-import { addToIPFS, loadFromIPFS } from "../../../services/ipfs";
+import { addToIPFS, loadFromIPFS } from "../../../service/ipfs";
 import IPFSSave from "../../popups/IPFSSave";
 import { useState } from "react";
 import IPFSLoad from "../../popups/IPFSLoad";

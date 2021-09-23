@@ -3,16 +3,16 @@ import { useEffect, useContext, useState } from "react";
 import { AppContext } from ".././context/App";
 import { useRouter } from "next/router";
 import { useRef } from "react";
-import nknApi from "../services/nkn";
-import messageApi from "../services/message";
-import membersApi from "../services/members";
+import nknApi from "../service/nkn";
+import messageApi from "../service/message";
+import membersApi from "../service/members";
 import Loading from "./Loading";
 import NamePopup from "./popups/NamePopup";
 import SharePopup from "./popups/SharePopup";
 import { useToast } from "@chakra-ui/react";
 import MembersPopup from "./popups/MembersPopup";
 import TopMenu from "./menu/TopMenu";
-import { saveFile } from "../services/canvas/fabric";
+import { saveFile } from "../service/canvas/fabric";
 
 function Collaboration() {
   const context = useContext(AppContext);
