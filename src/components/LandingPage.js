@@ -21,7 +21,7 @@ function LandingPage() {
   };
 
   const goToCollabPage = (hostAddress) => {
-    router.push(`drawingboard/${hostAddress}`);
+    router.push(`drawingboard?hostAddress=${hostAddress}`);
   };
 
   const [show, setShow] = useState(false);

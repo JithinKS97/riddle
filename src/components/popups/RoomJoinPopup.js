@@ -29,7 +29,7 @@ const RoomJoinPopup = (props) => {
       alert("Invalid room id");
       return;
     }
-    router.push(`/drawingboard/${roomId}`);
+    router.push(`/drawingboard?hostAddress=${roomId}`);
   };
 
   const handleKeydown = (e) => {
