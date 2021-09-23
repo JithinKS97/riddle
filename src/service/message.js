@@ -15,7 +15,7 @@ import {
 
 const join = async ({ client, goBack, hostAddress }) => {
   try {
-    // public key is the address of the main client
+    // My public is my address
     const myAddress = client.getPublicKey();
 
     const content = {
