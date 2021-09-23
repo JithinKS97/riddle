@@ -21,7 +21,7 @@ App is hosted in IPFS. We recommend Brave browser to use it. There are chances t
 
 # Communication protocol
 1. When a client accesses the app, a public address is allocated to him.
-2. The person who creates a room (Main user) shares his public address with people who wants to join.
+2. The person who creates a room (Main user) shares his public address with people who want to join.
 3. When a new person joins, they ping the main user to get the latest state of the canvas and the public addresses of all the other members in the room.
 4. The whiteboard updates made by each user is broadcasted to everyone so that everyone updates their board with the new changes.
 5. When the main user leaves, another user is made the main user and if somebody wants to join, he has to use the public address of the new main user.
