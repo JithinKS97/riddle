@@ -85,49 +85,55 @@ export const deleteSelectedObjectsInCanvas = (canvas) => {
 };
 
 export const updateObjectsInCanvas = ({ canvas, updatedValues, updater }) => {
-  let discarded = false;
+  canvas.discardActiveObject();
 
-  for (let updatedValue of updatedValues) {
-    const targetObject = canvas
-      .getObjects()
-      .find((object) => object.id === updatedValue.id);
+  const { targetObjects, sourceObjects } = getSourceAndTarget({
+    updatedValues,
+    canvas,
+  });
 
-    for (let parameter of parametersToLook) {
-      if (targetObject[parameter] !== updatedValue[parameter]) {
-        if (["stroke", "strokeWidth", "fill"].includes(parameter)) {
-          {
-            targetObject[parameter] = updatedValue[parameter];
-            canvas.renderAll();
-          }
-        } else {
-          if (!discarded) {
-            canvas.discardActiveObject();
-            discarded = true;
-          }
-          if (parameter === "angle") {
-            // Todo - Animate rotate also
-            const angleDifference = getAngleDifference(
-              targetObject[parameter],
-              updatedValue[parameter]
-            );
-            targetObject[parameter] = targetObject[parameter] + angleDifference;
-          }
-          animateObject({
-            object: targetObject,
-            startValue: targetObject[parameter],
-            endValue: updatedValue[parameter],
-            parameter,
-            canvas,
-          });
-        }
-      }
-    }
+  highlightModification({
+    targetObjects,
+    sourceObjects,
+    canvas,
+    user: updater,
+  });
+
+  for (let i = 0; i < targetObjects.length; i++) {
+    replaceObject({
+      objectToBeReplaced: sourceObjects[i],
+      objectToReplaceWith: targetObjects[i],
+      canvas,
+    });
   }
 };
 
-const getAngleDifference = (angle1, angle2) => {
-  const diff = ((angle2 - angle1 + 180) % 360) - 180;
-  return diff < -180 ? diff + 360 : diff;
+const getSourceAndTarget = ({ updatedValues, canvas }) => {
+  let targetObjects = [],
+    sourceObjects = [];
+
+  for (let updatedValue of updatedValues) {
+    const sourceObject = canvas
+      .getObjects()
+      .find((object) => object.id === updatedValue.id);
+
+    sourceObjects.push(sourceObject);
+
+    let targetObject;
+
+    sourceObject.clone((_clone) => {
+      targetObject = _clone;
+    });
+
+    for (let parameter of parametersToLook) {
+      if (targetObject[parameter] !== updatedValue[parameter]) {
+        targetObject[parameter] = updatedValue[parameter];
+      }
+    }
+
+    targetObjects.push(targetObject);
+  }
+  return { sourceObjects, targetObjects };
 };
 
 export const addObjectsInCanvas = ({ canvas, objectsToAdd, adder }) => {
@@ -149,6 +155,37 @@ export const addObjectsInCanvas = ({ canvas, objectsToAdd, adder }) => {
         canvas,
       });
     });
+  });
+};
+
+const replaceObject = ({ objectToBeReplaced, objectToReplaceWith, canvas }) => {
+  parametersToLook.forEach((parameter) => {
+    if (objectToBeReplaced[parameter] !== objectToReplaceWith[parameter]) {
+      if (["stroke", "strokeWidth", "fill"].includes(parameter)) {
+        canvas.remove(objectToBeReplaced);
+        canvas.add(objectToReplaceWith);
+        canvas.renderAll();
+        return;
+      }
+
+      if (parameter === "angle") {
+        // Todo - Animate rotate also
+        const angleDifference = getAngleDifference(
+          objectToBeReplaced[parameter],
+          objectToReplaceWith[parameter]
+        );
+        objectToReplaceWith[parameter] =
+          objectToBeReplaced[parameter] + angleDifference;
+      }
+
+      animateObject({
+        object: objectToBeReplaced,
+        startValue: objectToBeReplaced[parameter],
+        endValue: objectToReplaceWith[parameter],
+        parameter,
+        canvas,
+      });
+    }
   });
 };
 
@@ -227,7 +264,7 @@ export const saveFile = (jsonData) => {
   FileSaver.saveAs(blob, "riddle.json");
 };
 
-const f = (angle1, angle2) => {
+const getAngleDifference = (angle1, angle2) => {
   const diff = ((angle2 - angle1 + 180) % 360) - 180;
   return diff < -180 ? diff + 360 : diff;
 };
