@@ -16,7 +16,7 @@ The whiteboard content can be saved to local computer by anyone in the room. The
 # Use the App
 Access the App at http://nknriddle.xyz/
 
-** The app is hosted in IPFS. Use Brave browser with IPFS mode enabled to access it. You can also use it from Chrome by installing [IPFS Companion](https://chrome.google.com/webstore/detail/ipfs-companion/nibjojkomfdiaoajekhjakgkdhaomnch?hl=en) extension. **
+<b> Note - The app is hosted in IPFS. Use Brave browser with IPFS mode enabled to access it. You can also use it from Chrome by installing [IPFS Companion](https://chrome.google.com/webstore/detail/ipfs-companion/nibjojkomfdiaoajekhjakgkdhaomnch?hl=en) extension. </b>
 
 # Communication protocol
 1. When a client accesses the app, a public address is allocated to him.
