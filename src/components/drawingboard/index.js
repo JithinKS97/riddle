@@ -100,6 +100,24 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
     return registerKeyEvents({ deleteSelectedObjects, window });
   }, [selectedMode, canvas]);
 
+  useEffect(() => {
+    return registerResize();
+  }, []);
+
+  const registerResize = () => {
+    const topBarClass = "css-ir3bez";
+    window.onresize = () => {
+      canvas.setHeight(
+        window.innerHeight -
+          document.getElementsByClassName(topBarClass)[0].offsetHeight
+      );
+      canvas.setWidth(window.innerWidth);
+    };
+    return () => {
+      window.onresize = null;
+    };
+  };
+
   // On mode change
   useEffect(onModeChange(canvas, selectedMode), [selectedMode, canvas]);
 
