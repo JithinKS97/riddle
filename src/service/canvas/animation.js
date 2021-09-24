@@ -22,62 +22,55 @@ export const highlightObject = ({ object, canvas, user }) => {
   });
 };
 
-export const highlightModification = ({ objects, canvas, user }) => {
-  const idsOfObjectsBeingUpdated = objects.map((object) => object.id);
-  const objectsBeingUpdated = canvas
-    .getObjects()
-    .filter((obj) => idsOfObjectsBeingUpdated.includes(obj.id));
-  fabric.util.enlivenObjects(objects, (objectsToReplaceWith) => {
-    // Get bounding rect of each
-    // Animate it
-    const objectsToReplaceWithClone = [];
-    objectsToReplaceWith.forEach((obj) =>
-      obj.clone((clone) => {
-        objectsToReplaceWithClone.push(clone);
-      })
-    );
+export const highlightModification = ({
+  targetObjects,
+  sourceObjects,
+  canvas,
+  user,
+}) => {
+  let objectsBeingUpdatedClone = [],
+    objectsToReplaceWithClone = [];
 
-    const objectsBeingUpdatedClone = [];
-    objectsBeingUpdated.forEach((obj) =>
-      obj.clone((clone) => {
-        objectsBeingUpdatedClone.push(clone);
-      })
-    );
-
-    const objectsBeingUpdatedGroup = new fabric.Group(objectsBeingUpdatedClone);
-    const objectsToReplaceWithGroup = new fabric.Group(
-      objectsToReplaceWithClone
-    );
-
-    let boundingRect = objectsBeingUpdatedGroup.getBoundingRect();
-    const toRect = objectsToReplaceWithGroup.getBoundingRect();
-
-    let fromRect = getFabricRectFromBoundingRect(boundingRect, user.color);
-
-    let label = createLabelAtCorner({
-      user,
-      fromRect,
+  for (let i = 0; i < targetObjects.length; i++) {
+    targetObjects[i].clone((targetObjectClone) => {
+      objectsToReplaceWithClone.push(targetObjectClone);
     });
-
-    const parameters = ["left", "top", "width", "height"];
-
-    fadeInTransformFadeOut({
-      fromObj: fromRect,
-      toObj: toRect,
-      canvas,
-      parameters,
+    sourceObjects[i].clone((sourceObjectClone) => {
+      objectsBeingUpdatedClone.push(sourceObjectClone);
     });
+  }
 
-    fadeInTransformFadeOut({
-      fromObj: label,
-      toObj: {
-        top: toRect.top - label.height - 5,
-        left: toRect.left + toRect.width,
-      },
-      canvas,
-      parameters: ["top", "left"],
-      opacity: 0.7,
-    });
+  const objectsBeingUpdatedGroup = new fabric.Group(objectsBeingUpdatedClone);
+  const objectsToReplaceWithGroup = new fabric.Group(objectsToReplaceWithClone);
+
+  let boundingRect = objectsBeingUpdatedGroup.getBoundingRect();
+  const toRect = objectsToReplaceWithGroup.getBoundingRect();
+
+  let fromRect = getFabricRectFromBoundingRect(boundingRect, user.color);
+
+  let label = createLabelAtCorner({
+    user,
+    fromRect,
+  });
+
+  const parameters = ["left", "top", "width", "height"];
+
+  fadeInTransformFadeOut({
+    fromObj: fromRect,
+    toObj: toRect,
+    canvas,
+    parameters,
+  });
+
+  fadeInTransformFadeOut({
+    fromObj: label,
+    toObj: {
+      top: toRect.top - label.height - 5,
+      left: toRect.left + toRect.width,
+    },
+    canvas,
+    parameters: ["top", "left"],
+    opacity: 0.7,
   });
 };
 

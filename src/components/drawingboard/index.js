@@ -20,6 +20,8 @@ import {
   resetZoomAndPanInCanvas,
   resetZoomInCanvas,
   resetPanInCanvas,
+  updateObjectsInCanvas,
+  extractUpdatedValues,
 } from "../../service/canvas/fabric";
 
 import { registerCanvasEvents, registerKeyEvents } from "./event";
@@ -36,6 +38,7 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
   const {
     onAddObjects: sendObjectsToOthers,
     onObjectsRemove: deleteObjectsFromOthers,
+    onUpdateObjects: sendUpdatedValuesToOthers,
   } = props;
   const [currentZoom, setCurrentZoom] = useState(1);
   const [showZoom, setShowZoom] = useState(false);
@@ -93,6 +96,7 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
       selectedFill,
       selectedStroke,
       brushSize,
+      sendUpdatedValuesInCanvasToOthers,
     });
   }, [canvas, selectedMode, selectedFill, selectedStroke, brushSize]);
 
@@ -133,6 +137,7 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
       resetZoom,
       resetPan,
       clearAndAddObjects,
+      updateObjects,
     };
   });
 
@@ -142,6 +147,12 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
     sendObjectsToOthers(selectedObjects);
   };
 
+  const sendUpdatedValuesInCanvasToOthers = () => {
+    const selectedObjects = getSelectedObjectsInCanvas(canvas);
+    const updatedValues = extractUpdatedValues(selectedObjects);
+    sendUpdatedValuesToOthers(updatedValues);
+  };
+
   const deleteSelectedObjects = () => {
     const ids = deleteSelectedObjectsInCanvas(canvas);
     deleteObjectsFromOthers(ids);
@@ -149,6 +160,10 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
 
   const addObjects = (objectsToAdd, adder) => {
     addObjectsInCanvas({ canvas, objectsToAdd, adder });
+  };
+
+  const updateObjects = (updatedValues, updater) => {
+    updateObjectsInCanvas({ canvas, updatedValues, updater });
   };
 
   const clearAndAddObjects = (objectsToAdd) => {

@@ -1,7 +1,7 @@
 import { fabric } from "fabric";
 var FileSaver = require("file-saver");
 
-const parametersToLook = [
+export const parametersToLook = [
   "top",
   "left",
   "angle",
@@ -84,67 +84,78 @@ export const deleteSelectedObjectsInCanvas = (canvas) => {
   return ids;
 };
 
-export const addObjectsInCanvas = ({ canvas, objectsToAdd, adder }) => {
-  const idsOfObjectsCurrentlyPresent = canvas
-    .getObjects()
-    .map((object) => object.id);
+export const updateObjectsInCanvas = ({ canvas, updatedValues, updater }) => {
+  canvas.discardActiveObject();
 
-  const idsOfObjectsToBeAdded = objectsToAdd.map((object) => object.id);
+  const { targetObjects, sourceObjects } = getSourceAndTarget({
+    updatedValues,
+    canvas,
+  });
 
-  const isObjectBeingModified = findIfObjectIsBeingModified(
-    idsOfObjectsCurrentlyPresent,
-    idsOfObjectsToBeAdded
-  );
+  highlightModification({
+    targetObjects,
+    sourceObjects,
+    canvas,
+    user: updater,
+  });
 
-  if (isObjectBeingModified && adder) {
-    canvas.discardActiveObject();
-    highlightModification({ objects: objectsToAdd, canvas, user: adder });
+  for (let i = 0; i < targetObjects.length; i++) {
+    replaceObject({
+      objectToBeReplaced: sourceObjects[i],
+      objectToReplaceWith: targetObjects[i],
+      canvas,
+    });
   }
+};
 
+const getSourceAndTarget = ({ updatedValues, canvas }) => {
+  let targetObjects = [],
+    sourceObjects = [];
+
+  for (let updatedValue of updatedValues) {
+    const sourceObject = canvas
+      .getObjects()
+      .find((object) => object.id === updatedValue.id);
+
+    sourceObjects.push(sourceObject);
+
+    let targetObject;
+
+    sourceObject.clone((_clone) => {
+      targetObject = _clone;
+    });
+
+    for (let parameter of parametersToLook) {
+      if (targetObject[parameter] !== updatedValue[parameter]) {
+        targetObject[parameter] = updatedValue[parameter];
+      }
+    }
+
+    targetObjects.push(targetObject);
+  }
+  return { sourceObjects, targetObjects };
+};
+
+export const addObjectsInCanvas = ({ canvas, objectsToAdd, adder }) => {
   fabric.util.enlivenObjects(objectsToAdd, (enlivenedObjectsToAdd) => {
     enlivenedObjectsToAdd.forEach((enlivenedObjectToAdd) => {
-      if (!isObjectBeingModified) {
-        canvas.add(enlivenedObjectToAdd);
-
-        if (adder) {
-          highlightObject({
-            object: enlivenedObjectToAdd,
-            user: adder,
-            canvas,
-          });
-        }
-
-        animateObject({
+      canvas.add(enlivenedObjectToAdd);
+      if (adder) {
+        highlightObject({
           object: enlivenedObjectToAdd,
-          startValue: 0,
-          endValue: 1,
-          parameter: "opacity",
-          canvas,
-        });
-      } else {
-        let objectToModify = canvas
-          .getObjects()
-          .find((object) => object.id === enlivenedObjectToAdd.id);
-        replaceObject({
-          objectToBeReplaced: objectToModify,
-          objectToReplaceWith: enlivenedObjectToAdd,
+          user: adder,
           canvas,
         });
       }
+      animateObject({
+        object: enlivenedObjectToAdd,
+        startValue: 0,
+        endValue: 1,
+        parameter: "opacity",
+        canvas,
+      });
     });
   });
-};
-
-const findIfObjectIsBeingModified = (
-  idsOfObjectsCurrentlyPresent,
-  idsOfObjectsToBeAdded
-) => {
-  for (const idOfObjectToBeAdded of idsOfObjectsToBeAdded) {
-    if (idsOfObjectsCurrentlyPresent.includes(idOfObjectToBeAdded)) {
-      return true;
-    }
-  }
-  return false;
 };
 
 const replaceObject = ({ objectToBeReplaced, objectToReplaceWith, canvas }) => {
@@ -188,13 +199,12 @@ export const removeObjectsInCanvas = ({ canvas, ids, deleter }) => {
     .getObjects()
     .filter((object) => ids.includes(object.id));
 
-  console.log(ids);
-
   if (ids.length === 1) {
     highlightObject({ object: objectsToRemove[0], canvas, user: deleter });
   } else {
     highlightModification({
-      objects: objectsToRemove,
+      sourceObjects: objectsToRemove,
+      targetObjects: objectsToRemove,
       canvas,
       user: deleter,
     });
@@ -256,4 +266,16 @@ export const saveFile = (jsonData) => {
 const getAngleDifference = (angle1, angle2) => {
   const diff = ((angle2 - angle1 + 180) % 360) - 180;
   return diff < -180 ? diff + 360 : diff;
+};
+
+export const extractUpdatedValues = (objects) => {
+  const updatedValues = objects.map((object) => {
+    const updatedValue = {};
+    updatedValue.id = object.id;
+    parametersToLook.map((parameter) => {
+      updatedValue[parameter] = object[parameter];
+    });
+    return updatedValue;
+  });
+  return updatedValues;
 };
