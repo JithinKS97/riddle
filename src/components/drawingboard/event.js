@@ -16,6 +16,7 @@ export const registerCanvasEvents = ({
   setCurrentZoom,
   setShowZoom,
   sendSelectedObjectsToOthers,
+  sendUpdatedValuesInCanvasToOthers,
   selectedFill,
   selectedStroke,
   brushSize,
@@ -95,8 +96,8 @@ export const registerCanvasEvents = ({
     }, 1000);
   });
 
-  canvas.on("object:modified", () => {
-    sendSelectedObjectsToOthers();
+  canvas.on("object:modified", (e) => {
+    sendUpdatedValuesInCanvasToOthers();
   });
 
   return () => {

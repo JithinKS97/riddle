@@ -1,7 +1,7 @@
 import { fabric } from "fabric";
 var FileSaver = require("file-saver");
 
-const parametersToLook = [
+export const parametersToLook = [
   "top",
   "left",
   "angle",
@@ -84,97 +84,71 @@ export const deleteSelectedObjectsInCanvas = (canvas) => {
   return ids;
 };
 
-export const addObjectsInCanvas = ({ canvas, objectsToAdd, adder }) => {
-  const idsOfObjectsCurrentlyPresent = canvas
-    .getObjects()
-    .map((object) => object.id);
+export const updateObjectsInCanvas = ({ canvas, updatedValues, updater }) => {
+  let discarded = false;
 
-  const idsOfObjectsToBeAdded = objectsToAdd.map((object) => object.id);
+  for (let updatedValue of updatedValues) {
+    const targetObject = canvas
+      .getObjects()
+      .find((object) => object.id === updatedValue.id);
 
-  const isObjectBeingModified = findIfObjectIsBeingModified(
-    idsOfObjectsCurrentlyPresent,
-    idsOfObjectsToBeAdded
-  );
-
-  if (isObjectBeingModified && adder) {
-    canvas.discardActiveObject();
-    highlightModification({ objects: objectsToAdd, canvas, user: adder });
-  }
-
-  fabric.util.enlivenObjects(objectsToAdd, (enlivenedObjectsToAdd) => {
-    enlivenedObjectsToAdd.forEach((enlivenedObjectToAdd) => {
-      if (!isObjectBeingModified) {
-        canvas.add(enlivenedObjectToAdd);
-
-        if (adder) {
-          highlightObject({
-            object: enlivenedObjectToAdd,
-            user: adder,
+    for (let parameter of parametersToLook) {
+      if (targetObject[parameter] !== updatedValue[parameter]) {
+        if (["stroke", "strokeWidth", "fill"].includes(parameter)) {
+          {
+            targetObject[parameter] = updatedValue[parameter];
+            canvas.renderAll();
+          }
+        } else {
+          if (!discarded) {
+            canvas.discardActiveObject();
+            discarded = true;
+          }
+          if (parameter === "angle") {
+            // Todo - Animate rotate also
+            const angleDifference = getAngleDifference(
+              targetObject[parameter],
+              updatedValue[parameter]
+            );
+            targetObject[parameter] = targetObject[parameter] + angleDifference;
+          }
+          animateObject({
+            object: targetObject,
+            startValue: targetObject[parameter],
+            endValue: updatedValue[parameter],
+            parameter,
             canvas,
           });
         }
-
-        animateObject({
-          object: enlivenedObjectToAdd,
-          startValue: 0,
-          endValue: 1,
-          parameter: "opacity",
-          canvas,
-        });
-      } else {
-        let objectToModify = canvas
-          .getObjects()
-          .find((object) => object.id === enlivenedObjectToAdd.id);
-        replaceObject({
-          objectToBeReplaced: objectToModify,
-          objectToReplaceWith: enlivenedObjectToAdd,
-          canvas,
-        });
       }
-    });
-  });
-};
-
-const findIfObjectIsBeingModified = (
-  idsOfObjectsCurrentlyPresent,
-  idsOfObjectsToBeAdded
-) => {
-  for (const idOfObjectToBeAdded of idsOfObjectsToBeAdded) {
-    if (idsOfObjectsCurrentlyPresent.includes(idOfObjectToBeAdded)) {
-      return true;
     }
   }
-  return false;
 };
 
-const replaceObject = ({ objectToBeReplaced, objectToReplaceWith, canvas }) => {
-  parametersToLook.forEach((parameter) => {
-    if (objectToBeReplaced[parameter] !== objectToReplaceWith[parameter]) {
-      if (["stroke", "strokeWidth", "fill"].includes(parameter)) {
-        canvas.remove(objectToBeReplaced);
-        canvas.add(objectToReplaceWith);
-        canvas.renderAll();
-        return;
-      }
+const getAngleDifference = (angle1, angle2) => {
+  const diff = ((angle2 - angle1 + 180) % 360) - 180;
+  return diff < -180 ? diff + 360 : diff;
+};
 
-      if (parameter === "angle") {
-        // Todo - Animate rotate also
-        const angleDifference = getAngleDifference(
-          objectToBeReplaced[parameter],
-          objectToReplaceWith[parameter]
-        );
-        objectToReplaceWith[parameter] =
-          objectToBeReplaced[parameter] + angleDifference;
+export const addObjectsInCanvas = ({ canvas, objectsToAdd, adder }) => {
+  fabric.util.enlivenObjects(objectsToAdd, (enlivenedObjectsToAdd) => {
+    enlivenedObjectsToAdd.forEach((enlivenedObjectToAdd) => {
+      canvas.add(enlivenedObjectToAdd);
+      if (adder) {
+        highlightObject({
+          object: enlivenedObjectToAdd,
+          user: adder,
+          canvas,
+        });
       }
-
       animateObject({
-        object: objectToBeReplaced,
-        startValue: objectToBeReplaced[parameter],
-        endValue: objectToReplaceWith[parameter],
-        parameter,
+        object: enlivenedObjectToAdd,
+        startValue: 0,
+        endValue: 1,
+        parameter: "opacity",
         canvas,
       });
-    }
+    });
   });
 };
 
@@ -253,7 +227,19 @@ export const saveFile = (jsonData) => {
   FileSaver.saveAs(blob, "riddle.json");
 };
 
-const getAngleDifference = (angle1, angle2) => {
+const f = (angle1, angle2) => {
   const diff = ((angle2 - angle1 + 180) % 360) - 180;
   return diff < -180 ? diff + 360 : diff;
+};
+
+export const extractUpdatedValues = (objects) => {
+  const updatedValues = objects.map((object) => {
+    const updatedValue = {};
+    updatedValue.id = object.id;
+    parametersToLook.map((parameter) => {
+      updatedValue[parameter] = object[parameter];
+    });
+    return updatedValue;
+  });
+  return updatedValues;
 };

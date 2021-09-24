@@ -60,6 +60,7 @@ function Collaboration() {
       hostAddress,
       removeObjects,
       notifyHostChange,
+      updateObjectsInCanvas,
     });
   };
 
@@ -208,6 +209,14 @@ function Collaboration() {
     });
   };
 
+  const onUpdateObjects = (updatedValues) => {
+    messageApi.updateObjectsInOthersCanvas({
+      client: clientRef.current,
+      updatedValues,
+      members: membersRef.current,
+    });
+  };
+
   const onObjectsRemove = (ids) => {
     messageApi.removeObjectsFromOthersCanvas({
       client: clientRef.current,
@@ -341,6 +350,14 @@ function Collaboration() {
     onAddObjects(objects, true);
   };
 
+  const updateObjectsInCanvas = (updatedValues, fromAddress) => {
+    const updater = membersApi.getMemberById({
+      id: fromAddress,
+      members: membersRef.current,
+    });
+    canvasRef.current.updateObjects(updatedValues, updater);
+  };
+
   const exit = () => {
     if (confirm("Are you sure you want to leave the room?")) {
       leaveRoom();
@@ -386,6 +403,7 @@ function Collaboration() {
           onAddObjects={onAddObjects}
           onObjectsRemove={onObjectsRemove}
           ref={canvasRef}
+          onUpdateObjects={onUpdateObjects}
         />
       </div>
     </>

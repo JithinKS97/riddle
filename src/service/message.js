@@ -7,6 +7,7 @@ import {
   ADD_OBJECTS,
   MAKE_THE_MEMBER_MAINCLIENT,
   REMOVE_OBJECTS,
+  MODIFY_OBJECTS,
 } from "../constant/message";
 
 /**
@@ -137,6 +138,17 @@ const addObjectsToOthersCanvas = ({
   sendCanvasUpdate({ client, members, message, hostAddress, isHost });
 };
 
+const updateObjectsInOthersCanvas = ({ client, updatedValues, members }) => {
+  if (!client) {
+    return;
+  }
+  const content = {
+    updatedValues,
+  };
+  const message = generateMessage(MODIFY_OBJECTS, content);
+  sendCanvasUpdate({ client, members, message });
+};
+
 const removeObjectsFromOthersCanvas = ({ client, ids, members }) => {
   const content = {
     ids,
@@ -166,7 +178,7 @@ const sendCanvasUpdate = ({ client, members, message }) => {
  */
 
 function handleReception(props) {
-  const { client, message, isHost } = props;
+  const { message, isHost } = props;
 
   const payload = JSON.parse(message.payload);
   const src = message.src;
@@ -191,6 +203,7 @@ function handleMessageForHost(props) {
     removeObjects,
     src,
     hostAddress,
+    updateObjectsInCanvas,
   } = props;
   const type = payload.type;
 
@@ -233,7 +246,7 @@ function handleMessageForHost(props) {
       return message;
     case REMOVE_MEMBER:
       // The member has to be removed from the members list
-      const memberToRemove = payload.content.identifier;
+      const memberToRemove = payload.content.identiValuesfier;
       notifyLeave(memberToRemove);
       removeSubClientMember(memberToRemove);
       break;
@@ -241,6 +254,10 @@ function handleMessageForHost(props) {
       const objects = payload.content.objects;
       const clear = payload.content.clear;
       addObjectsToCanvas(objects, src, clear);
+      break;
+    case MODIFY_OBJECTS:
+      const updatedValues = payload.content.updatedValues;
+      updateObjectsInCanvas(updatedValues, src);
       break;
     case REMOVE_OBJECTS:
       const ids = payload.content.ids;
@@ -262,6 +279,7 @@ function handleMessageForSub(props) {
     src,
     hostAddress,
     notifyHostChange,
+    updateObjectsInCanvas,
   } = props;
 
   const type = payload.type;
@@ -295,6 +313,10 @@ function handleMessageForSub(props) {
       const objects = payload.content.objects;
       const clear = payload.content.clear;
       addObjectsToCanvas(objects, src, clear);
+      break;
+    case MODIFY_OBJECTS:
+      const updatedValues = payload.content.updatedValues;
+      updateObjectsInCanvas(updatedValues, src);
       break;
     case REMOVE_OBJECTS:
       const ids = payload.content.ids;
@@ -356,4 +378,5 @@ export default {
   makeSubClientMainClient,
   addObjectsToOthersCanvas,
   removeObjectsFromOthersCanvas,
+  updateObjectsInOthersCanvas,
 };
