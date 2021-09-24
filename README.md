@@ -7,12 +7,6 @@ Riddle is an open source white board collaboration App. It is built on <a href="
 Using the App, you can create a new room and invite others by using the Share Id provided to you and start collaborating in the shared white board.
 The whiteboard content can be saved to local computer by anyone in the room. There is also an option to store and retrieve it from [IPFS](https://ipfs.io/).
 
-# Technologies used
-1. [NKN](https://nkn.org/)
-2. [Fabric](http://fabricjs.com/)
-3. [React](https://reactjs.org/)
-4. [IPFS](https://ipfs.io/)
-
 # Use the App
 Access the App at http://nknriddle.xyz/
 
@@ -24,6 +18,12 @@ Access the App at http://nknriddle.xyz/
 3. When a new person joins, they ping the main user to get the latest state of the canvas and the public addresses of all the other members in the room.
 4. The whiteboard updates made by each user is broadcasted to everyone so that everyone updates their board with the new changes.
 5. When the main user leaves, another user is made the main user and if somebody wants to join, he has to use the public address of the new main user.
+
+# Technologies used
+1. [NKN](https://nkn.org/)
+2. [Fabric](http://fabricjs.com/)
+3. [React](https://reactjs.org/)
+4. [IPFS](https://ipfs.io/)
 
 # The whiteboard
 The whiteboard is made using [Fabric.js](http://fabricjs.com/), a very powerful and convenient layer of abstraction build over the canvas API.
