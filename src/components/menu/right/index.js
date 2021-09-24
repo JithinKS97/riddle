@@ -1,7 +1,6 @@
 import { HStack, Button } from "@chakra-ui/react";
 import OptionsMenu from "../common/OptionsMenu";
 import { FaShareAlt } from "react-icons/fa";
-import { GoFileMedia } from "react-icons/go";
 import { BsFillPeopleFill } from "react-icons/bs";
 import { fileOptions } from "../../../constant/menu";
 import { useRef } from "react";
@@ -10,6 +9,7 @@ import { addToIPFS, loadFromIPFS } from "../../../service/ipfs";
 import IPFSSave from "../../popups/IPFSSave";
 import { useState } from "react";
 import IPFSLoad from "../../popups/IPFSLoad";
+import { ImFilesEmpty } from "react-icons/im";
 
 const RightSection = (props) => {
   const {
@@ -121,7 +121,7 @@ const RightSection = (props) => {
         />
         <OptionsMenu
           onClick={handleClick}
-          defaultIcon={<GoFileMedia />}
+          defaultIcon={<ImFilesEmpty />}
           options={fileOptions}
         />
         <Button onClick={onShareIconClick}>
