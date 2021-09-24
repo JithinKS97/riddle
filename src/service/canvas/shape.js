@@ -2,7 +2,7 @@ import { fabric } from "fabric";
 import { v4 as uuidv4 } from "uuid";
 import { Rectangle, Line, Ellipse, Triangle } from "../../constant/mode";
 
-let newShape, origX, origY;
+let newShape, origX, origY, boundingBox;
 
 export const startDrawingShape = ({
   canvas,
@@ -15,6 +15,17 @@ export const startDrawingShape = ({
   const pointer = canvas.getPointer(option.e);
   origX = pointer.x;
   origY = pointer.y;
+
+  boundingBox = createNewRectangle({
+    left: origX,
+    top: origY,
+    pointer,
+    fill: "Transparent",
+    stroke: "#aaa",
+    strokeWidth: 1,
+  });
+
+  canvas.add(boundingBox);
 
   switch (shape) {
     case Rectangle:
@@ -69,6 +80,16 @@ export const continueDrawingShape = ({ canvas, option, shape }) => {
     return;
   }
   const pointer = canvas.getPointer(option.e);
+
+  if (origX > pointer.x) {
+    boundingBox.set({ left: Math.abs(pointer.x) });
+  }
+  if (origY > pointer.y) {
+    boundingBox.set({ top: Math.abs(pointer.y) });
+  }
+  boundingBox.set({ width: Math.abs(origX - pointer.x) });
+  boundingBox.set({ height: Math.abs(origY - pointer.y) });
+
   switch (shape) {
     case Rectangle:
     case Triangle:
@@ -109,6 +130,7 @@ export const endDrawingShape = ({ canvas }) => {
   if (!newShape) {
     return;
   }
+  canvas.remove(boundingBox);
   canvas.discardActiveObject();
   const shapeObject = newShape.toObject(["id"]);
   return shapeObject;
