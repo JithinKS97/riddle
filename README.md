@@ -1,5 +1,4 @@
 # Riddle
-http://nknriddle.xyz/
 <p align="center"><img width="650px" height="360px" src="https://i.ibb.co/0CYwLwN/Screenshot-2021-09-17-at-8-03-32-AM.png" alt="riddle-logo" /></p>
 Riddle is an open source white board collaboration App. It is built on <a href="https://nkn.org/">NKN</a>, a p2p network connectivity protocol, which implies that users do not rely on a centralized authority to engage with one-another.
 <br/>
@@ -15,6 +14,8 @@ The whiteboard content can be saved to local computer by anyone in the room. The
 4. [IPFS](https://ipfs.io/)
 
 # Use the App
+Access the App at http://nknriddle.xyz/
+
 The app is hosted in IPFS. Use Brave browser with IPFS mode enabled to access it. You can also use it from Chrome by installing [IPFS Companion](https://chrome.google.com/webstore/detail/ipfs-companion/nibjojkomfdiaoajekhjakgkdhaomnch?hl=en) extension.
 
 # Communication protocol
