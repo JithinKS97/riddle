@@ -199,13 +199,12 @@ export const removeObjectsInCanvas = ({ canvas, ids, deleter }) => {
     .getObjects()
     .filter((object) => ids.includes(object.id));
 
-  console.log(ids);
-
   if (ids.length === 1) {
     highlightObject({ object: objectsToRemove[0], canvas, user: deleter });
   } else {
     highlightModification({
-      objects: objectsToRemove,
+      sourceObjects: objectsToRemove,
+      targetObjects: objectsToRemove,
       canvas,
       user: deleter,
     });
