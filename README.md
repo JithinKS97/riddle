@@ -1,7 +1,7 @@
 # Riddle
 http://nknriddle.xyz/
 <p align="center"><img width="650px" height="360px" src="https://i.ibb.co/0CYwLwN/Screenshot-2021-09-17-at-8-03-32-AM.png" alt="riddle-logo" /></p>
-Riddle is an open source white board collaboration App. It is built on NKN, a p2p network connectivity protocol, which implies that users do not rely on a centralized authority to engage with one-another.
+Riddle is an open source white board collaboration App. It is built on [NKN](https://nkn.org/), a p2p network connectivity protocol, which implies that users do not rely on a centralized authority to engage with one-another.
 <br/>
 <br/>
 You can create a new room and invite others by using the Share Id and start collaborating in the shared white board.
