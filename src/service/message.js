@@ -352,10 +352,6 @@ const generateMessage = (type, content) => {
   return stringifiedMessage;
 };
 
-const isMain = (client) => {
-  return client.identifier === "";
-};
-
 const sendMessage = async ({ address, message, client }) => {
   try {
     console.log("");

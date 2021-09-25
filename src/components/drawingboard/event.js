@@ -15,7 +15,6 @@ export const registerCanvasEvents = ({
   selectedMode,
   setCurrentZoom,
   setShowZoom,
-  sendSelectedObjectsToOthers,
   sendUpdatedValuesInCanvasToOthers,
   selectedFill,
   selectedStroke,

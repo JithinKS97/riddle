@@ -76,7 +76,7 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
 
   const changePropertyOfSelectedObjects = (property, value) => {
     changePropertyOfSelectedObjectsInCanvas({ canvas, property, value });
-    sendSelectedObjectsToOthers();
+    sendUpdatedValuesInCanvasToOthers();
   };
 
   // Registering events
@@ -91,7 +91,6 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
       selectedMode,
       setCurrentZoom,
       setShowZoom,
-      sendSelectedObjectsToOthers,
       setSelectedMode,
       selectedFill,
       selectedStroke,
@@ -141,14 +140,11 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
     };
   });
 
-  // Canvas interfaces
-  const sendSelectedObjectsToOthers = () => {
-    const selectedObjects = getSelectedObjectsInCanvas(canvas);
-    sendObjectsToOthers(selectedObjects);
-  };
-
   const sendUpdatedValuesInCanvasToOthers = () => {
     const selectedObjects = getSelectedObjectsInCanvas(canvas);
+    if (!selectedObjects) {
+      return;
+    }
     const updatedValues = extractUpdatedValues(selectedObjects);
     sendUpdatedValuesToOthers(updatedValues);
   };

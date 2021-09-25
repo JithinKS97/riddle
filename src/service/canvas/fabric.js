@@ -123,6 +123,9 @@ const getSourceAndTarget = ({ updatedValues, canvas }) => {
 
     sourceObject.clone((_clone) => {
       targetObject = _clone;
+      targetObject.set({
+        id: sourceObject.id,
+      });
     });
 
     for (let parameter of parametersToLook) {
