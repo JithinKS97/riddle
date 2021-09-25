@@ -246,7 +246,7 @@ function handleMessageForHost(props) {
       return message;
     case REMOVE_MEMBER:
       // The member has to be removed from the members list
-      const memberToRemove = payload.content.identiValuesfier;
+      const memberToRemove = payload.content.identifier;
       notifyLeave(memberToRemove);
       removeSubClientMember(memberToRemove);
       break;
