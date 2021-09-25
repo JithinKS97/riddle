@@ -4,6 +4,7 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { AppProvider } from "../src/context/App";
 import theme from "../src/theme/theme";
 import { Pencil } from "../src/constant/mode";
+import Head from "next/head";
 
 function MyApp({ Component, pageProps }) {
   const [client, setClient] = useState(null);
@@ -34,6 +35,9 @@ function MyApp({ Component, pageProps }) {
   return (
     <ChakraProvider theme={theme}>
       <AppProvider value={value}>
+        <Head>
+          <link rel="shortcut icon" href="/favicon.ico" />
+        </Head>
         <Component {...pageProps} />
       </AppProvider>
     </ChakraProvider>
