@@ -22,7 +22,10 @@ function LandingPage() {
   };
 
   const goToCollabPage = (hostAddress) => {
-    router.push(`drawingboard/${hostAddress}`);
+    router.push({
+      pathname: "drawingboard/[hostAddress]",
+      query: { hostAddress },
+    });
   };
 
   const [show, setShow] = useState(false);
