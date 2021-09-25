@@ -43,7 +43,7 @@ function LandingPage() {
 
   return (
     <>
-      <style>{style}</style>
+      <style>{style({ show })}</style>
       <RoomJoinPopup onClose={closeRoomJoinPopup} show={showRoomJoinPopup} />
       <Center h="100vh">
         <ScaleFade initialScale={0.9} in={show}>
@@ -95,7 +95,7 @@ function LandingPage() {
   );
 }
 
-const style = `
+const style = ({ show }) => `
 @font-face {
   font-family: "Caveat";
   src: url("/fonts/caveat.ttf");
@@ -111,6 +111,8 @@ const style = `
   left:50vw;
   bottom:4%;
   transform:translate(-70%,0);
+  opacity:${show ? 1 : 0};
+  transition: opacity 0.2s ease-in-out;
 }
 `;
 
