@@ -5,6 +5,7 @@ import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { ScaleFade } from "@chakra-ui/react";
 import RoomJoinPopup from "./popups/RoomJoinPopup";
+import { AiFillGithub } from "react-icons/ai";
 
 function LandingPage() {
   const context = useContext(AppContext);
@@ -78,6 +79,18 @@ function LandingPage() {
           </HStack>
         </ScaleFade>
       </Center>
+      <Box cursor="pointer" className="github">
+        <a
+          rel="noreferrer"
+          href="https://github.com/JithinKS97/riddle"
+          target="_blank"
+        >
+          <HStack>
+            <span>Github repo</span>
+            <AiFillGithub color="#2C5282" size="30px" />
+          </HStack>
+        </a>
+      </Box>
     </>
   );
 }
@@ -92,6 +105,12 @@ const style = `
 }
 .title {
   font-family: 'Caveat', cursive;
+}
+.github {
+  position:absolute;
+  left:50vw;
+  bottom:4%;
+  transform:translate(-70%,0);
 }
 `;
 
