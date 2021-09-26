@@ -13,7 +13,7 @@ The whiteboard content can be saved to local computer by anyone in the room. The
 
 Access the App at http://nknriddle.xyz/
 
-<b> Note - The app is hosted in IPFS. We would recommend Brave browser with <a href="https://www.youtube.com/watch?v=jTDkTQiKzJA">IPFS enabled (In local node mode)</a> to access it though you can access it with other browsers also.
+<b> Note - The app is hosted in IPFS. We would recommend Brave browser with <a href="https://www.youtube.com/watch?v=jTDkTQiKzJA">IPFS enabled (In local node mode)</a> to access it. You can also access it from other browsers.
 
 # Communication protocol
 
