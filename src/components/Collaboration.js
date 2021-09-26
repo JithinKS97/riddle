@@ -413,7 +413,11 @@ function Collaboration() {
 const style = ({ loading }) => `
   .canvas-outer {
     visibility:${loading ? "hidden" : "visible"};
-  }  
+  }
+  body {
+    overflow-x:hidden;
+    overflow-y:hidden;
+  }
 `;
 
 export default Collaboration;
