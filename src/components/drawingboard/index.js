@@ -53,6 +53,7 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
     canvas = createCanvas(window);
     canvas.freeDrawingBrush.color = "black";
     canvas.freeDrawingBrush.width = 3;
+    canvas.freeDrawingBrush.decimate = 6;
   };
 
   // On change of object properties by the user
