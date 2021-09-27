@@ -9,12 +9,13 @@ import { AiFillGithub } from "react-icons/ai";
 
 function LandingPage() {
   const context = useContext(AppContext);
-  const { setClient, setIsHost, setClientConnected } = context;
+  const { setClient, setIsHost, setLoading } = context;
   const router = useRouter();
   const [showRoomJoinPopup, setShowRoomJoinPopup] = useState(false);
   const [hostAddress, setHostAddress] = useState("");
 
   const handleCollaborationClick = () => {
+    setIsHost(true);
     goToCollabPage(hostAddress);
   };
 
@@ -28,12 +29,10 @@ function LandingPage() {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    setIsHost(true);
     const client = nknApi.createClient();
-    setClientConnected(false);
     client.onConnect(() => {
       console.log("Client connected");
-      setClientConnected(true);
+      setLoading(false);
     });
     const hostAddress = client.getPublicKey();
     setHostAddress(hostAddress);

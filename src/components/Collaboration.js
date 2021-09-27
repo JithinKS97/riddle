@@ -23,10 +23,10 @@ function Collaboration() {
     setMembers,
     isHost,
     setIsHost,
-    clientConnected,
+    loading,
+    setLoading,
   } = context;
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
   const canvasRef = useRef(null);
   const membersRef = useRef([]);
   const clientRef = useRef(null);
@@ -133,19 +133,17 @@ function Collaboration() {
 
   const onNameSubmitInSubClient = () => {
     setLoading(true);
-    const newClient = nknApi.createClient();
-    newClient.name = name;
-    setClient(newClient);
-    newClient.onConnect(getCurrentState(newClient));
+    getCurrentState();
   };
 
-  const getCurrentState = () => async () => {
+  const getCurrentState = async () => {
     const { fabricJSON, currentMembers } = await messageApi.join({
       client: clientRef.current,
       name,
       goBack,
       hostAddress,
     });
+    console.log(fabricJSON, currentMembers);
     setCanvas(fabricJSON);
     setMembers(currentMembers);
     setLoading(false);
@@ -370,7 +368,7 @@ function Collaboration() {
   return (
     <>
       <style>{style({ loading })}</style>
-      {loading && !clientConnected ? <Loading /> : null}
+      {loading ? <Loading /> : null}
       <TopMenu
         onShareIconClick={onShareIconClick}
         onMembersIconClick={onMembersIconClick}
