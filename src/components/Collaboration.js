@@ -16,7 +16,15 @@ import { saveFile } from "../service/canvas/fabric";
 
 function Collaboration() {
   const context = useContext(AppContext);
-  const { client, setClient, members, setMembers, isHost, setIsHost } = context;
+  const {
+    client,
+    setClient,
+    members,
+    setMembers,
+    isHost,
+    setIsHost,
+    clientConnected,
+  } = context;
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const canvasRef = useRef(null);
@@ -116,12 +124,6 @@ function Collaboration() {
       return;
     }
     fillShareLink();
-    if (isHostRef.current) {
-      client.onConnect(() => {
-        setShowSharePopup(true);
-        setLoading(false);
-      });
-    }
   }, [hostAddress]);
 
   const fillShareLink = () => {
@@ -368,7 +370,7 @@ function Collaboration() {
   return (
     <>
       <style>{style({ loading })}</style>
-      {loading ? <Loading /> : null}
+      {loading && !clientConnected ? <Loading /> : null}
       <TopMenu
         onShareIconClick={onShareIconClick}
         onMembersIconClick={onMembersIconClick}

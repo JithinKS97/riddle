@@ -14,6 +14,7 @@ function MyApp({ Component, pageProps }) {
   const [selectedFill, setSelectedFill] = useState("#00D084");
   const [selectedStroke, setSelectedStroke] = useState("black");
   const [isHost, setIsHost] = useState(false);
+  const [clientConnected, setClientConnected] = useState(true);
 
   const value = {
     client,
@@ -30,6 +31,8 @@ function MyApp({ Component, pageProps }) {
     setSelectedFill,
     selectedStroke,
     setSelectedStroke,
+    clientConnected,
+    setClientConnected,
   };
 
   return (
