@@ -338,7 +338,9 @@ function Collaboration() {
   };
 
   const changeShareUrl = (hostAddress) => {
-    router.push(`/drawingboard/${hostAddress}`, undefined, { shallow: true });
+    router.push(`/drawingboard?hostAddress=${hostAddress}`, undefined, {
+      shallow: true,
+    });
   };
 
   const saveJson = () => {
