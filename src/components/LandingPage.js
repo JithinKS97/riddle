@@ -42,6 +42,15 @@ function LandingPage() {
     });
   };
 
+  const showConnectedStatus = () => {
+    toast({
+      title: `Connected`,
+      status: "success",
+      position: "top",
+      duration: 1000,
+    });
+  };
+
   useEffect(() => {
     showConnectingToast();
     setMembers([]);
@@ -49,6 +58,7 @@ function LandingPage() {
     console.log("Trying to connect...");
     client.onConnect(() => {
       console.log("Finished connecting...");
+      showConnectedStatus();
       setIsConnected(true);
       setLoading(false);
       toast.close(toastRef.current);

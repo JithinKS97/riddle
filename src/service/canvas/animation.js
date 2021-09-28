@@ -173,3 +173,26 @@ export const animateObject = ({
     easing: fabric.util.ease.easeInOutQuad,
   });
 };
+
+export const animatePath = ({ pathObject, fullPath, canvas }) => {
+  let fullPathLength = fullPath.length;
+  let previousObject;
+  fabric.util.animate({
+    startValue: 0,
+    endValue: 1,
+    duration: 100,
+    endValue: fullPathLength,
+    duration: 500,
+    onChange: function (value) {
+      pathObject.opacity = value;
+      canvas.renderAll();
+      if (previousObject) {
+        canvas.remove(previousObject);
+      }
+      const newPathObject = fabric.util.object.clone(pathObject);
+      newPathObject.path = fullPath.slice(0, value);
+      canvas.add(newPathObject);
+      previousObject = newPathObject;
+    },
+  });
+};
