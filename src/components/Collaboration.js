@@ -44,6 +44,12 @@ function Collaboration() {
   ////////////////////////////////////////////////
 
   useEffect(() => {
+    return () => {
+      leaveRoom();
+    };
+  }, []);
+
+  useEffect(() => {
     clientRef.current = client;
     if (!client) {
       return;
@@ -93,6 +99,7 @@ function Collaboration() {
     if (!clientRef.current) {
       return;
     }
+    console.log(clientRef.current);
     if (!isHostRef.current) {
       messageApi.sendLeaveMessageForSubClient({
         client: clientRef.current,

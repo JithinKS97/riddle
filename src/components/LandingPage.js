@@ -48,6 +48,7 @@ function LandingPage() {
   };
 
   const closeRoomJoinPopup = () => {
+    setIsHost(false);
     setShowRoomJoinPopup(false);
   };
 
