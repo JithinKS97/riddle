@@ -32,6 +32,8 @@ const join = async ({ client, name, goBack, hostAddress }) => {
       client,
     });
 
+    console.log(res);
+
     console.log("Received join acknowledge message and canvas data");
 
     res = JSON.parse(res);
@@ -42,6 +44,7 @@ const join = async ({ client, name, goBack, hostAddress }) => {
 
     return { fabricJSON, currentMembers };
   } catch (err) {
+    console.log(err);
     alert("Unable to join room");
     goBack();
   }
@@ -182,9 +185,6 @@ function handleReception(props) {
 
   const payload = JSON.parse(message.payload);
   const src = message.src;
-
-  console.log(`Received message from ${src}`);
-  console.log(payload);
 
   if (isHost) {
     return handleMessageForHost({ ...props, payload, src });

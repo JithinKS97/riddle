@@ -60,6 +60,9 @@ function Collaboration() {
   }, [client]);
 
   const handleMessage = (message) => {
+    console.log(`Received message`);
+    console.log(message);
+
     return messageApi.handleReception({
       message,
       client,
