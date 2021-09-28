@@ -45,6 +45,7 @@ function Collaboration() {
 
   useEffect(() => {
     return () => {
+      setIsHost(false);
       leaveRoom();
     };
   }, []);
