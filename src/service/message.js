@@ -14,14 +14,14 @@ import {
  * Functions related to joining and leaving
  */
 
-const join = async ({ client, goBack, hostAddress }) => {
+const join = async ({ client, name, goBack, hostAddress }) => {
   try {
     // My public is my address
     const myAddress = client.getPublicKey();
 
     const content = {
       identifier: myAddress,
-      name: client.name,
+      name,
     };
 
     const message = generateMessage(JOIN, content);

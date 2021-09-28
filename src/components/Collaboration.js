@@ -16,9 +16,17 @@ import { saveFile } from "../service/canvas/fabric";
 
 function Collaboration() {
   const context = useContext(AppContext);
-  const { client, setClient, members, setMembers, isHost, setIsHost } = context;
+  const {
+    client,
+    setClient,
+    members,
+    setMembers,
+    isHost,
+    setIsHost,
+    loading,
+    setLoading,
+  } = context;
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
   const canvasRef = useRef(null);
   const membersRef = useRef([]);
   const clientRef = useRef(null);
@@ -34,6 +42,12 @@ function Collaboration() {
   /////////////////////////////////////////////////
   ///// Registering events related to nkn client///
   ////////////////////////////////////////////////
+
+  useEffect(() => {
+    return () => {
+      leaveRoom();
+    };
+  }, []);
 
   useEffect(() => {
     clientRef.current = client;
@@ -85,6 +99,7 @@ function Collaboration() {
     if (!clientRef.current) {
       return;
     }
+    console.log(clientRef.current);
     if (!isHostRef.current) {
       messageApi.sendLeaveMessageForSubClient({
         client: clientRef.current,
@@ -116,12 +131,6 @@ function Collaboration() {
       return;
     }
     fillShareLink();
-    if (isHostRef.current) {
-      client.onConnect(() => {
-        setShowSharePopup(true);
-        setLoading(false);
-      });
-    }
   }, [hostAddress]);
 
   const fillShareLink = () => {
@@ -131,19 +140,17 @@ function Collaboration() {
 
   const onNameSubmitInSubClient = () => {
     setLoading(true);
-    const newClient = nknApi.createClient();
-    newClient.name = name;
-    setClient(newClient);
-    newClient.onConnect(getCurrentState(newClient));
+    getCurrentState();
   };
 
-  const getCurrentState = () => async () => {
+  const getCurrentState = async () => {
     const { fabricJSON, currentMembers } = await messageApi.join({
       client: clientRef.current,
       name,
       goBack,
       hostAddress,
     });
+    console.log(fabricJSON, currentMembers);
     setCanvas(fabricJSON);
     setMembers(currentMembers);
     setLoading(false);
@@ -161,6 +168,7 @@ function Collaboration() {
     if (!isHostRef.current) {
       onNameSubmitInSubClient();
     } else {
+      setShowSharePopup(true);
       const updatedClientWithName = clientRef.current;
       updatedClientWithName.name = name;
       setClient(updatedClientWithName);
@@ -338,7 +346,9 @@ function Collaboration() {
   };
 
   const changeShareUrl = (hostAddress) => {
-    router.push(`/drawingboard/${hostAddress}`, undefined, { shallow: true });
+    router.push(`/drawingboard?hostAddress=${hostAddress}`, undefined, {
+      shallow: true,
+    });
   };
 
   const saveJson = () => {

@@ -9,21 +9,19 @@ import { AiFillGithub } from "react-icons/ai";
 
 function LandingPage() {
   const context = useContext(AppContext);
-  const { setClient, setIsHost } = context;
+  const { setClient, setIsHost, setLoading, setMembers } = context;
   const router = useRouter();
   const [showRoomJoinPopup, setShowRoomJoinPopup] = useState(false);
+  const [hostAddress, setHostAddress] = useState("");
 
   const handleCollaborationClick = () => {
     setIsHost(true);
-    const client = nknApi.createClient();
-    const hostAddress = client.getPublicKey();
-    setClient(client);
     goToCollabPage(hostAddress);
   };
 
   const goToCollabPage = (hostAddress) => {
     router.push({
-      pathname: "drawingboard/[hostAddress]",
+      pathname: "drawingboard",
       query: { hostAddress },
     });
   };
@@ -31,6 +29,15 @@ function LandingPage() {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
+    setMembers([]);
+    const client = nknApi.createClient();
+    client.onConnect(() => {
+      console.log("Client connected");
+      setLoading(false);
+    });
+    const hostAddress = client.getPublicKey();
+    setHostAddress(hostAddress);
+    setClient(client);
     document.fonts.ready.then(function () {
       setShow(true);
     });
@@ -41,6 +48,7 @@ function LandingPage() {
   };
 
   const closeRoomJoinPopup = () => {
+    setIsHost(false);
     setShowRoomJoinPopup(false);
   };
 
