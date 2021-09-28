@@ -55,6 +55,7 @@ function LandingPage() {
     showConnectingToast();
     setMembers([]);
     const client = nknApi.createClient();
+    console.log(client);
     console.log("Trying to connect...");
     client.onConnect(() => {
       console.log("Finished connecting...");
