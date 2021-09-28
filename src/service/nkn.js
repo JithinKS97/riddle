@@ -1,8 +1,11 @@
 import nkn from "nkn-sdk";
 
 export const createClient = () => {
-  const client = new nkn.Client();
-  return client;
+  let multiclient = new nkn.MultiClient({
+    numSubClients: 4,
+    originalClient: true,
+  });
+  return multiclient;
 };
 
 export const isValidId = (id) => {

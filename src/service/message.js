@@ -338,6 +338,10 @@ const sentMemberUpdatesToAll = ({
     newMemberName,
   };
 
+  if (membersToNotify.length === 0) {
+    return;
+  }
+
   const message = generateMessage(ADD_MEMBER, content);
   sendMessage({ address: membersToNotify, message, client });
 };
