@@ -7,13 +7,11 @@ Riddle is an open source white board collaboration App. It is built on <a href="
 # About
 
 Using the App, you can create a new room and invite others by using the Share Id provided to you and start collaborating in the shared white board.
-The whiteboard contents can be saved to local computer by anyone in the room. There is also an option to store and retrieve it from [IPFS](https://ipfs.io/).
+The whiteboard contents can be saved to local computer by anyone in the room.
 
 # Use the App
 
 Access the App at http://nknriddle.xyz/
-
-<b> Note - The app is hosted in IPFS. We would recommend Brave browser with <a href="https://www.youtube.com/watch?v=jTDkTQiKzJA">IPFS enabled (In local node mode)</a> to access it. You can also access it from other browsers.
 
 # Communication protocol
 
@@ -28,7 +26,6 @@ Access the App at http://nknriddle.xyz/
 1. [NKN](https://nkn.org/)
 2. [Fabric](http://fabricjs.com/)
 3. [React](https://reactjs.org/)
-4. [IPFS](https://ipfs.io/)
 
 # The whiteboard
 
