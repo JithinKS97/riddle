@@ -6,6 +6,8 @@ import { useRouter } from "next/router";
 import { ScaleFade } from "@chakra-ui/react";
 import RoomJoinPopup from "./popups/RoomJoinPopup";
 import { AiFillGithub } from "react-icons/ai";
+import { useToast } from "@chakra-ui/react";
+import { useRef } from "react";
 
 function LandingPage() {
   const context = useContext(AppContext);
@@ -13,6 +15,9 @@ function LandingPage() {
   const router = useRouter();
   const [showRoomJoinPopup, setShowRoomJoinPopup] = useState(false);
   const [hostAddress, setHostAddress] = useState("");
+  const [isConnected, setIsConnected] = useState(false);
+  const toast = useToast();
+  const toastRef = useRef();
 
   const handleCollaborationClick = () => {
     setIsHost(true);
@@ -28,12 +33,25 @@ function LandingPage() {
 
   const [show, setShow] = useState(false);
 
+  const showConnectingToast = () => {
+    toastRef.current = toast({
+      title: `Connecting...`,
+      isClosable: false,
+      duration: null,
+      position: "top",
+    });
+  };
+
   useEffect(() => {
+    showConnectingToast();
     setMembers([]);
     const client = nknApi.createClient();
+    console.log("Trying to connect...");
     client.onConnect(() => {
-      console.log("Client connected");
+      console.log("Finished connecting...");
+      setIsConnected(true);
       setLoading(false);
+      toast.close(toastRef.current);
     });
     const hostAddress = client.getPublicKey();
     setHostAddress(hostAddress);
@@ -72,6 +90,7 @@ function LandingPage() {
                 top="20px"
                 variant="primary"
                 onClick={handleCollaborationClick}
+                disabled={!isConnected}
               >
                 Create a room
               </Button>
@@ -80,6 +99,7 @@ function LandingPage() {
                 position="relative"
                 top="30px"
                 variant="primary"
+                disabled={!isConnected}
               >
                 Join a room
               </Button>

@@ -19,7 +19,10 @@ const theme = extendTheme({
           bg: "#1A365D",
           color: "white",
           _hover: {
-            backgroundColor: "#4299E1",
+            bgColor: "#4299E1",
+            _disabled: {
+              bgColor: "#1A365D",
+            },
           },
         },
       },
