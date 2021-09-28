@@ -9,7 +9,7 @@ import { AiFillGithub } from "react-icons/ai";
 
 function LandingPage() {
   const context = useContext(AppContext);
-  const { setClient, setIsHost, setLoading } = context;
+  const { setClient, setIsHost, setLoading, setMembers } = context;
   const router = useRouter();
   const [showRoomJoinPopup, setShowRoomJoinPopup] = useState(false);
   const [hostAddress, setHostAddress] = useState("");
@@ -29,6 +29,7 @@ function LandingPage() {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
+    setMembers([]);
     const client = nknApi.createClient();
     client.onConnect(() => {
       console.log("Client connected");

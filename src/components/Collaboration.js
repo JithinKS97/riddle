@@ -161,6 +161,7 @@ function Collaboration() {
     if (!isHostRef.current) {
       onNameSubmitInSubClient();
     } else {
+      setShowSharePopup(true);
       const updatedClientWithName = clientRef.current;
       updatedClientWithName.name = name;
       setClient(updatedClientWithName);
