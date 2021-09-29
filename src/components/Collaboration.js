@@ -33,7 +33,6 @@ function Collaboration() {
   const [showNamePopup, setShowNamePopup] = useState(true);
   const [showSharePopup, setShowSharePopup] = useState(false);
   const [showMembersPopup, setShowMembersPopup] = useState(false);
-  const [shareLink, setShareLink] = useState("");
   const [name, setName] = useState("");
   const toast = useToast();
   const isHostRef = useRef(isHost);
@@ -132,14 +131,8 @@ function Collaboration() {
     if (!hostAddress) {
       return;
     }
-    fillShareLink();
     hostAddressRef.current = hostAddress;
   }, [hostAddress]);
-
-  const fillShareLink = () => {
-    const id = hostAddressRef.current;
-    setShareLink(id);
-  };
 
   const onNameSubmitInSubClient = () => {
     setLoading(true);
@@ -277,7 +270,6 @@ function Collaboration() {
       memberToMakeMainClient,
       hostAddress: hostAddressRef.current,
       changeShareUrl,
-      fillShareLink,
     });
   };
 
@@ -293,7 +285,6 @@ function Collaboration() {
       hostAddress: hostAddressRef.current,
       setIsHost,
       changeShareUrl,
-      fillShareLink,
     });
   };
 
@@ -407,7 +398,7 @@ function Collaboration() {
         <NamePopup
           name={name}
           setName={setName}
-          shareLink={shareLink}
+          shareLink={hostAddressRef.current}
           show={showNamePopup}
           onClose={handleNamePopupClose}
           onNameSubmit={handleNameSubmit}
@@ -415,7 +406,7 @@ function Collaboration() {
         <SharePopup
           show={showSharePopup && !showNamePopup}
           onClose={handleSharePopupClose}
-          shareLink={shareLink}
+          shareLink={hostAddressRef.current}
         />
         <Drawingboard
           onAddObjects={onAddObjects}

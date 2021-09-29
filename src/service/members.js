@@ -25,14 +25,12 @@ const makeTheMemberMainClient = ({
   memberToMakeMainClient,
   hostAddress,
   changeShareUrl,
-  fillShareLink,
 }) => {
   const filterOutMainClient = (member) => member.identifier !== hostAddress;
 
   const updatedMembers = members.filter(filterOutMainClient);
 
   changeShareUrl(memberToMakeMainClient);
-  fillShareLink(memberToMakeMainClient);
 
   setMembers(updatedMembers);
 };
@@ -50,7 +48,6 @@ const makeThisMainClient = ({
   setMembers,
   setIsHost,
   hostAddress,
-  fillShareLink,
   client,
   changeShareUrl,
 }) => {
@@ -65,7 +62,6 @@ const makeThisMainClient = ({
   setIsHost(true);
 
   changeShareUrl(publicKey);
-  fillShareLink(publicKey);
 };
 
 const getName = ({ id, members }) => {
