@@ -38,6 +38,7 @@ function Collaboration() {
   const toast = useToast();
   const isHostRef = useRef(isHost);
   const { hostAddress } = router.query;
+  const hostAddressRef = useRef(hostAddress);
 
   /////////////////////////////////////////////////
   ///// Registering events related to nkn client///
@@ -72,7 +73,7 @@ function Collaboration() {
       makeTheMemberMainClient,
       notifyLeave,
       isHost: isHostRef.current,
-      hostAddress,
+      hostAddress: hostAddressRef.current,
       removeObjects,
       notifyHostChange,
       updateObjectsInCanvas,
@@ -132,10 +133,11 @@ function Collaboration() {
       return;
     }
     fillShareLink();
+    hostAddressRef.current = hostAddress;
   }, [hostAddress]);
 
   const fillShareLink = () => {
-    const id = hostAddress;
+    const id = hostAddressRef.current;
     setShareLink(id);
   };
 
@@ -149,7 +151,7 @@ function Collaboration() {
       client: clientRef.current,
       name,
       goBack,
-      hostAddress,
+      hostAddress: hostAddressRef.current,
     });
     notifyJoined();
     console.log(fabricJSON, currentMembers);
@@ -174,7 +176,7 @@ function Collaboration() {
       const updatedClientWithName = clientRef.current;
       updatedClientWithName.name = name;
       setClient(updatedClientWithName);
-      addMember({ name, identifier: hostAddress });
+      addMember({ name, identifier: hostAddressRef.current });
     }
     handleNamePopupClose();
   };
@@ -214,7 +216,7 @@ function Collaboration() {
       client: clientRef.current,
       objects,
       members: membersRef.current,
-      hostAddress,
+      hostAddress: hostAddressRef.current,
       clear,
     });
   };
@@ -273,7 +275,7 @@ function Collaboration() {
       members: membersRef.current,
       setMembers,
       memberToMakeMainClient,
-      hostAddress,
+      hostAddress: hostAddressRef.current,
       changeShareUrl,
       fillShareLink,
     });
@@ -288,7 +290,7 @@ function Collaboration() {
       setLoading,
       createClient: nknApi.createClient,
       handleSharePopupClose,
-      hostAddress,
+      hostAddress: hostAddressRef.current,
       setIsHost,
       changeShareUrl,
       fillShareLink,
