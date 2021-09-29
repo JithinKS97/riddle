@@ -394,6 +394,7 @@ function Collaboration() {
           members={members}
           onClose={onMembersPopupCloseClick}
           show={showMembersPopup}
+          hostAddress={hostAddressRef.current}
         />
         <NamePopup
           name={name}

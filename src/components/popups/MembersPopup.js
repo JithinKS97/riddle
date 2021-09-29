@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 
 function MembersPopup(props) {
-  const { show, onClose, members } = props;
+  const { show, onClose, members, hostAddress } = props;
 
   return (
     <>
@@ -33,6 +33,7 @@ function MembersPopup(props) {
                     <HStack key={identifier}>
                       <Text fontWeight="bold">{name}</Text>
                       <Box bg={color} width="10px" height="10px"></Box>
+                      {hostAddress === identifier ? <Box>(host)</Box> : null}
                     </HStack>
                   );
                 })}
