@@ -151,6 +151,7 @@ function Collaboration() {
       goBack,
       hostAddress,
     });
+    notifyJoined();
     console.log(fabricJSON, currentMembers);
     setCanvas(fabricJSON);
     setMembers(currentMembers);
@@ -312,6 +313,10 @@ function Collaboration() {
 
   const notifyHostChange = () => {
     showToast(`You are the host now`, "success");
+  };
+
+  const notifyJoined = () => {
+    showToast(`Joined the room`, "success");
   };
 
   const showToast = (title, status) => {
