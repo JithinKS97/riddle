@@ -186,6 +186,9 @@ function handleReception(props) {
   const payload = JSON.parse(message.payload);
   const src = message.src;
 
+  console.log(`Received message from ${src}`);
+  console.log(payload);
+
   if (isHost) {
     return handleMessageForHost({ ...props, payload, src });
   } else {

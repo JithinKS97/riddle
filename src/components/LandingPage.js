@@ -87,7 +87,7 @@ function LandingPage() {
       <RoomJoinPopup onClose={closeRoomJoinPopup} show={showRoomJoinPopup} />
       <Center h="100vh">
         <ScaleFade initialScale={0.9} in={show}>
-          <HStack position="relative" left="120px">
+          <HStack position="relative" left="140px">
             <VStack>
               <Text color="#2C5282" className="title" fontSize="9xl">
                 Riddle
@@ -152,7 +152,7 @@ const style = ({ show }) => `
   position:absolute;
   left:50vw;
   bottom:4%;
-  transform:translate(-70%,0);
+  transform:translate(-50%,0);
   opacity:${show ? 1 : 0};
   transition: opacity 0.2s ease-in-out;
 }

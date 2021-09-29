@@ -176,7 +176,10 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
   };
 
   const getCanvasAsJSON = () => {
-    return canvas.toJSON(["id"]);
+    const canvasObject = canvas.toJSON(["id"]);
+    const filteredObjects = canvasObject.objects.filter((obj) => obj.id);
+    canvasObject.objects = filteredObjects;
+    return canvasObject;
   };
 
   const resetZoomAndPan = () => {
