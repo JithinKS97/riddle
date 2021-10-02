@@ -8,6 +8,7 @@ import RoomJoinPopup from "./popups/RoomJoinPopup";
 import { AiFillGithub } from "react-icons/ai";
 import { useToast } from "@chakra-ui/react";
 import { useRef } from "react";
+import Link from "next/link";
 
 function LandingPage() {
   const context = useContext(AppContext);
@@ -21,14 +22,6 @@ function LandingPage() {
 
   const handleCollaborationClick = () => {
     setIsHost(true);
-    goToCollabPage(hostAddress);
-  };
-
-  const goToCollabPage = (hostAddress) => {
-    router.push({
-      pathname: "drawingboard",
-      query: { hostAddress },
-    });
   };
 
   const [show, setShow] = useState(false);
@@ -96,15 +89,22 @@ function LandingPage() {
               <Box suppressHydrationWarning position="relative" left="10px">
                 Real time collaborative whiteboard
               </Box>
-              <Button
-                position="relative"
-                top="20px"
-                variant="primary"
-                onClick={handleCollaborationClick}
-                disabled={!isConnected}
+              <Link
+                href={{
+                  pathname: "/drawingboard",
+                  query: { hostAddress },
+                }}
               >
-                Create a room
-              </Button>
+                <Button
+                  position="relative"
+                  top="20px"
+                  variant="primary"
+                  disabled={!isConnected}
+                  onClick={handleCollaborationClick}
+                >
+                  Create a room
+                </Button>
+              </Link>
               <Button
                 onClick={handleJoinRoomClick}
                 position="relative"
