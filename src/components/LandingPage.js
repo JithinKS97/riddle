@@ -105,7 +105,7 @@ function LandingPage() {
                   Create a room
                 </Button>
               </Link>
-              <Button
+              {/* <Button
                 onClick={handleJoinRoomClick}
                 position="relative"
                 top="30px"
@@ -113,7 +113,7 @@ function LandingPage() {
                 disabled={!isConnected}
               >
                 Join a room
-              </Button>
+              </Button> */}
             </VStack>
             <Box position="relative" left="20px">
               <img width="300px" height="300px" src={"pencil.gif"}></img>
