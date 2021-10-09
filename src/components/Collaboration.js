@@ -38,12 +38,25 @@ function Collaboration() {
   const isHostRef = useRef(isHost);
   const { hostAddress } = router.query;
   const hostAddressRef = useRef(hostAddress);
+  const toastRef = useRef();
 
   /////////////////////////////////////////////////
   ///// Registering events related to nkn client///
   ////////////////////////////////////////////////
 
   useEffect(() => {
+    if (!isHostRef.current) {
+      showConnectingToast();
+      const newClient = nknApi.createClient();
+      setClient(newClient);
+      setLoading(true);
+      setShowNamePopup(false);
+      newClient.onConnect(() => {
+        setLoading(false);
+        toast.close(toastRef.current);
+        setShowNamePopup(true);
+      });
+    }
     return () => {
       setIsHost(false);
       leaveRoom();
@@ -58,6 +71,15 @@ function Collaboration() {
     client.onMessage(handleMessage);
     return () => client.onMessage(null);
   }, [client]);
+
+  const showConnectingToast = () => {
+    toastRef.current = toast({
+      title: `Connecting...`,
+      isClosable: false,
+      duration: null,
+      position: "top",
+    });
+  };
 
   const handleMessage = (message) => {
     return messageApi.handleReception({
@@ -280,7 +302,6 @@ function Collaboration() {
       client: clientRef.current,
       setClient,
       setLoading,
-      createClient: nknApi.createClient,
       handleSharePopupClose,
       hostAddress: hostAddressRef.current,
       setIsHost,
@@ -399,7 +420,6 @@ function Collaboration() {
         <NamePopup
           name={name}
           setName={setName}
-          shareLink={hostAddressRef.current}
           show={showNamePopup}
           onClose={handleNamePopupClose}
           onNameSubmit={handleNameSubmit}

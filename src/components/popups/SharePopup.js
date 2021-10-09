@@ -12,10 +12,13 @@ import {
   Text,
   useClipboard,
 } from "@chakra-ui/react";
+import { env } from "../../../next.config";
 
 function SharePopup(props) {
   const { shareLink, onClose, show } = props;
-  const { hasCopied, onCopy } = useClipboard(shareLink);
+  const host = env.host;
+  const link = `${host}/drawingboard?hostAddress=${shareLink}`;
+  const { hasCopied, onCopy } = useClipboard(link);
 
   const handleCopyClick = () => {
     setTimeout(() => {
@@ -29,12 +32,10 @@ function SharePopup(props) {
       <Modal size="xl" isCentered onClose={onClose} isOpen={show}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>
-            Anybody with the below Id can join this room
-          </ModalHeader>
+          <ModalHeader>Anybody with below link can join the room</ModalHeader>
           <ModalBody>
             <InputGroup size="md">
-              <Input isReadOnly value={shareLink} pr="4.5rem" />
+              <Input isReadOnly value={link} pr="4.5rem" />
               <InputRightElement width="4.5rem">
                 <Button
                   variant="primary"
