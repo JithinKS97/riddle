@@ -16,8 +16,8 @@ import { env } from "../../../next.config";
 
 function SharePopup(props) {
   const { shareLink, onClose, show } = props;
-  const host = env.host;
-  const link = `${host}/drawingboard?hostAddress=${shareLink}`;
+  const drawingboardLink = env.drawingboard;
+  const link = `${drawingboardLink}?hostAddress=${shareLink}`;
   const { hasCopied, onCopy } = useClipboard(link);
 
   const handleCopyClick = () => {
