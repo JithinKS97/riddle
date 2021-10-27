@@ -66,14 +66,14 @@ export const fileOptions = [
     label: "Load from local",
     icon: FiDownload,
   },
-  // {
-  //   label: "Save to IPFS",
-  //   icon: SaveIPFS,
-  // },
-  // {
-  //   label: "Load from IPFS",
-  //   icon: LoadIPFS,
-  // },
+  {
+    label: "Save to IPFS",
+    icon: SaveIPFS,
+  },
+  {
+    label: "Load from IPFS",
+    icon: LoadIPFS,
+  },
 ];
 
 export const drawModes = drawOptions.map((drawOption) => drawOption.label);

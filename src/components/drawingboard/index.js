@@ -97,8 +97,9 @@ const DrawingboardContainer = forwardRef(function Drawingboard(props, ref) {
       selectedStroke,
       brushSize,
       sendUpdatedValuesInCanvasToOthers,
+      deleteObjectsFromOthers,
     });
-  }, [canvas, selectedMode, selectedFill, selectedStroke, brushSize]);
+  }, [canvas, selectedMode, selectedFill, selectedStroke, brushSize, deleteObjectsFromOthers]);
 
   useEffect(() => {
     return registerKeyEvents({ deleteSelectedObjects, window });

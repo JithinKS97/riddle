@@ -1,5 +1,5 @@
 import { drawModes } from "../../constant/menu";
-import { Pencil, Pan, Select, None } from "../../constant/mode";
+import { Pencil, Pan, Select, None, Eraser } from "../../constant/mode";
 
 export const onModeChange = (canvas, selectedMode) => () => {
   if (!canvas) {
@@ -8,6 +8,8 @@ export const onModeChange = (canvas, selectedMode) => () => {
 
   const isShapeDrawingMode =
     drawModes.includes(selectedMode) && selectedMode !== Pencil;
+
+  const isEraserMode = selectedMode === Eraser;
 
   if (selectedMode === Select) {
     enableSelect(canvas);
@@ -42,6 +44,8 @@ export const onModeChange = (canvas, selectedMode) => () => {
     return;
   } else if (selectedMode === None) {
     setCursor("auto");
+  } else if (isEraserMode) {
+    setCursor("pointer");
   }
 };
 

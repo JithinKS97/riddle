@@ -1,4 +1,4 @@
-import { HStack } from "@chakra-ui/react";
+import { HStack, Button } from "@chakra-ui/react";
 import OptionsMenu from "../common/OptionsMenu";
 import StrokeSlider from "./StrokeSlider";
 import ColorMenu from "./ColorMenu";
@@ -13,8 +13,9 @@ import {
   drawModes,
   cursorModes,
 } from "../../../constant/menu";
-import { None } from "../../../constant/mode";
+import { Eraser, None } from "../../../constant/mode";
 import { useEffect } from "react";
+import { FaEraser } from "react-icons/fa";
 
 const LeftSection = (props) => {
   const { resetPan, resetZoomAndPan } = props;
@@ -91,6 +92,10 @@ const LeftSection = (props) => {
     }
   };
 
+  const setEraserMode = () => {
+    setSelectedMode(Eraser);
+  };
+
   return (
     <HStack p="3">
       <OptionsMenu
@@ -99,6 +104,12 @@ const LeftSection = (props) => {
         options={drawOptions}
         highlighted={selectedMode === selectedDrawMode}
       />
+      <Button
+        variant={selectedMode === "Eraser" ? "primary" : undefined}
+        onClick={setEraserMode}
+      >
+        <FaEraser />
+      </Button>
       <StrokeSlider onChange={handleSliderChange} />
       <ColorMenu
         onClose={onColorChangeComplete}

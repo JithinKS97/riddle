@@ -1,4 +1,4 @@
-import { Pan, Pencil, Select } from "../../constant/mode";
+import { Eraser, Pan, Pencil, Select } from "../../constant/mode";
 import { v4 as uuidv4 } from "uuid";
 import { drawModes } from "../../constant/menu";
 import {
@@ -19,6 +19,7 @@ export const registerCanvasEvents = ({
   selectedFill,
   selectedStroke,
   brushSize,
+  deleteObjectsFromOthers,
 }) => {
   const isShapeDrawingMode =
     drawModes.includes(selectedMode) && selectedMode !== Pencil;
@@ -63,6 +64,24 @@ export const registerCanvasEvents = ({
           hoverCursor: "move",
         });
       }
+    } else if (option.target && selectedMode === Eraser) {
+      option.target.set("opacity", 0.5);
+      canvas.renderAll();
+    }
+  });
+
+  canvas.on("mouse:out", function (option) {
+    if (option.target && selectedMode === Eraser) {
+      option.target.set("opacity", 1);
+      canvas.renderAll();
+    }
+  });
+
+  canvas.on("mouse:down", function (option) {
+    if (option.target && selectedMode === Eraser) {
+      canvas.remove(option.target);
+      canvas.renderAll();
+      deleteObjectsFromOthers([option.target.id]);
     }
   });
 
