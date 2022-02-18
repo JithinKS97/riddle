@@ -2,7 +2,7 @@ import nkn from "nkn-sdk";
 
 export const createClient = () => {
   let multiclient = new nkn.MultiClient({
-    numSubClients: 4,
+    numSubClients: 10,
     originalClient: false,
   });
   return multiclient;
