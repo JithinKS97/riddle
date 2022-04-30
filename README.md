@@ -11,6 +11,8 @@ Riddle is an open source white board collaboration App. It is built on <a href="
 Using the App, you can create a new room and invite others by using the Share Id provided to you and start collaborating in the shared white board.
 The whiteboard contents can be saved to local computer by anyone in the room.
 
+[Read more here](https://nkn.org/community/blog/riddle-a-collaborative-whiteboard-web-app-powered-by-nkn/)
+
 # Communication protocol
 
 1. When a client accesses the app, a public address is allocated to him.
