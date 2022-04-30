@@ -1,6 +1,6 @@
 # Riddle
 
-https://ipfs.infura.io/ipfs/QmY9eQPJjGDUi13Mg7nU4bQMRfSkqSPCMV4bwD5po6CChe
+https://nkn-riddle.netlify.app/
 
 <p align="center"><img width="650px" height="360px" src="https://i.ibb.co/0CYwLwN/Screenshot-2021-09-17-at-8-03-32-AM.png" alt="riddle-logo" /></p>
 Riddle is an open source white board collaboration App. It is built on <a href="https://nkn.org/">NKN</a>, a p2p network connectivity protocol. Hence users do not rely on a centralized authority to engage with one-another.
