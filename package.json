@@ -16,7 +16,7 @@
     "file-saver": "^2.0.5",
     "framer-motion": "^4",
     "ipfs": "^0.58.6",
-    "next": "11.1.2",
+    "next": "12.1.0",
     "nkn-sdk": "^1.2.0",
     "react": "17.0.2",
     "react-color": "^2.19.3",
