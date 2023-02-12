@@ -15,7 +15,7 @@
     "fabric": "^4.6.0",
     "file-saver": "^2.0.5",
     "framer-motion": "^4",
-    "ipfs": "^0.58.6",
+    "ipfs": "^0.66.0",
     "next": "12.1.0",
     "nkn-sdk": "^1.2.0",
     "react": "17.0.2",
